@@ -11,114 +11,130 @@
 
     // Wait for PhoneGap to load
     //
+    
     document.addEventListener("deviceready", onDeviceReady, false);
+	$(window).bind("scrollstop", function() {
+		$.mobile.fixedToolbars.show(100);
+	});
 
+
+	var TIMEAPPFOLDER = 'TimeApp';
 
     // PhoneGap is ready
     //
     function onDeviceReady() {
-
+		checkAndCreateTimeAppFolder();
+    }
+    
+    function checkAndCreateTimeAppFolder() {
+	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0.2*1024*1024, function (fileSystem) { 
+        fileSystem.root.getDirectory(TIMEAPPFOLDER, {create: true}, function (dirEntry) {
+    	}, fail); 
+	  }, fail);    
+    }
+    
+    
+    function readDirectoryEntries(onSuccess, onFailure) {
+ 	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) { 
+        fileSystem.root.getDirectory(TIMEAPPFOLDER, {create: true}, function (dirEntry) {
+          var dirReader = dirEntry.createReader();
+          dirReader.readEntries(onSuccess, onFailure);        
+    	}, fail); 
+	  }, fail);       
     }
 
 
      function populateList() {
-
-          $("#contentlist").empty(); //empty the list elements we've placed in the html
-
+	 $("#contentlist").empty(); //empty the list elements we've placed in the html
+	 readDirectoryEntries(populateListpart2, fail);
+          
           //repopulate the list with data from phonegap's device api
 
-          $("#contentlist").append("<li><a href='#'>Device Name: "     +device.name+     "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Phonegap: " +device.phonegap+ "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Platform: " +device.platform+ "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device UUID: "     +device.uuid+     "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Version: "  +device.version+  "</a></li>");
-
-          $("#contentlist").listview('refresh'); //must be called if you want the new list elements properly styled
-
+          //$("#contentlist").append("<li><a href='#'>Device Name: "     +device.name+     "</a></li>");
+     }
+     
+     function populateListpart2(filelist) {
+       var i;
+       for (i = 0; i<filelist.length; i++) {
+       $("#contentlist").append("<li><a href='#'>File: "     +filelist[i].name+     "</a></li>");  
+       }
      }
 
- 
+
+	function writefile(filename, content) {
+	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0.2*1024*1024, function (fileSystem) { // henter filsystem
+        fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename, {create: true}, function (fileEntry) {
+          fileEntry.createWriter(function (writer) {
+  		    writer.onwrite = function(evt) {
+              console.log("write success");
+        	};
+        	console.log("Path " + fileEntry.fullPath);
+        	writer.write(content);
+    	  }, fail);
+    	}, fail); 
+	  }, fail);
+    }
+    
+    function readfile(filename, handler) {
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+	        		fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename, {create: true}, function (fileEntry) {
+ 		       		  fileEntry.file(function gotFile(file){
+					    var reader = new FileReader();
+					      reader.onloadend = function(evt) {
+					        console.log("Read as text");
+				    	    console.log(evt.target.result)
+				        	handler(reader.result);
+				       	  };
+				        reader.readAsText(file);
+    				  }, fail);
+    			  }, fail);
+    		}, fail);
+
+    }
+
+	 var punchcard = {"punch": [
+        {"date": 1, "company": "Intern", "project": "Vacation", "confirmed": 0},
+        {"date": 2, "company": "DNB", "project": "SOAP", "confirmed": 1},
+        {"date": 3, "company": "Intern", "project": "Training", "confirmed": 0}
+    	]
+	 };
+	 
+	 function dance(result){
+	   //var json = JSON.parse(result);     
+	   $("#jsontest").append("hei " + result);
+	 
+	 }
+
+     function fail(error) {
+     // TODO Gi beskjed hvis man ikke får skrevet data til fil
+        console.log("Error: "+error.code);
+     }	
 
      function beepbeep() {
-    var punchcard = {"widget": {
-    "debug": "on",
-    "window": {
-        "title": "Sample Konfabulator Widget",
-        "name": "main_window",
-        "width": 500,
-        "height": 500
-    },
-    "image": { 
-        "src": "Images/Sun.png",
-        "name": "sun1",
-        "hOffset": 250,
-        "vOffset": 250,
-        "alignment": "center"
-    },
-    "text": {
-        "data": "Click Here",
-        "size": 36,
-        "style": "bold",
-        "name": "text1",
-        "hOffset": 250,
-        "vOffset": 100,
-        "alignment": "center",
-        "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
-    }
-}};
 
 
-
+	 
+		punchcard.punch[0].company = "Børge schi |'17/a";
+		var start = new Date().getTime();
+     //   for (int i = 0; i<1000; i++) {
         var jsonString = JSON.stringify(punchcard);
-
+		
+		writefile("test.txt", jsonString);
+		var jsonTest = JSON.parse(jsonString);
+		readfile("test.txt", dance);
         
-        var jsonTest = JSON.parse(jsonString);
-        
-        $("#jsontest").append(jsonTest.widget.text.name);
-
-
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
-        
+        // }
+        var elapsed = new Date().getTime() - start;
+        $("#jsontest").append(jsonTest.punch[0].company + " tok " + elapsed);
 
      }
-     
-
-    function gotFS(fileSystem) {
-        fileSystem.root.getFile("readme.txt", {create: true}, gotFileEntry, fail); 
-    }
-
-    function gotFileEntry(fileEntry) {
-        fileEntry.createWriter(gotFileWriter, fail);
-    }
-
-    function gotFileWriter(writer) {
-        writer.onwrite = function(evt) {
-            console.log("write success");
-        };
-        writer.write("some sample text");
-        // contents of file now 'some sample text'
-        writer.write(" different text");
-        // contents of file now 'some different text'
-    }
-
-    function fail(error) {
-        console.log(error.code);
-    }
-     
-     
-     
-     
-     
+        
     </script>
   </head>
   <body>
      <div data-role="page"> 
 
-          <div data-role="header"> 
+          <div data-role="header" data-position="fixed"> 
 
                <h1> Header Content </h1>
 
@@ -140,7 +156,7 @@
 
           </div>
 
-          <div data-role="footer"> 
+          <div data-role="footer" data-position="fixed"> 
 
                <h1> Footer Content </h1>
 
