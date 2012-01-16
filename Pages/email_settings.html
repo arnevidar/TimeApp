@@ -1,0 +1,135 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+    <head>
+        <title>Email settings</title>
+        
+        <link rel="stylesheet" type="text/css" href="../css/jquery.mobile-1.0.css" />
+        <link rel="stylesheet" type="text/css" href="../css/jquery.mobile.datebox.css"/>
+        <link rel="stylesheet" type="text/css" href="../css/jquery.mobile.simpledialog.min.css"/>
+
+        <script type="text/javascript" charset="utf-8" src="../js/jquery-1.7.1.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile-1.0.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/phonegap-1.3.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile.datebox.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile.simpledialog.min.js"></script>
+        <script type="text/javascript" charset="utf-8">
+
+
+
+            $(document).delegate('#dialog', 'click', function() {
+                $(this).simpledialog({
+                    'mode' : 'bool',
+                    'prompt' : 'Are you sure?',
+                    'useModal': true,
+                    'buttons' : {
+                        'Cancel': {
+                            click: function () {
+                            },
+                            icon: "delete",
+                            closeOnClick: true,
+                            iconpos: "notext",
+                            inline: true
+                        },
+                        'OK': {
+                            click: function () {
+                                $.mobile.changePage('settings.html');
+                            },
+                            icon: "check",
+                            iconpos: "notext",
+                            inline: true
+                        }
+                    }
+                })
+            })
+
+
+
+
+
+            $(document).ready(function () {
+                // Time
+                $('#date1').scroller({ preset: 'time' });
+
+                $('#disable').click(function() {
+                    $('#date1').scroller('disable');
+                    return false;
+                });
+
+                $('#enable').click(function() {
+                    $('#date1').scroller('enable');
+                    return false;
+                });
+
+                $('#get').click(function() {
+                    alert($('#date1').scroller('getDate'));
+                    return false;
+                });
+
+                $('#get').click(function() {
+                    alert($('#date1').scroller('getDate'));
+                    return false;
+                });
+
+                $('#theme, #mode').change(function() {
+                    var t = $('#theme').val();
+                    var m = $('#mode').val();
+                    $('#date1').scroller('destroy').scroller({ preset: 'time', theme: t, mode: m });
+                });
+            });
+        </script>
+
+    </head>
+
+
+    <body>
+        <div data-role="page">
+            <div data-role="header">
+                <h2>Email settings</h2>
+            </div><!-- header -->
+
+            <div data-role="content">
+
+                <div data-role="fieldcontain">
+                    <label for="email">Email:</label>
+                    <input type="text" name="name" id="email" placeholder="Email" />
+                </div> <!-- fieldcontain - input field -->
+
+                <div data-role="fieldcontain">
+                    <label for="toggle-email">Toggle email notification:</label>
+                    <select name="slider" id="toggle-email" data-role="slider">
+                        <option value="off">Off</option>
+                        <option value="on">On</option>
+                    </select>
+                </div> <!-- fieldcontain - flip switch -->
+                
+                <div data-role="fieldcontain">
+                    <label for="select-weekday">Select day to send Email:</label>
+                    <select name="select-weekday" id="select-weekday">
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednsday">Wednsday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                        <option value="saturday">Saturday</option>
+                        <option value="sunday">Sunday</option>
+                    </select>
+                </div> <!-- daypicker -->
+
+                <div data-role="fieldcontain">
+                    <label for="mydate">Some Time</label>
+                    <input name="mydate" id="mydate" type="date" data-role="datebox" value="04:00"
+                           data-options='{"mode": "timeflipbox"}'>
+                </div> <!-- Timepicker -->
+
+                <div data-role="fieldcontain">
+                    <a href="#" id="dialog" data-role="button" data-inline="true" data-icon="delete" data-iconpos="notext"></a>
+                    <a href="settings.html" data-role="button" data-inline="true" data-icon="check" data-iconpos="notext" ></a>
+                </div>
+
+
+
+            </div> <!-- content -->
+        </div><!-- page -->
+    </body>
+</html>
