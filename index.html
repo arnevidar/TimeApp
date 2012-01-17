@@ -13,15 +13,17 @@
     //
     document.addEventListener("deviceready", onDeviceReady, false);
 
-
     // PhoneGap is ready
     //
     function onDeviceReady() {
+        $(window).bind("scrollstop", function() {
+            $.mobile.fixedToolbars.show(true);
+        });
 
     }
 
 
-     function populateList() {
+    function populateList() {
 
           $("#contentlist").empty(); //empty the list elements we've placed in the html
 
@@ -108,8 +110,7 @@
     function fail(error) {
         console.log(error.code);
     }
-     
-     
+
      
      
      
@@ -140,11 +141,15 @@
 
           </div>
 
-          <div data-role="footer"> 
-
-               <h1> Footer Content </h1>
-
-          </div>
+         <div data-role="footer" data-position="fixed">
+             <div data-role="navbar">
+                 <ul>
+                     <li><a href="index.html" data-icon="home">Overview</a></li>
+                     <li><a href="registrer_time.html" data-icon="plus">Add hours</a> </li>
+                     <li><a href="settings.html" data-icon="gear">Settings</a></li>
+                 </ul>
+             </div>
+         </div>
 
      </div>
   </body>
