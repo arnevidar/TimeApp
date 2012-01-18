@@ -10,6 +10,10 @@
         <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
         <script type="text/javascript" charset="utf-8">
 
+            var toTheRight = 0;
+
+
+
             $(document).ready(function() {
                var optionsArray = $("#select_description").children('option').map(function() {
                     return {
@@ -60,9 +64,11 @@
 
             }
 
-            function printToday() {
-                var today = new Date();
-                document.write(today.toDateString());
+            function printDate() {
+                var theDate = new Date();
+                theDate.setDate(theDate.getDate()+toTheRight);
+               // var today = new Date();
+                document.write(theDate.toDateString());
             }
 
             function saveDraft() {
@@ -81,15 +87,37 @@
                 //do JSON-stuff
             }
 
+            $(document).delegate('[data-role="page"]', 'swipeleft swiperight', function(event) {
+                event.preventDefault();
+                if(event.type == 'swipeleft') {
+                    //show next day
+                    toTheRight++;
+                    changeDay();
+                } else if(event.type == 'swiperight') {
+                    //show previous day
+                    toTheRight--;
+                    changeDay();
+                }
+            });
+
+            function changeDay() {
+                var today = new Date();
+                today.setDate(today.getDate()+toTheRight);
+                $("#date_heading").html(today.toDateString());
+                //load records from this day and put it in the div, in a li?
+
+            }
+
 
         </script>
 
     </head>
     <body>
 
-        <div data-role="page">
+        <div data-role="page" id="register_hours">
+
             <div data-role="content">
-                <h2><script type="text/javascript">printToday()</script></h2>
+                <h2 id="date_heading"><script type="text/javascript">printDate()</script></h2>
                 <h2>Register hours</h2>
                 <a href="#add_details" id="add_new_line" data-role="button">Add hours</a>
 
