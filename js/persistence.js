@@ -39,7 +39,7 @@
 	
 	function writefile(filename, content, onFailure) {
 	  window.requestFileSystem(LocalFileSystem.PERSISTENT, APPDATASIZE, function (fileSystem) { // henter filsystem
-        fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename, {create: true}, function (fileEntry) {
+        fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename+".json", {create: true}, function (fileEntry) {
           fileEntry.createWriter(function (writer) {
   		    writer.onwrite = function(evt) {
               console.log("write success");
@@ -58,7 +58,7 @@
     
     function readfile(filename, onSuccess, onFailure) {
             window.requestFileSystem(LocalFileSystem.PERSISTENT, APPDATASIZE, function (fileSystem) {
-	        		fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename, {create: true}, function (fileEntry) {
+	        		fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename+".json", {create: true}, function (fileEntry) {
  		       		  fileEntry.file(function gotFile(file){
 					    var reader = new FileReader();
 					      reader.onloadend = function(evt) {
