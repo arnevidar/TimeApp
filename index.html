@@ -7,6 +7,9 @@
 	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>    
 	<script type="text/javascript" charset="utf-8">
 
     // Wait for PhoneGap to load
@@ -18,31 +21,15 @@
 	});
 
 
-	var TIMEAPPFOLDER = 'TimeApp';
-
     // PhoneGap is ready
     //
     function onDeviceReady() {
-		checkAndCreateTimeAppFolder();
-    }
-    
-    function checkAndCreateTimeAppFolder() {
-	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0.2*1024*1024, function (fileSystem) { 
-        fileSystem.root.getDirectory(TIMEAPPFOLDER, {create: true}, function (dirEntry) {
-    	}, fail); 
-	  }, fail);    
-    }
-    
-    
-    function readDirectoryEntries(onSuccess, onFailure) {
- 	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) { 
-        fileSystem.root.getDirectory(TIMEAPPFOLDER, {create: true}, function (dirEntry) {
-          var dirReader = dirEntry.createReader();
-          dirReader.readEntries(onSuccess, onFailure);        
-    	}, fail); 
-	  }, fail);       
-    }
+	checkAndCreateTimeAppFolder(fail);
+	 
 
+	
+    }
+	
 
      function populateList() {
 	 $("#contentlist").empty(); //empty the list elements we've placed in the html
@@ -61,36 +48,6 @@
      }
 
 
-	function writefile(filename, content) {
-	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0.2*1024*1024, function (fileSystem) { // henter filsystem
-        fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename, {create: true}, function (fileEntry) {
-          fileEntry.createWriter(function (writer) {
-  		    writer.onwrite = function(evt) {
-              console.log("write success");
-        	};
-        	console.log("Path " + fileEntry.fullPath);
-        	writer.write(content);
-    	  }, fail);
-    	}, fail); 
-	  }, fail);
-    }
-    
-    function readfile(filename, handler) {
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-	        		fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename, {create: true}, function (fileEntry) {
- 		       		  fileEntry.file(function gotFile(file){
-					    var reader = new FileReader();
-					      reader.onloadend = function(evt) {
-					        console.log("Read as text");
-				    	    console.log(evt.target.result)
-				        	handler(reader.result);
-				       	  };
-				        reader.readAsText(file);
-    				  }, fail);
-    			  }, fail);
-    		}, fail);
-
-    }
 
 	 var punchcard = {"punch": [
         {"date": 1, "company": "Intern", "project": "Vacation", "confirmed": 0},
@@ -98,6 +55,10 @@
         {"date": 3, "company": "Intern", "project": "Training", "confirmed": 0}
     	]
 	 };
+
+	 
+
+	 
 	 
 	 function dance(result){
 	   //var json = JSON.parse(result);     
@@ -107,26 +68,32 @@
 
      function fail(error) {
      // TODO Gi beskjed hvis man ikke får skrevet data til fil
-        console.log("Error: "+error.code);
+     //   console.log("Error: "+error.code);
+     navigator.notification.alert(error.code, function () { navigator.app.exitApp(); }, 'Error', 'Ok');
      }	
 
      function beepbeep() {
 
-
+	 var punch = new Punch("no", 12);
 	 
-		punchcard.punch[0].company = "Børge schi |'17/a";
+	 alert(punch.totH + " " + punch.date);	
+
+
+
+	/*	punchcard.punch[0].company = "Børge schi |'17/a";
+		punchcard.punch[0].descr = "halla";
 		var start = new Date().getTime();
      //   for (int i = 0; i<1000; i++) {
         var jsonString = JSON.stringify(punchcard);
 		
-		writefile("test.txt", jsonString);
+		writefile("test.txt", jsonString, fail);
 		var jsonTest = JSON.parse(jsonString);
-		readfile("test.txt", dance);
+		readfile("test.txt", dance, fail);
         
         // }
         var elapsed = new Date().getTime() - start;
         $("#jsontest").append(jsonTest.punch[0].company + " tok " + elapsed);
-
+*/
      }
         
     </script>
