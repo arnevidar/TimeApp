@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+    <head>
+        <title>Email settings</title>
+        
+        <link rel="stylesheet" type="text/css" href="../css/jquery.mobile-1.0.css" />
+        <link rel="stylesheet" type="text/css" href="../css/jquery.mobile.datebox.css"/>
+        <link rel="stylesheet" type="text/css" href="../css/jquery.mobile.simpledialog.min.css"/>
+        <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+
+        <script type="text/javascript" charset="utf-8" src="../js/jquery-1.7.1.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile-1.0.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile.datebox.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile.simpledialog.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/phonegap-1.3.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/jquery.toaster.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/jquery.toaster.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="../js/persistence.js"></script>
+        <script type="text/javascript" charset="utf-8">
+
+
+            function onFailure(error) {
+                console.log(error.code);
+            }
+
+            function pushData() {
+                var emailsettings = new Object();
+                emailsettings.email = $("#email").val();
+                emailsettings.enabled = $("#toggle-email").val();
+                emailsettings.weekday = $("#select-weekday").val();
+                emailsettings.time = $("#email-time").val();
+                var jsonString = JSON.stringify(emailsettings);
+                writefile('emailsettings', emailsettings, onFailure);
+
+                $(function(){ //on jquery load
+                    var toaster = $.toaster({showTime:1000, centerX:true, centerY:true}); // create a toaster
+                    toaster.toast("THIS IS A TOASTER");//show a toast message
+                });
+
+            }
+
+        </script>
+
+    </head>
+
+
+    <body onload="">
+        <div data-role="page">
+            <div data-role="header">
+                <h2>Email settings</h2>
+            </div><!-- header -->
+
+            <div data-role="content">
+
+                <div data-role="fieldcontain">
+                    <label for="email">Email:</label>
+                    <input type="text" name="name" id="email" placeholder="Email" />
+                </div> <!-- fieldcontain - input field -->
+
+                <div data-role="fieldcontain">
+                    <label for="toggle-email">Toggle email notification:</label>
+                    <select name="slider" id="toggle-email" data-role="slider">
+                        <option value="off">Off</option>
+                        <option value="on">On</option>
+                    </select>
+                </div> <!-- fieldcontain - flip switch -->
+                
+                <div data-role="fieldcontain">
+                    <label for="select-weekday">Select day to send Email:</label>
+                    <select name="select-weekday" id="select-weekday">
+                        <option value="monday">Monday</option>
+                        <option value="tuesday">Tuesday</option>
+                        <option value="wednsday">Wednsday</option>
+                        <option value="thursday">Thursday</option>
+                        <option value="friday">Friday</option>
+                        <option value="saturday">Saturday</option>
+                        <option value="sunday">Sunday</option>
+                    </select>
+                </div> <!-- daypicker -->
+
+                <div data-role="fieldcontain">
+                    <label for="email-time">Set the time for the email to be sent:</label>
+                    <input name="mydate" id="email-time" type="date" data-role="datebox" value="04:00"
+                           data-options='{"mode": "timeflipbox"}'>
+                </div> <!-- Timepicker -->
+
+                <div data-role="fieldcontain">
+                    <a href="settings.html" id="dialog" data-role="button" data-inline="true" data-icon="delete" data-iconpos="notext"></a>
+                   <a data-role="button" data-inline="true" data-icon="check" data-iconpos="notext" onclick="pushData()"></a>
+                </div>
+
+                <div data-role="footer" data-position="fixed">
+                    <div data-role="navbar">
+                        <ul>
+                            <li><a href="../index.html" data-icon="home">Overview</a></li>
+                            <li><a href="registrer_time.html" data-icon="plus">Add hours</a> </li>
+                            <li><a href="settings.html" data-icon="gear">Settings</a></li>
+                        </ul>
+                    </div>
+                </div> <!-- footer -->
+
+
+            </div> <!-- content -->
+        </div><!-- page -->
+    </body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>FileReader Example</title>
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.6.4.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+
+        <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
+        <script type="text/javascript" charset="utf-8">
+
+            var toTheRight = 0;
+
+
+
+            $(document).ready(function() {
+               var optionsArray = $("#select_description").children('option').map(function() {
+                    return {
+                        "value": this.value,
+                        "option": "<option value='" + this.value + "'>" + this.text + "</option>"
+                    }
+                })
+                $("#select_company").change(function() {
+                    $("#select_description").children('option').remove();
+                    var internalAlternatives = [];
+                    for(var i=0; i<optionsArray.length; i++) {
+                        if(optionsArray[i].value.indexOf($(this).val()) > -1) {
+                            internalAlternatives.push(optionsArray[i].option);
+                        }
+                    }
+                    $("#select_description").html(internalAlternatives.join(''));
+                    var mySelect = $("#select_description");
+                    mySelect.selectmenu("refresh");
+
+
+                }).change();
+            });
+
+
+            function openNewcompanyDialog(obj) {
+                //var selected = $("#select_company option:selected");
+                var ddValue = obj.value;
+                if(ddValue === "new_company_option") {
+                    //alert(ddValue);
+                  $("#linkHax").click();
+                }
+
+            }
+
+            function handleInternalChoice(obj) {
+                var ddValue = obj.value;
+                if(ddValue === "day_off" || ddValue === "time_off") {
+                    $("#internal_back").click();
+                  //  $("#save_value").click();
+                }
+            }
+
+
+            function getNewCompany() {
+                var newCompany = $('#the_new_company').val();
+                alert(newCompany);
+                //Do JSON things to add the company and show as chosen in the selectbox
+
+            }
+
+            function printDate() {
+                var theDate = new Date();
+                theDate.setDate(theDate.getDate()+toTheRight);
+               // var today = new Date();
+                document.write(theDate.toDateString());
+            }
+
+            function saveDraft() {
+                var formElements = $('#details_to_add :input');
+
+                var value = [];
+                formElements.each(function(i, el) {
+                     value.push(el.value);
+                });
+
+                var message = '';
+                for (var num = 0; num < value.length; num++) {
+                    message += value[num];
+                }
+                alert(value.join(' '));
+                //do JSON-stuff
+            }
+
+            $(document).delegate('[data-role="page"]', 'swipeleft swiperight', function(event) {
+                event.preventDefault();
+                if(event.type == 'swipeleft') {
+                    //show next day
+                    toTheRight++;
+                    changeDay();
+                } else if(event.type == 'swiperight') {
+                    //show previous day
+                    toTheRight--;
+                    changeDay();
+                }
+            });
+
+            function changeDay() {
+                var today = new Date();
+                today.setDate(today.getDate()+toTheRight);
+                $("#date_heading").html(today.toDateString());
+                //load records from this day and put it in the div, in a li?
+
+            }
+
+
+        </script>
+
+    </head>
+    <body>
+
+        <div data-role="page" id="register_hours">
+
+            <div data-role="content">
+                <h2 id="date_heading"><script type="text/javascript">printDate()</script></h2>
+                <h2>Register hours</h2>
+                <a href="#add_details" id="add_new_line" data-role="button">Add hours</a>
+
+            </div>
+            <div data-role="footer" data-position="fixed">
+                <div data-role="navbar">
+                    <ul>
+                        <li><a href="index.html" data-icon="home">Overview</a></li>
+                        <li><a href="registrer_time.html" data-icon="plus">Add hours</a> </li>
+                        <li><a href="settings.html" data-icon="gear">Settings</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div data-role="page" id="add_details">
+            <div data-role="content">
+                <form id="details_to_add">
+                    <div data-role="fieldcontain">
+                        <select id="select_company" data-native-menu="false" onchange="openNewcompanyDialog(this)">
+                            <label for="select_company"  class="select">Select company:</label>
+                            <option data-placeholder="company">Company</option>
+                            <option value="internal1">Internal</option>
+                            <option value="new_company_option">Add a new company</option>
+                        </select>
+                    </div>
+
+                    <div data-role="fieldcontain">
+                        <select id="select_description" data-native-menu="false" onchange="handleInternalChoice(this)">
+                            <option data-placeholder="description">Description</option>'
+                            <option value="test">Test</option>
+
+                            <!--Options to be shown when "internal" is chosen from company -->
+                            <option value="internal1_1">Day off</option>
+                            <option value="internal1_2">Time off</option>
+                            <option value="internal1_3">Vacation</option>
+
+
+                        </select>
+                    </div>
+
+
+                    <div data-role="fieldcontain">
+                        <label for="number_of_hours">Number of hours:</label>
+                        <input type="range" id="number_of_hours" value="0" min="0" max="24" step="0.25" />
+                    </div>
+                </form>
+                <div data-role="controlgroup" data-type="horizontal">
+                    <a href="#" data-role="button" data-rel="back" onclick="saveDraft()">Close</a>
+                    <input id="save_values" type="submit" value="Save"/>
+                </div>
+
+            </div>
+        </div>
+
+        <!--a hack to get the dialog working -->
+        <a id="linkHax" href="#new_company" data-rel="dialog" data-transition="pop" style="display: none;"></a>
+        <a id="internal_link" href="#internal_alternatives" data-rel="dialog" data-transition="pop" style="display:none;"></a>
+
+        <div data-role="page" id="new_company" >
+            <div data-role="content">
+                <h2>Add a new company</h2>
+                <input type="text" id="the_new_company" value="New company"/>
+                <div data-role="controllgroup" data-type="horizontal">
+                    <a href="#" data-role="button" data-rel="back">Close</a>
+                    <input type="button" value="Ok" onclick="getNewCompany()"/>
+                </div>
+            </div>
+        </div>
+    
+        <div data-role="page" id="internal_alternatives">
+            <div data-role="content">
+                <select id="select_internal_description" data-native-menu="false" onchange="handleInternalChoice(this)">
+                    <option value="vacation">Vacation</option>
+                    <option value="day_off">Day off</option>
+                    <option value="time_off">Time off</option>
+                </select>
+                <a href="#" id="internal_back" data-role="button" data-rel="back" style="display : none;"></a>
+            </div>
+        </div>
+    
+    </body>
+</html>
