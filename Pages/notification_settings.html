@@ -12,66 +12,14 @@
     <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile.datebox.js"></script>
     <script type="text/javascript">
 
-        function pushData() {
-            var notificationsettings = new Object();
-            notificationsettings.enabled = $("#toggle-notification").val();
-            notificationsettings.interval = $("#select-interval").val();
-            notificationsettings.time = $("#mydate").val();
-            var jsonString = JSON.stringify(notificationsettings);
-        }
+
 
     </script>
 
 </head>
 
 <body>
-<div data-role="page">
-    <div data-role="header">
-        <h2>Notification settings</h2>
-    </div><!-- header -->
 
-    <div data-role="content">
-
-        <div data-role="fieldcontain">
-            <label for="toggle-notifications">Toggle email notification:</label>
-            <select name="slider" id="toggle-notifications" data-role="slider">
-                <option value="off">Off</option>
-                <option value="on">On</option>
-            </select>
-        </div> <!-- fieldcontain - flip switch -->
-
-        <div data-role="fieldcontain">
-            <label for="select-interval">Select notification interval:</label>
-            <select name="select-interval" id="select-interval">
-                <option value="weekdays">Every weekday</option>
-                <option value="everyday">Every day</option>
-                <option value="custom">Custom</option>
-            </select>
-        </div>
-
-        <div data-role="fieldcontain">
-            <label for="mydate">Some Time</label>
-
-            <input name="mydate" id="mydate" type="date" data-role="datebox" value="04:00"
-                   data-options='{"mode": "timeflipbox"}' >
-        </div> <!-- Timepicker -->
-
-
-        <div data-role="fieldcontain">
-            <a href="settings.html" id="dialog" data-role="button" data-inline="true" data-icon="delete" data-iconpos="notext"></a>
-            <a data-role="button" data-inline="true" data-icon="check" data-iconpos="notext" onclick="pushData()"></a>
-        </div>
-    </div>
-
-    <div data-role="footer" data-position="fixed">
-        <div data-role="navbar">
-            <ul>
-                <li><a href="../index.html" data-icon="home">Overview</a></li>
-                <li><a href="registrer_time.html" data-icon="plus">Add hours</a> </li>
-                <li><a href="settings.html" data-icon="gear">Settings</a></li>
-            </ul>
-        </div>
-    </div> <!-- footer -->
 
 </div><!-- page -->
 </body>
