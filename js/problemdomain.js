@@ -108,6 +108,17 @@ TimeAppDataController.prototype.loadData = function () {
     var aba_koding_punch = this.addPunch(aba_koding, obs_date, 10);
 }
 
+
+/**
+ * Returns array of objects with these variables:
+ * date - date of punch
+ * name - company name
+ * description - description of work done
+ * totH - total hours worked on this punch
+ *
+ * @param dateToFetch
+ */
+
 TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
     var startDate = this.createDate(dateToFetch);
     // startDate.getFullYear() startDate.getMonth() startDate.getDay()
