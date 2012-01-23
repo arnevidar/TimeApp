@@ -155,11 +155,8 @@
             }
 
             function choseDate() {
-                alert("hey");
-                //$("#datePickerArea").show();
+              $('#mydate').datebox('open');
             }
-
-
 
 
         </script>
@@ -170,8 +167,9 @@
 
             <div data-role="content">
                 <h2 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h2>
-               <!-- <input name="mydate" id="mydate" type="date" data-role="datebox" data-options='{"mode": "calbox"}'>
-               -->
+                <input name="mydate" type="date" data-role="datebox" id="mydate" data-options='{"mode" : "calbox",
+                 "calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true}' />
+
                 <h2>Register hours</h2>
                 <ul data-role="listview" id="registered_hours_overview">
 
