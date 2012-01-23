@@ -136,7 +136,7 @@
                 var description = jsonObject.description;
                 var hours = jsonObject.number_of_hours;
                 var kk ='<li> <a href="#add_details" onclick="editDetails()"> <h3>' + company + '</h3><p>' + description + " " + hours + '</p></li>';
-                alert(kk);
+                //alert(kk);
 
                 $('#registered_hours_overview').append(kk);
                 $('#registered_hours_overview').listview('refresh');
@@ -184,7 +184,7 @@
                     <ul>
                         <li><a href="index.html" data-icon="home">Overview</a></li>
                         <li><a href="registrer_time.html" data-icon="plus">Add hours</a> </li>
-                        <li><a href="settings.html" data-icon="gear">Settings</a></li>
+                        <li><a href="Pages/settings.html" data-icon="gear">Settings</a></li>
                     </ul>
                 </div>
             </div>
