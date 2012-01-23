@@ -82,12 +82,6 @@
                 settingsSavedDialog();
             }
 
-            function handleInternalChoice(obj) {
-                var ddValue = obj.value;
-                if(ddValue === "Custom") {
-                }
-            }
-
 
         </script>
     </head>
@@ -115,7 +109,7 @@
                     <ul>
                         <li><a href="../index.html" data-icon="home">Overview</a></li>
                         <li><a href="../registrer_time.html" data-icon="plus">Add hours</a> </li>
-                        <li><a href="settings.html" data-icon="gear">Settings</a></li>
+                        <li><a href="#settings" data-icon="gear">Settings</a></li>
                     </ul>
                 </div>
             </div> <!-- footer -->
@@ -198,7 +192,7 @@
                 </div> <!-- fieldcontain - flip switch -->
 
                 <div data-role="fieldcontain">
-                    <label for="select-interval">Select notification interval:</label>
+                    <label for="select-interval">Repeat:</label>
                     <a href="#notification-day" id="select-interval" data-role="button" data-inline="true" data-rel="dialog">Choose day(s)</a>
                 </div>
 
@@ -219,24 +213,38 @@
                 <div data-role="navbar">
                     <ul>
                         <li><a href="../index.html" data-icon="home">Overview</a></li>
-                        <li><a href="registrer_time.html" data-icon="plus">Add hours</a> </li>
+                        <li><a href="../registrer_time.html" data-icon="plus">Add hours</a> </li>
                         <li><a href="settings.html" data-icon="gear">Settings</a></li>
                     </ul>
                 </div>
             </div> <!-- footer -->   
         </div> <!-- Settings page -->
 
+
+        <!-- Notification day dialog -->
+
         <div data-role="page" id="notification-day">
             <div data-role="fieldcontain">
                 <fieldset data-role="controlgroup">
                     <legend>Choose day(s)</legend>
-                    <input type="checkbox" name="checkbox-1" id="checkbox-1" class="custom" />
-                    <label for="checkbox-1">Test</label>
-                    <input type="checkbox" name="checkbox-2" id="checkbox-2" class="custom" />
-                    <label for="checkbox-2">Test2</label>
+                    <input type="checkbox" name="monday" id="monday" class="custom" />
+                    <label for="monday">Monday</label>
+                    <input type="checkbox" name="tuesday" id="tuesday" class="custom" />
+                    <label for="tuesday">Tuesday</label>
+                    <input type="checkbox" name="wednesday" id="wednesday" class="custom" />
+                    <label for="wednesday">Wednesday</label>
+                    <input type="checkbox" name="thursday" id="thursday" class="custom" />
+                    <label for="thursday">Thursday</label>
+                    <input type="checkbox" name="friday" id="friday" class="custom" />
+                    <label for="friday">Friday</label>
+                    <input type="checkbox" name="saturday" id="saturday" class="custom" />
+                    <label for="saturday">Saturday</label>
+                    <input type="checkbox" name="sunday" id="sunday" class="custom" />
+                    <label for="sunday">Sunday</label>
                 </fieldset>
 
-                <a href="#notificationSettings" data-role="button">Back</a>
+                <a href="#notificationSettings" data-role="button" data-inline="true" data-icon="delete" data-iconpos="notext"></a>
+                <a href="" data-role="button" data-inline="true" data-icon="check" data-iconpos="notext"></a>
             </div>
         </div>
 

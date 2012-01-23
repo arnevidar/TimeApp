@@ -45,21 +45,6 @@
 
         }
 
-        function getYearStartingWeek(year) {
-            var date = new Date();
-            var now = new Date();
-            alert(now);
-            date.setFullYear(year,0,1);
-            var day = date.getDay();
-            day = (day >= 0 ? day : day + 7);
-            var dayNum = Math.floor((now.getTime() - date.getTime() -
-                    (now.getTimezoneOffset()-date.getTimezoneOffset())*MILLISECONDS_MINUTE)/MILLISECONDS_DAY) + 1;
-            console.log(dayNum);
-            if(day < 4 ) {
-
-            }
-        }
-
 
         /**
          * Returns the week number for this date. dowOffset is the day of week the week
@@ -68,8 +53,8 @@
          * @param int dowOffset
          * @return int
          */
-        /*function getCurrentWeekNumber(date) {
-            getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com
+        function getCurrentWeekNumber(date) {
+            //getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com
             var dowOffset = 1; //The week starts on Monday
             //dowOffset = typeof(dowOffset) == 'int' ? dowOffset : 0; //default dowOffset to zero
             date = date || new Date();
@@ -87,7 +72,7 @@
                     nday = nYear.getDay() - dowOffset;
                     nday = nday >= 0 ? nday : nday + 7;
                     /*if the next year starts before the middle of
-                     the week, it is week #1 of that year
+                     the week, it is week #1 of that year*/
                     weeknum = nday < 4 ? 1 : 53;
                 }
             }
@@ -96,7 +81,7 @@
             }
             document.write(weeknum);
             return weeknum;
-        };*/
+        };
 
         function getWeek() {
             var weeknum;
