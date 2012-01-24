@@ -63,10 +63,9 @@
             return weekNr;
         }
 
-        var weekdaysAndTheirWeekNr = [];
-
         /**
          * Loops through each day in the month, and assign the week number to it.
+         * Returns it as an array, {0, 52}, {1, 52}, {2, 1} ...
          */
         function pushDaysToWeekArray(month, y) {
             if(y == null) {
@@ -75,7 +74,7 @@
                 var year = new Date(y);
             }
             var lastDay = new Date(year, month+1, 0).getDate(); // Number of days in the month
-            weekdaysAndTheirWeekNr = [];
+            var weekdaysAndTheirWeekNr = [];
             for(var i = 0; i < lastDay; ++i ) {
                 var date = new Date(year, month, i);
                 weekdaysAndTheirWeekNr.push(date.getWeek(date));
