@@ -11,11 +11,8 @@
     <script type="text/javascript" src="../js/jquery-1.7.1.js"></script>
     <script type="text/javascript">
 
-        var MILLISECONDS_DAY = 86400000;
-        var MILLISECONDS_MINUTE = 60000;
-
-        function printMonthName() {
-            var date = new Date()
+        function printMonthName(month) {
+            var date = new Date();
             var month=new Array(12);
             month[0]="January";
             month[1]="February";
@@ -33,76 +30,70 @@
             document.write(month[date.getMonth()]);
         }
 
-        function getWeeksInMonth() {
-            var date = new Date();
-            date.getDate();
-            alert(date);
-            var weeks = new Array(6);
+        /**
+         * Get the ISO week date week number
+         */
+        Date.prototype.getWeek = function (d) {
+            // Create a copy of this date object
+            var target  = new Date(this.valueOf()) || new Date(d.valueOf());
+
+            // ISO week date weeks start on monday
+            // so correct the day number
+            var dayNr = (this.getDay() + 6) % 7 || (d.getDay() + 6) % 7;
+
+            // ISO 8601 states that week 1 is the week
+            // with the first thursday of that year.
+            // Set the target date to the thursday in the target week
+            target.setDate(target.getDate() - dayNr + 3);
+
+            // Store the millisecond value of the target date
+            var firstThursday = target.valueOf();
+
+            // Set the target to the first thursday of the year
+            // First set the target to january first
+            target.setMonth(0, 1);
+            // Not a thursday? Correct the date to the next thursday
+            if (target.getDay() != 4) {
+                target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+            }
+
+            // The weeknumber is the number of weeks between the
+            // first thursday of the year and the thursday in the target week
+            var weekNr =  1 + Math.ceil((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000
+            return weekNr;
         }
 
-        function getNumOfWeeksInMonth() {
-            var date = new Date();
-
-        }
-
+        var weekdaysAndTheirWeekNr = [];
 
         /**
-         * Returns the week number for this date. dowOffset is the day of week the week
-         * "starts" on for your locale - it can be from 0 to 6. If dowOffset is 1 (Monday),
-         * the week returned is the ISO 8601 week number.
-         * @param int dowOffset
-         * @return int
+         * Loops through each day in the month, and assign the week number to it.
          */
-        function getCurrentWeekNumber(date) {
-            //getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com
-            var dowOffset = 1; //The week starts on Monday
-            //dowOffset = typeof(dowOffset) == 'int' ? dowOffset : 0; //default dowOffset to zero
-            date = date || new Date();
-            var newYear = new Date(date.getFullYear(),0,1);
-            var day = newYear.getDay() - dowOffset; //the day of week the year begins on
-            day = (day >= 0 ? day : day + 7);
-            var daynum = Math.floor((date.getTime() - newYear.getTime() -
-                    (date.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
-            var weeknum;
-            //if the year starts before the middle of a week
-            if(day < 4) {
-                weeknum = Math.floor((daynum+day-1)/7) + 1;
-                if(weeknum > 52) {
-                    nYear = new Date(date.getFullYear() + 1,0,1);
-                    nday = nYear.getDay() - dowOffset;
-                    nday = nday >= 0 ? nday : nday + 7;
-                    /*if the next year starts before the middle of
-                     the week, it is week #1 of that year*/
-                    weeknum = nday < 4 ? 1 : 53;
-                }
+        function pushDaysToWeekArray(month, y) {
+            if(y == null) {
+                var year = new Date().getFullYear();
+            } else {
+                var year = new Date(y);
             }
-            else {
-                weeknum = Math.floor((daynum+day-1)/7);
+            var lastDay = new Date(year, month+1, 0).getDate(); // Number of days in the month
+            weekdaysAndTheirWeekNr = [];
+            for(var i = 0; i < lastDay; ++i ) {
+                var date = new Date(year, month, i);
+                weekdaysAndTheirWeekNr.push(date.getWeek(date));
             }
-            document.write(weeknum);
-            return weeknum;
-        };
-
-        function getWeek() {
-            var weeknum;
-            var now = new Date(2012,0,1);
-            var onejan = new Date(now.getFullYear(),0,1);
-            var dayNum = Math.ceil((now-onejan) / MILLISECONDS_DAY);
-            console.log(dayNum);
-            weeknum = Math.ceil(dayNum / 7);
-            if( dayNum < 4 ) {
-                weeknum = 52;
-            }
-
-            console.log(weeknum);
-            return Math.ceil((now - onejan) / 86400000);
+            alert(weekdaysAndTheirWeekNr);
+            return weekdaysAndTheirWeekNr;
         }
 
 
-        function getHoursInWeek() {
+        function todayWeek(d) {
+            var date = new Date(d.valueOf());
+            var weekNr = d.getWeek();
+            document.writeln(weekNr);
+        }
+
+        function getHoursInWeek(week) {
             document.write("7,5");
         }
-
 
     </script>
 
@@ -112,10 +103,14 @@
         <div data-role="header">
             <h2 id="monthname"><script type="text/javascript">printMonthName()</script></h2>
         </div>
-        <div data-rloe="content">
-            <h3>Week <script type="text/javascript":>getWeek()</script>:<script type="text/javascript"> document.write(" 7,5");</script></h3>
+        <div data-role="content">
+            <h3>Week <script type="text/javascript">todayWeek(new Date(2010,0,1))</script>:<script type="text/javascript"> document.write(" 7,5");</script></h3>
+            <h3>Week <script type="text/javascript">todayWeek(new Date(2012,1,0))</script>:<script type="text/javascript"> document.write(" 8,0");</script></h3>
+            <h3>Week <script type="text/javascript">todayWeek(new Date(2008,0,1))</script>:<script type="text/javascript"> document.write(" 8,0");</script></h3>
+            <script type="text/javascript">
+                getWeeksInMonth2(11,2009);
+            </script>
         </div>
     </div>
-
 </body>
 </html>
