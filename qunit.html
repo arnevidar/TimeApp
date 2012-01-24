@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <script src="js/jquery-1.7.1.js"></script>
+    <link rel="stylesheet" href="qunit.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="qunit.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
+
+
+    <script>
+
+
+
+
+        $(document).ready(function(){
+
+            module("Problemdomain");
+
+
+
+            test("obj - jsn - str - jsn - obj", function() {
+
+                var punch = new Object();
+                punch.date = Date.parse(2012, 0 , 1);
+                punch.totH = 8;
+                var description = new Object();
+                description.desc = "Coding";
+                description.punch = [];
+                description.punch.push(punch);
+                var descString = JSON.stringify(description);
+                var descJson = JSON.parse(descString);
+
+                deepEqual(descJson, description, "Equal check");
+
+            });
+
+
+
+            test("Syntax test", function() {
+                var tadc = new TimeAppDataController();
+                tadc.addCompany("Acando");
+                tadc.addDescription(tadc.companies[0], "Code");
+                tadc.addPunch(tadc.companies[0].desc[0], new Date(2012,0,1), 8);
+                deepEqual(tadc.companies[0].desc[0].punch[0].date, Date.parse(tadc.createDate(new Date(2012,0,1))), "timeapp...date = date");
+            });
+
+
+
+            test("JSON stringify TimeAppDataController and back", function() {
+
+
+                var timeapp = new TimeAppDataController();
+                timeapp.addCompany("Acando");
+                timeapp.addDescription(timeapp.companies[0], "Code");
+                timeapp.addPunch(timeapp.companies[0].desc[0], new Date(2012,0,1), 8);
+                var timeappString = JSON.stringify(timeapp.companies);
+                var timeappObj = new TimeAppDataController();
+                timeappObj.companies = JSON.parse(timeappString);;
+                deepEqual(timeappObj.companies, timeapp.companies, "Equal check");
+
+                timeapp.addCompany("DNB");
+                timeappObj.addCompany("DNB");
+                deepEqual(timeapp.companies, timeappObj.companies, "Equal check");
+
+            });
+
+
+
+
+            test("Sort companies", function() {
+                var playDate = new Date();
+                var changeDate = new Date();
+                changeDate.setDate(playDate.getDate());
+                var tadc = new TimeAppDataController();
+                var dnb = tadc.addCompany("DNB");
+                var dnb_koding = tadc.addDescription(dnb, "dnbkoding");
+                var dnb_koding_punch = tadc.addPunch(dnb_koding, changeDate, 3);
+
+                var obs = tadc.addCompany("OBS");
+                var obs_koding = tadc.addDescription(obs, "obskoding");
+
+                changeDate.setDate(playDate.getDate()-2);
+                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, 9);
+
+                changeDate.setDate(playDate.getDate()-3);
+                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, 8);
+
+                changeDate.setDate(playDate.getDate()-4);
+                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, 7);
+
+                changeDate.setDate(playDate.getDate()-2);
+                var obs_koding2 = tadc.addDescription(obs, "obskoding2");
+                var obs_koding_punch = tadc.addPunch(obs_koding2, changeDate, 6);
+
+                changeDate.setDate(playDate.getDate()-3);
+                var obs_koding3 = tadc.addDescription(obs, "obskoding3");
+                var obs_koding_punch = tadc.addPunch(obs_koding3, changeDate, 5);
+
+                var aba = tadc.addCompany("ABA");
+                var aba_koding = tadc.addDescription(aba, "adakoding");
+                changeDate.setDate(playDate.getDate());
+                var aba_koding_punch = tadc.addPunch(aba_koding, changeDate, 4);
+
+                var correctOrder = [aba, dnb, obs];
+                deepEqual(correctOrder, tadc.get7companies(), "Verify sort and get companies");
+
+            });
+
+/*
+            test("Verify preloaded data", function () {
+                var tadc = new TimeAppDataController();
+                var dnb = tadc.addCompany("DNB");
+                var dnb_koding = tadc.addDescription(dnb, "dnbkoding");
+                var dnb_koding_punch = tadc.addPunch(dnb_koding, new Date(), 10);
+
+                var obs = tadc.addCompany("OBS");
+                var obs_koding = tadc.addDescription(obs, "obskoding");
+                var obs_koding_punch = tadc.addPunch(obs_koding, new Date(), 10);
+
+                var aba = tadc.addCompany("ABA");
+                var aba_koding = tadc.addDescription(aba, "adakoding");
+                var aba_koding_punch = tadc.addPunch(aba_koding, new Date(), 10);
+
+
+                var tadc2 = new TimeAppDataController();
+                tadc2.loadData();
+                deepEqual(tadc2, tadc, "load data = dummy data");
+            });
+*/
+
+            test("Get data for a specific date", function () {
+                var tadc = new TimeAppDataController();
+                tadc.loadData();
+                var today = tadc.getDataForDay(new Date());
+                var result = [  {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": 10},
+                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": 2}]
+                deepEqual(today, result, "got all data");
+            });
+
+
+            test("Update company info", function () {
+                var tadc = new TimeAppDataController();
+                tadc.updatePunch("DNB", "dnbkoding", tadc.getTodaysDate(), 2);
+                tadc.updatePunch("ABA", "adakoding", tadc.getTodaysDate(), 10);
+                var today = tadc.getDataForDay(new Date());
+                var result = [  {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": 10},
+                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": 2}]
+                deepEqual(today, result, "got all data");
+                tadc.updatePunch("DNB", "dnbkoding2", tadc.getTodaysDate(), 3);
+                today = tadc.getDataForDay(new Date());
+                result = [      {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": 10},
+                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": 2},
+                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding2", "totH": 3}                                  ]
+                deepEqual(today, result, "got all data");
+                tadc.updatePunch("DNB", "DNBnykoding", tadc.getTodaysDate(), 5,
+                                 "DNB", "dnbkoding2", tadc.getTodaysDate(), 3);
+                today = tadc.getDataForDay(new Date());
+                result = [      {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": 10},
+                    {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "DNBnykoding", "totH": 5},
+                    {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": 2}                                              ]
+                deepEqual(today, result, "got all data");
+            });
+            
+            module("Peristence");
+
+            asyncTest("Asynccheck to verify folder" , 1 ,function() {
+               
+               var pers = new Persistence();
+               pers.checkAndCreateTimeAppFolder(function () {
+               		ok(true, "folder verified");
+               	    start();
+               }, function(){
+               	    ok(false, "folder not verified");
+               	    start();
+               });
+            });
+
+
+            asyncTest("file hardcode", 1, function() {
+             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
+                function gotFS(fileSystem) {
+                    fileSystem.root.getFile("readme.txt", {create: true}, gotFileEntry, fail);
+                }
+
+                function gotFileEntry(fileEntry) {
+                    fileEntry.createWriter(gotFileWriter, fail);
+                }
+
+                function gotFileWriter(writer) {
+                    writer.onwrite = function(evt) {
+                        console.log("write success");
+                        ok(true, "write ok");
+                        start();
+                    };
+                    writer.write("some sample text");
+
+                }
+
+                function fail(error) {
+                    console.log(error.code);
+                    ok(false, "write fail");
+                    start();
+                }
+
+
+            });
+
+      
+            
+            asyncTest("Save to file", 1,function() {
+               var pers = new Persistence();
+               //pers.checkAndCreateTimeAppFolder();
+               var tadc = new TimeAppDataController();
+               tadc.loadData();
+               pers.writefile("qunit", JSON.stringify(tadc.companies), function() {
+                ok(true, "file written ok");
+                start();
+               }, function(e) {
+                ok(false, "file error " + e.code);
+                start();
+               });
+            });
+
+            asyncTest("Read from file", 2,function() {
+               var pers = new Persistence();
+               //pers.checkAndCreateTimeAppFolder();
+               var tadc = new TimeAppDataController();
+               var tadc2 = new TimeAppDataController();
+               tadc.loadData();
+               pers.readfile("qunit", function(content) {
+                tadc2.companies = JSON.parse(content);
+                ok(true, "file read ok");
+                deepEqual(tadc2, tadc, "Equal ok");
+                start();
+               }, function(e) {
+                ok(false, "file read error " + e.code);
+                ok(false, "nothing to compare");
+                start();
+               });
+               
+            });
+
+
+
+        });
+    </script>
+
+</head>
+<body>
+<h1 id="qunit-header">QUnit example</h1>
+<h2 id="qunit-banner"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<h2 id="qunit-userAgent"></h2>
+<ol id="qunit-tests"></ol>
+<div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
