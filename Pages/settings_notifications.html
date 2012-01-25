@@ -1,0 +1,166 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title>Settings</title>
+
+    <script type="text/javascript" charset="utf-8" src="../js/phonegap-1.3.0.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../css/jquery.mobile-1.0.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/jquery.mobile.datebox.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/jquery.mobile.simpledialog.min.css"/>
+    <link rel="stylesheet" type="text/css" href="../css/style.css"/>
+
+    <script type="text/javascript" charset="utf-8" src="../js/jquery-1.7.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile-1.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile.simpledialog.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/jquery.toaster.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile.datebox.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/persistence.js"></script>
+
+    <script type="text/javascript">
+        // Wait for PhoneGap to load
+        //
+        document.addEventListener("deviceready", onDeviceReady, false);
+
+        // PhoneGap is ready
+        //
+        function onDeviceReady() {
+            readEmailSettingsFile(esFilename);
+            readNotificationSettingsFile(nsFilename);
+        }
+
+        var esFilename = "emailsettings";
+        var nsFilename = "notificationsettings";
+
+        function loadEmailSettings() {
+            alert("Page is loaded");
+        }
+
+        function failSaveSettings(error) {
+            console.log(error.code);
+            alert("Error w files" + error.code);
+        }
+
+        function successfullyReadEmailSettings(result) {
+            var res = JSON.parse(result);
+            $("#email").attr() = res.email;
+            $("#toggle-email").attr() = res.enabled;
+            $("#select-weekday").attr() = res.weekday;
+            $("#email-time").attr() = res.time;
+        }
+
+        function successfullyReadNotificationSettings(result) {
+            var res = JSON.parse(result);
+            $("#toggle-notifications").attr() = res.enabled;
+            $("#select-interval").attr() = res.interval;
+            $("#notification-time").attr() = res.time;
+        }
+
+        function settingsSavedDialog() { //on jquery load
+            var toaster = $.toaster({showTime:1000, centerX:true, centerY:true}); // create a toaster
+            toaster.toast("Saved");//show a toast message
+        }
+
+        function readEmailSettingsFile(filename) {
+            var p = new Persistence();
+            p.readfile(filename, successfullyReadEmailSettings, failSaveSettings );
+        }
+
+        function readNotificationSettingsFile(filename) {
+            var p = new Persistence();
+            p.readfile(filename, successfullyReadNotificationSettings, failSaveSettings );
+        }
+
+        function saveNotificationSettings() {
+            var notificationSettings = new Object();
+            notificationSettings.enabled = $("#toggle-notification").val();
+            notificationSettings.interval = $("#select-interval").val();
+            notificationSettings.time = $("#notification-time").val();
+            var jsonString = JSON.stringify(notificationSettings);
+            var p = new Persistence();
+            p.writefile(nsFilename, notificationSettings, settingsSavedDialog, failSaveSettings);
+        }
+
+        function saveEmailSettings() {
+            var emailSettings = new Object();
+            emailSettings.email = $("#email").val();
+            emailSettings.enabled = $("#toggle-email").val();
+            emailSettings.weekday = $("#select-weekday").val();
+            emailSettings.time = $("#email-time").val();
+            var jsonString = JSON.stringify(emailSettings);
+            var p = new Persistence();
+            p.writefile(esFilename, emailSettings, settingsSavedDialog ,failSaveSettings);
+        }
+    </script>
+</head>
+<body>
+<!-- Notification settings -->
+
+<div data-role="page" id="notificationSettings">
+    <div data-role="header">
+        <h2>Notification settings</h2>
+    </div><!-- header -->
+
+    <div data-role="content">
+
+        <div data-role="fieldcontain">
+            <label for="toggle-notifications">Toggle notification:</label>
+            <select name="slider" id="toggle-notifications" data-role="slider">
+                <option value="off">Off</option>
+                <option value="on">On</option>
+            </select>
+        </div> <!-- fieldcontain - flip switch -->
+
+        <div data-role="fieldcontain">
+            <label for="select-interval">Repeat:</label>
+            <a href="#notification-day" id="select-interval" data-role="button" data-inline="true" data-rel="dialog">Choose day(s)</a>
+        </div>
+
+        <div data-role="fieldcontain">
+            <label for="notification-time">Time:</label>
+            <input name="mydate" id="notification-time" type="date" data-role="datebox" data-inline="true" value="04:00"
+                   data-options='{"mode": "timeflipbox"}' >
+        </div> <!-- Timepicker -->
+
+
+        <div data-role="fieldcontain">
+            <a href="settings.html" id="dialog" data-role="button" data-inline="true" data-icon="delete" data-iconpos="notext" rel="back"></a>
+            <a data-role="button" data-inline="true" data-icon="check" data-iconpos="notext" onclick="saveNotificationSettings()"></a>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="../js/navbar.js"></script>
+</div> <!-- Settings page -->
+
+
+<!-- Notification day dialog -->
+
+<div data-role="page" id="notification-day">
+    <div data-role="fieldcontain">
+        <fieldset data-role="controlgroup">
+            <legend>Choose day(s)</legend>
+            <input type="checkbox" name="monday" id="monday" class="custom" />
+            <label for="monday">Monday</label>
+            <input type="checkbox" name="tuesday" id="tuesday" class="custom" />
+            <label for="tuesday">Tuesday</label>
+            <input type="checkbox" name="wednesday" id="wednesday" class="custom" />
+            <label for="wednesday">Wednesday</label>
+            <input type="checkbox" name="thursday" id="thursday" class="custom" />
+            <label for="thursday">Thursday</label>
+            <input type="checkbox" name="friday" id="friday" class="custom" />
+            <label for="friday">Friday</label>
+            <input type="checkbox" name="saturday" id="saturday" class="custom" />
+            <label for="saturday">Saturday</label>
+            <input type="checkbox" name="sunday" id="sunday" class="custom" />
+            <label for="sunday">Sunday</label>
+        </fieldset>
+
+        <a href="#notificationSettings" data-role="button" data-inline="true" data-icon="delete" data-iconpos="notext"></a>
+        <a href="" data-role="button" data-inline="true" data-icon="check" data-iconpos="notext"></a>
+    </div>
+</div>
+
+</body>
+</html>
