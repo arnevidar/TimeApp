@@ -1,3 +1,6 @@
+
+
+
 function TimeAppDataController () {
   this.companies = [];
 }
@@ -126,24 +129,29 @@ TimeAppDataController.prototype.get7companies = function() {
     var comp = [];
     var i = 0;
     for (i = 0; i < 7 && i < this.companies.length; i++) {
-        comp.push(this.companies[i]);
+        comp.push(this.companies[i].name);
     }
     return comp;
 }
 
 /**
  * Returns array with 7 latest descriptions used with selected company
- * @param company
+ * @param companyName
  */
 
-TimeAppDataController.prototype.get7descriptions = function (company) {
-
-    var descr = [];
-    var i = 0;
-    for (i = 0; i < 7 && i < company.desc.length; i++) {
-        company.descr.add(descr[i]);
+TimeAppDataController.prototype.get7descriptions = function (companyName) {
+    var internalChoices = ["Time off", "Day off", "Vacation"];
+    if(companyName === "Internal") {
+        return internalChoices;
+    } else {
+        var company  = this.getCompany(companyName);
+        var descr = [];
+        var i = 0;
+        for (i = 0; i < 7 && i < company.desc.length; i++) {
+            descr.push(company.desc[i].description);
+        }
     }
-    return desc;
+    return descr;
 }
 
 function punchComparator(a, b) {
