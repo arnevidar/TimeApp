@@ -7,11 +7,12 @@
         <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
         <link rel="stylesheet" type="text/css" href="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.css" />
         <link rel="stylesheet" type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.css" />
-        <script type="text/javascript" charset="utf-8" src="js/jquery-1.6.4.js"></script>
+
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/jquery.form.js"></script>
         <script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
         <script type="text/javascript" charset="utf-8">
@@ -99,37 +100,8 @@
             }
 
 
-            function saveNewCompany() {
-                var newCompany = $('#the_new_company').val();
-                var company = new Object();
-                //company.id = //getcompany.length +1;
-                company.value = newCompany;
-                var jsonString = JSON.stringify(hours);
-                alert(jsonString);
-                //Do JSON things to add the company and show as chosen in the selectbox
-
-            }
-
             function printDate() {
-                //var theDate = new Date();
-                //theDate.setDate(theDate.getDate()+toTheRight);
-               // var today = new Date();
                 document.write(todaysDate.toDateString());
-            }
-
-            function saveDraft() {
-                var formElements = $('#details_to_add :input');
-                var value = [];
-                formElements.each(function(i, el) {
-                     value.push(el.val);
-                });
-                var message = '';
-                for (var num = 0; num < value.length; num++) {
-                    message += value[num];
-                }
-                //alert(message);
-                //alert(value.join(' '));
-                //do JSON-stuff
             }
 
             $(document).delegate('[data-role="page"]', 'swipeleft swiperight', function(event) {
@@ -161,16 +133,33 @@
             }
 
             function pushData(formObject) {
-                var hours = new Object();
-               // hours.id = xx;
-                hours.day = todaysDate.getDay(); //0-6. Monday = 1
-                hours.company = $("#select_company option:selected").text();
-                hours.description = $("#select_description option:selected").text();
-                hours.number_of_hours = $("#number_of_hours").val();
-                var jsonString = JSON.stringify(hours);
-                addMockLine(jsonString);
-                resetFormValues();
-             //   writefile('hours', hours, onFailure);
+                var company = $("#select_company option:selected").text();
+                var description = $("#select_description option:selected").text();
+                var number_of_hours = $("#hours_and_minutes").val();
+                //formatTime(number_of_hours);
+                alert(number_of_hours);
+                //TimeAppDataController.updatePunch(company, description, todaysDate, number_of_hours);
+                //addMockLine(jsonString);
+                //resetFormValues();
+            }
+
+            function formatTime(time) {
+                var hours = time.getHours();
+                var minutes = time.getMinutes();
+                var formatedMinues = 0;
+
+                switch(minutes) {
+                    case 15:
+                        formatedMinues = 0.25;
+                        break;
+                    case 30:
+                        formatedMinues = 0.5;
+                        break;
+                    case 45:
+                        formatedMinues = 0.75;
+                        break;
+                }
+                alert(hours +" " + minutes);
             }
 
             function resetFormValues() {
@@ -206,6 +195,10 @@
 
             function choseDate() {
               $('#mydate').datebox('open');
+            }
+
+            function choseHoursAndMinutes() {
+                $("#show_time_picker_link").scroller('show');
             }
 
             $(document).ready(function() {
@@ -266,9 +259,7 @@
 
                     <div data-role="fieldcontain">
                         <label for="hours_and_minutes">Hours and minutes:</label>
-                        <input type="time" id="hours_and_minutes"/>
-                        <input type="text" id="tester"/>
-                    </div>
+                        <input type="time" id="hours_and_minutes"/>                    </div>
                     <div data-role="controlgroup" data-type="horizontal">
                         <a href="#" data-role="button" data-rel="back">Close</a>
                         <a href="#" data-role="button" data-rel="back" onclick="pushData()">Save</a>
@@ -281,7 +272,6 @@
 
         <!--a hack to get the dialog working -->
 
-        <a id="transition_left" href="#" data-transition="slide"></a>
         <a id="linkHax" href="#new_company" data-rel="dialog" data-transition="pop" style="display: none;"></a>
         <a id="internal_link" href="#internal_alternatives" data-rel="dialog" data-transition="pop" style="display:none;"></a>
 
