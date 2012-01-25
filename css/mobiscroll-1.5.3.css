@@ -41,8 +41,7 @@
 }
 /* Datewheel value */
 .dwv {
-    padding: 10px 0;
-    border-bottom: 1px solid #000;
+    display: none;
 }
 /* Datewheel wheel container */
 .dwrc {
