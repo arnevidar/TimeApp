@@ -20,6 +20,8 @@
 
             var todaysDate = new Date();
             var mockIdCreator = 0;
+            var tadc = new TimeAppDataController();
+            tadc.loadData();
 
             $(document).bind('pagecreate', function() {
                 $("#mydate").bind('datebox', function (e, passed) {
@@ -29,7 +31,7 @@
                 });
             });
 
-            $(document).delegate('#new_description_link', 'click', function() {
+            $(document).delegate('#new_company_link', 'click', function() {
                 $(this).simpledialog({
                     'mode' : 'string',
                     'prompt' : 'Add a new company',
@@ -37,9 +39,9 @@
                     'buttons' : {
                         'OK': {
                             click: function () {
-                                var newOption = $("#new_description_link").attr('data-string');
+                                var newOption = $("#new_company_link").attr('data-string');
                                 $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_company"));
-                                $("#select_company").selectmenu('refresh', true);
+                                $("#select_company").selectmenu('refresh');
                                 
                             }
                         },
@@ -52,49 +54,78 @@
                 })
             });
 
+            $(document).delegate('#new_description_link', 'click', function() {
+                $(this).simpledialog({
+                    'mode' : 'string',
+                    'prompt' : 'Add a new description',
+                    'useDialogForceFalse' : true,
+                    'buttons' : {
+                        'OK': {
+                            click: function () {
+                                var newOption = $("#new_description_link").attr('data-string');
+                                $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_description"));
+                                $("#select_description").selectmenu('refresh');
 
-            $(document).ready(function() {
-               var optionsArray = $("#select_description").children('option').map(function() {
-                    return {
-                        "value": this.value,
-                        "option": "<option value='" + this.value + "'>" + this.text + "</option>"
-                    }
-                })
-                $("#select_company").change(function() {
-                    $("#select_description").children('option').remove();
-                    var internalAlternatives = [];
-                    for(var i=0; i<optionsArray.length; i++) {
-                        if(optionsArray[i].value.indexOf($(this).val()) > -1) {
-                            internalAlternatives.push(optionsArray[i].option);
+                            }
+                        },
+                        'Cancel': {
+                            click: function () { },
+                            icon: "delete",
+                            theme: "a"
                         }
                     }
-                    $("#select_description").html(internalAlternatives.join(''));
-                    var mySelect = $("#select_description");
-                    mySelect.selectmenu("refresh");
-                }).change();
+                })
+            });
+
+            $(document).ready(function() {
+                var last7UsedCompanies = tadc.get7companies();
+                //$("#select_company").children('option').remove();
+                for(var i = 0; i < last7UsedCompanies.length; i++) {
+                    $('<option value="'+last7UsedCompanies[i] +'" selected="selected">'+last7UsedCompanies[i]+'</option>').appendTo($("#select_company"));
+                    $("#select_company").selectmenu('refresh');
+                }
+                $("#select_company option")[0].selected = true;
+                $("#select_company").selectmenu('refresh');
+            });
+
+            function get7LastDescriptions(companyName) {
+                var descriptions = tadc.get7descriptions(companyName);
+                $("#select_description").children('option').remove();
+                for(var i = 0; i < descriptions.length; i++) {
+                    $('<option value="' + descriptions[i] + '" selected="selected">' + descriptions[i] + '</option>').appendTo($("#select_description"));
+                    $("#select_description").selectmenu('refresh');
+                }
+                $("#select_description option")[0].selected = true;
+                $("#select_description").selectmenu('refresh');
+
+            }
+
+            $(document).delegate("#select_company", "change", function() {
+                var value = this.value;
+                if(value != "Company") {
+                    get7LastDescriptions(value);
+                }
             });
 
 
+
             function openNewcompanyDialog(obj) {
-                //var selected = $("#select_company option:selected");
                 var ddValue = obj.value;
                 if(ddValue === "new_company_option") {
-                    //alert(ddValue);
-                 // $("#linkHax").click();
-                    $("#new_description_link").click();
+                    $("#new_company_link").click();
                 }
 
             }
 
             function handleInternalChoice(obj) {
                 var ddValue = obj.value;
+                $("#hours_and_minutes").prop("disabled", false);
                 if(ddValue === "day_off" || ddValue === "time_off") {
-                    $("#internal_back").click();
+                   // $("#internal_back").click();
                   //  $("#save_value").click();
                 } else if(ddValue === "new_description_option") {
-                    new_description_link.click();
+                    $("#new_description_link").click();
                 } else if(ddValue === "vacation") {
-                    $("#tester").attr('disabled', 'disabled');
                     //Show datepicker with vacation-stop
                 }
             }
@@ -120,7 +151,16 @@
             function changeDay(direction) {
                 todaysDate.setDate(todaysDate.getDate()+direction);
                 $("#date_heading").html(todaysDate.toDateString());
-                $("#transition_left").click();
+                var list = document.getElementById("registered_hours_overview");
+                if(list === null) alert("DEN ER NULL");
+
+                if(list.hasChildNodes()) {
+                    while(list.childNodes.length >= 1) {
+                        list.removeChild(list.firstChild);
+                    }
+                }
+
+                addMockData();
                 //load records from this day and put it in the div, in a li?
 
             }
@@ -135,37 +175,38 @@
             function pushData(formObject) {
                 var company = $("#select_company option:selected").text();
                 var description = $("#select_description option:selected").text();
-                var number_of_hours = $("#hours_and_minutes").val();
-                //formatTime(number_of_hours);
-                alert(number_of_hours);
-                //TimeAppDataController.updatePunch(company, description, todaysDate, number_of_hours);
+                var number_of_hours = formatTime($("#hours_and_minutes").val());
+                tadc.updatePunch(company, description, todaysDate, number_of_hours);
                 //addMockLine(jsonString);
                 //resetFormValues();
             }
 
             function formatTime(time) {
-                var hours = time.getHours();
-                var minutes = time.getMinutes();
+                var hours = time.slice(0,2);
+                var minutes = time.slice(3,5);
                 var formatedMinues = 0;
 
                 switch(minutes) {
-                    case 15:
-                        formatedMinues = 0.25;
+                    case '15':
+                        formatedMinues = 25;
                         break;
-                    case 30:
-                        formatedMinues = 0.5;
+                    case '30':
+                        formatedMinues = 5;
                         break;
-                    case 45:
-                        formatedMinues = 0.75;
+                    case '45':
+                        formatedMinues = 75;
                         break;
                 }
-                alert(hours +" " + minutes);
+                return hours + "." + formatedMinues;
             }
 
             function resetFormValues() {
-                $('#select_company option')[0].selected = true;
+                $("#select_company option")[0].selected = true;
                 $("#select_company").selectmenu('refresh');
-                $("#select_company").change();
+                $("#select_description option")[0].selected = true;
+                $("#select_description").selectmenu('refresh');
+             //   $("#select_company").change();
+
 
             }
 
@@ -179,6 +220,16 @@
 
                 $('#registered_hours_overview').append(kk);
                 $('#registered_hours_overview').listview('refresh');
+            }
+
+            function addMockData() {
+                var daysData = tadc.getDataForDay(todaysDate);
+                var html = '';
+                for(var i =0; i<daysData.length; i++) {
+                    html = '<li> <a href="#add_details" onclick="editDetails()"> <h3>' + daysData[i].name + '</h3><p>' + daysData[i].desc + " " + daysData[i].totH + '</p></li>';
+                    $('#registered_hours_overview').append(html);
+                    $('#registered_hours_overview').listview('refresh');
+                }
             }
 
             function checkContentsOfThisDay() {
@@ -197,9 +248,7 @@
               $('#mydate').datebox('open');
             }
 
-            function choseHoursAndMinutes() {
-                $("#show_time_picker_link").scroller('show');
-            }
+
 
             $(document).ready(function() {
                 var Adate = new Date(0,0,0,0,0,0,0);
@@ -238,10 +287,8 @@
                     <div data-role="fieldcontain">
                         <select id="select_company" data-native-menu="false" onchange="openNewcompanyDialog(this)" value="Company">
                             <option data-placeholder="company">Company</option>
-                            <option value=""></option>
-                            <option value="test">Test</option>
-                            <option value="internal1">Internal</option>
                             <option value="new_company_option">Add a new company</option>
+                            <option value="Internal">Internal</option>
                         </select>
                     </div>
 
@@ -249,30 +296,27 @@
                         <select id="select_description" data-native-menu="false" onchange="handleInternalChoice(this)" value="Description">
                             <option data-placeholder="description">Description</option>
                             <option value="new_description_option">Add new description</option>
-
-                            <!--Options to be shown when "internal" is chosen from company -->
-                            <option value="internal1_1">Day off</option>
-                            <option value="internal1_2">Time off</option>
-                            <option value="internal1_3">Vacation</option>
                       </select>
                     </div>
 
                     <div data-role="fieldcontain">
                         <label for="hours_and_minutes">Hours and minutes:</label>
-                        <input type="time" id="hours_and_minutes"/>                    </div>
+                        <input type="time" id="hours_and_minutes" disabled="true"/>
+                    </div>
                     <div data-role="controlgroup" data-type="horizontal">
                         <a href="#" data-role="button" data-rel="back">Close</a>
                         <a href="#" data-role="button" data-rel="back" onclick="pushData()">Save</a>
                     </div>
                 </form>
                 <a href="#" id="new_description_link" style="display : none;"></a>
+                <a id="new_company_link" href="#" style="display: none;"></a>
                 <a href="#" data-role="button" value="clear" onclick="resetFormValues()">Clear</a>
             </div>
         </div>
 
         <!--a hack to get the dialog working -->
 
-        <a id="linkHax" href="#new_company" data-rel="dialog" data-transition="pop" style="display: none;"></a>
+
         <a id="internal_link" href="#internal_alternatives" data-rel="dialog" data-transition="pop" style="display:none;"></a>
 
         <div data-role="page" id="new_company" >
