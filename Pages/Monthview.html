@@ -1,121 +1,41 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Monthview</title>
+
+    <script type="text/javascript" src="../js/phonegap-1.3.0.js"></script>
 
     <link rel="stylesheet" type="text/css" href="../css/jquery.mobile-1.0.min.css" />
 
     <script type="text/javascript" src="../js/jquery-1.7.1.js"></script>
-    <script type="text/javascript">
-
-        var MILLISECONDS_DAY = 86400000;
-        var MILLISECONDS_MINUTE = 60000;
-
-        function printMonthName() {
-            var date = new Date()
-            var month=new Array(12);
-            month[0]="January";
-            month[1]="February";
-            month[2]="March";
-            month[3]="April";
-            month[4]="May";
-            month[5]="June";
-            month[6]="July";
-            month[7]="August";
-            month[8]="September";
-            month[9]="October";
-            month[10]="November";
-            month[11]="December";
-
-            document.write(month[date.getMonth()]);
-        }
-
-        function getWeeksInMonth() {
-            var date = new Date();
-            date.getDate();
-            alert(date);
-            var weeks = new Array(6);
-        }
-
-        function getNumOfWeeksInMonth() {
-            var date = new Date();
-
-        }
-
-
-        /**
-         * Returns the week number for this date. dowOffset is the day of week the week
-         * "starts" on for your locale - it can be from 0 to 6. If dowOffset is 1 (Monday),
-         * the week returned is the ISO 8601 week number.
-         * @param int dowOffset
-         * @return int
-         */
-        function getCurrentWeekNumber(date) {
-            //getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com
-            var dowOffset = 1; //The week starts on Monday
-            //dowOffset = typeof(dowOffset) == 'int' ? dowOffset : 0; //default dowOffset to zero
-            date = date || new Date();
-            var newYear = new Date(date.getFullYear(),0,1);
-            var day = newYear.getDay() - dowOffset; //the day of week the year begins on
-            day = (day >= 0 ? day : day + 7);
-            var daynum = Math.floor((date.getTime() - newYear.getTime() -
-                    (date.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
-            var weeknum;
-            //if the year starts before the middle of a week
-            if(day < 4) {
-                weeknum = Math.floor((daynum+day-1)/7) + 1;
-                if(weeknum > 52) {
-                    nYear = new Date(date.getFullYear() + 1,0,1);
-                    nday = nYear.getDay() - dowOffset;
-                    nday = nday >= 0 ? nday : nday + 7;
-                    /*if the next year starts before the middle of
-                     the week, it is week #1 of that year*/
-                    weeknum = nday < 4 ? 1 : 53;
-                }
-            }
-            else {
-                weeknum = Math.floor((daynum+day-1)/7);
-            }
-            document.write(weeknum);
-            return weeknum;
-        };
-
-        function getWeek() {
-            var weeknum;
-            var now = new Date(2012,0,1);
-            var onejan = new Date(now.getFullYear(),0,1);
-            var dayNum = Math.ceil((now-onejan) / MILLISECONDS_DAY);
-            console.log(dayNum);
-            weeknum = Math.ceil(dayNum / 7);
-            if( dayNum < 4 ) {
-                weeknum = 52;
-            }
-
-            console.log(weeknum);
-            return Math.ceil((now - onejan) / 86400000);
-        }
-
-
-        function getHoursInWeek() {
-            document.write("7,5");
-        }
-
-
-    </script>
+    <script type="text/javascript" src="../js/jquery.mobile-1.0.js"></script>
+    <script type="text/javascript" src="../js/month.js"></script>
+    <script type="text/javascript"></script>
 
 </head>
 <body>
     <div data-role="page">
         <div data-role="header">
+            <a href="" data-icon="arrow-l" data-iconpos="notext"></a>
             <h2 id="monthname"><script type="text/javascript">printMonthName()</script></h2>
+            <a href="" data-icon="arrow-r" data-iconpos="notext"></a>
         </div>
-        <div data-rloe="content">
-            <h3>Week <script type="text/javascript":>getWeek()</script>:<script type="text/javascript"> document.write(" 7,5");</script></h3>
+        <div data-role="content">
+            <h3>Week <script type="text/javascript">todayWeek(new Date(2010,0,1))</script>:<script type="text/javascript"> document.write(" 7,5");</script></h3>
+            <h3>Week <script type="text/javascript">todayWeek(new Date(2012,1,0))</script>:<script type="text/javascript"> document.write(" 8,0");</script></h3>
+            <h3>Week <script type="text/javascript">todayWeek(new Date(2008,0,1))</script>:<script type="text/javascript"> document.write(" 8,0");</script></h3>
+            <script type="text/javascript">
+                findWeeksInMonth(0);
+            </script>
+            <div data-role="fieldcontain">
+                <script type="text/javascript">
+                    printWeeksToView(0);
+                </script>
+            </div>
         </div>
     </div>
-
 </body>
 </html>

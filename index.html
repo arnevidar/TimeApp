@@ -19,100 +19,7 @@
         $(window).bind("scrollstop", function() {
             $.mobile.fixedToolbars.show(true);
         });
-
     }
-
-
-    function populateList() {
-
-          $("#contentlist").empty(); //empty the list elements we've placed in the html
-
-          //repopulate the list with data from phonegap's device api
-
-          $("#contentlist").append("<li><a href='#'>Device Name: "     +device.name+     "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Phonegap: " +device.phonegap+ "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Platform: " +device.platform+ "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device UUID: "     +device.uuid+     "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Version: "  +device.version+  "</a></li>");
-
-          $("#contentlist").listview('refresh'); //must be called if you want the new list elements properly styled
-
-     }
-
-
-
-     function beepbeep() {
-    var punchcard = {"widget": {
-    "debug": "on",
-    "window": {
-        "title": "Sample Konfabulator Widget",
-        "name": "main_window",
-        "width": 500,
-        "height": 500
-    },
-    "image": { 
-        "src": "Images/Sun.png",
-        "name": "sun1",
-        "hOffset": 250,
-        "vOffset": 250,
-        "alignment": "center"
-    },
-    "text": {
-        "data": "Click Here",
-        "size": 36,
-        "style": "bold",
-        "name": "text1",
-        "hOffset": 250,
-        "vOffset": 100,
-        "alignment": "center",
-        "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
-    }
-}};
-
-
-
-        var jsonString = JSON.stringify(punchcard);
-
-        
-        var jsonTest = JSON.parse(jsonString);
-        
-        $("#jsontest").append(jsonTest.widget.text.name);
-
-
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
-        
-
-     }
-     
-
-    function gotFS(fileSystem) {
-        fileSystem.root.getFile("readme.txt", {create: true}, gotFileEntry, fail); 
-    }
-
-    function gotFileEntry(fileEntry) {
-        fileEntry.createWriter(gotFileWriter, fail);
-    }
-
-    function gotFileWriter(writer) {
-        writer.onwrite = function(evt) {
-            console.log("write success");
-        };
-        writer.write("some sample text");
-        // contents of file now 'some sample text'
-        writer.write(" different text");
-        // contents of file now 'some different text'
-    }
-
-    function fail(error) {
-        console.log(error.code);
-    }
-
-     
-     
      
     </script>
   </head>
@@ -128,17 +35,7 @@
           <div data-role="content"> 
 
                <p> Main Page Content </p>
-                    <a href="#contentpage" data-role="button" onClick=populateList()> To the List Page!</a>
-
-    				<a href="#" data-role="button" id="beepbtn" onClick=beepbeep()> Beep!</a>
-    				
-    				     <p id="jsontest">
-                                aa
-                          </p>
-
-          <ul data-role="listview" data-theme="g" id="contentlist">
-          </ul>
-
+            <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a>
           </div>
 
          <div data-role="footer" data-position="fixed">

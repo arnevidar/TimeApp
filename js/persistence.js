@@ -2,20 +2,23 @@
 	*  Folder to store Time App data files
 	*
 	*/
-	
-	var TIMEAPPFOLDER = 'TimeApp';
-	var APPDATASIZE = 1*1024*1024;  // 1MB
-    
+	function Persistence () {
+        this.TIMEAPPFOLDER = "TimeApp"; // borked
+        this.APPDATASIZE = 1*1024*1024;  // borked
+        this.DEBUG = true;
+    }
+
     /**
     *  Check to determine if a memory card is present, and to verify the TimeApp data folder
     *
     */
     
-    function checkAndCreateTimeAppFolder(onFailure) {
-	  window.requestFileSystem(LocalFileSystem.PERSISTENT, APPDATASIZE, function (fileSystem) { 
-        fileSystem.root.getDirectory(TIMEAPPFOLDER, {create: true}, function (dirEntry) {
+    Persistence.prototype.checkAndCreateTimeAppFolder = function (onSuccess, onFailure) {
+	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+        fileSystem.root.getDirectory("TimeApp", {create: true}, function (dirEntry) {
+            onSuccess();
     	}, onFailure); 
-	  }, onFailure);    
+	  }, onFailure);        
     }
     
     /**
@@ -23,9 +26,9 @@
     *	
     */
     
-    function readDirectoryEntries(onSuccess, onFailure) {
- 	  window.requestFileSystem(LocalFileSystem.PERSISTENT, APPDATASIZE, function (fileSystem) { 
-        fileSystem.root.getDirectory(TIMEAPPFOLDER, {create: true}, function (dirEntry) {
+    Persistence.prototype.readDirectoryEntries = function (onSuccess, onFailure) {
+ 	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+        fileSystem.root.getDirectory("TimeApp/", {create: true}, function (dirEntry) {
           var dirReader = dirEntry.createReader();
           dirReader.readEntries(onSuccess, onFailure);        
     	}, onFailure); 
@@ -37,12 +40,12 @@
 	* 
 	*/
 	
-	function writefile(filename, content, onFailure) {
-	  window.requestFileSystem(LocalFileSystem.PERSISTENT, APPDATASIZE, function (fileSystem) { // henter filsystem
-        fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename+".json", {create: true}, function (fileEntry) {
-          fileEntry.createWriter(function (writer) {
-  		    writer.onwrite = function(evt) {
-              console.log("write success");
+    Persistence.prototype.writefile = function (filename, content, onSuccess, onFailure) {
+	  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) { // henter filsystem
+          fileSystem.root.getFile("TimeApp"+"/"+filename+".json", {create: true}, function (fileEntry) {
+            fileEntry.createWriter(function (writer) {
+			  writer.onwrite = function(evt) {
+              onSuccess();
         	};
         	console.log("Path " + fileEntry.fullPath);
         	writer.write(content);
@@ -56,9 +59,9 @@
     *
     */
     
-    function readfile(filename, onSuccess, onFailure) {
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, APPDATASIZE, function (fileSystem) {
-	        		fileSystem.root.getFile(TIMEAPPFOLDER+"/"+filename+".json", {create: true}, function (fileEntry) {
+    Persistence.prototype.readfile = function (filename, onSuccess, onFailure) {
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+	        		fileSystem.root.getFile("TimeApp"+"/"+filename+".json", {create: true}, function (fileEntry) {
  		       		  fileEntry.file(function gotFile(file){
 					    var reader = new FileReader();
 					      reader.onloadend = function(evt) {

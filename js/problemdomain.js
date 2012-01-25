@@ -2,6 +2,87 @@ function TimeAppDataController () {
   this.companies = [];
 }
 
+TimeAppDataController.prototype.saveToFile = function () {
+
+}
+
+
+TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescription, newDate, newTotH,
+                                                       oldCompanyName, oldDescription, oldDate, oldTotH){
+
+    if ((oldCompanyName)&&
+        (oldDescription)&&
+        (oldDate)&&
+        (oldTotH)){
+
+            var oldCompanyObject = this.getCompany(oldCompanyName);
+            var oldDescObject = this.getDescription(oldCompanyObject, oldDescription);
+            var oldPunchObject = this.getPunch(oldDescObject, oldDate, oldTotH);
+            this.removePunch(oldDescObject, oldPunchObject);
+            this.verifyDesc(oldCompanyObject, oldDescObject);
+            this.verifyComp(oldCompanyObject);
+    }
+
+
+    var companyObject = this.getCompany(newCompanyName);
+    if (!companyObject) var companyObject = this.addCompany(newCompanyName);
+
+    var descObject = this.getDescription(companyObject, newDescription);
+    if (!descObject) {
+        var descObject = this.addDescription(companyObject, newDescription);
+        //alert("Comp: " + companyObject.name + ". Description: " + descObject.description);
+    }
+
+    //var punchObject = this.getPunch(descObject, newDate, newTotH);
+    this.addPunch(descObject, newDate, newTotH);
+
+}
+
+TimeAppDataController.prototype.removePunch = function (description, punch) {
+    var indexOfPunch = description.punch.indexOf(punch);
+    description.punch.splice(indexOfPunch, 1);
+    description.punch.sort(punchComparator);
+
+}
+
+TimeAppDataController.prototype.verifyDesc = function (company, description) {
+    if (description.punch.length<1) {
+        var indexOfDesc = company.desc.indexOf(description);
+        company.desc.splice(indexOfDesc, 1);
+    }
+    company.desc.sort(descriptionComparator);
+}
+
+TimeAppDataController.prototype.verifyComp = function (company) {
+    if (company.desc.length<1) {
+        var indexOfComp = this.companies.indexOf(company);
+        this.companies.splice(indexOfComp, 1);
+    }
+    this.companies.sort(companyComparator);
+}
+
+
+TimeAppDataController.prototype.getPunch = function (description, dateToFind, totH) {
+    for (punchIndex in description.punch) {
+        if ((description.punch[punchIndex].totH = totH )&&(description.punch[punchIndex].totH = totH )) return description.punch[punchIndex];
+    }
+}
+
+
+TimeAppDataController.prototype.getDescription = function (companyObj, description){
+    for (descIndex in companyObj.desc) {
+        if(companyObj.desc[descIndex].description == description) return companyObj.desc[descIndex];
+    }
+}
+
+TimeAppDataController.prototype.getCompany = function (companyName) {
+    for (compIndex in this.companies) {
+        if (this.companies[compIndex].name == companyName) return this.companies[compIndex];
+    }
+}
+
+
+
 TimeAppDataController.prototype.addCompany = function (name){
     var company = new Object();
     company.name = name;
@@ -72,11 +153,15 @@ function punchComparator(a, b) {
 
 function descriptionComparator(a, b) {
  if (a.punch[0].date>b.punch[0].date) return -1;
+ if (a.punch[0].date<b.punch[0].date) return 1;
+ if (a.description<b.description) return -1;
  return 1;
 }
 
 function companyComparator(a, b) {
     if (a.desc[0].punch[0].date>b.desc[0].punch[0].date) return -1;
+    if (a.desc[0].punch[0].date<b.desc[0].punch[0].date) return 1;
+    if (a.name<b.name) return -1;
   return 1;
 }
 
@@ -88,25 +173,36 @@ TimeAppDataController.prototype.loadData = function () {
     var dnb = this.addCompany("DNB");
     var dnb_koding = this.addDescription(dnb, "dnbkoding");
     var dnb_date = this.getTodaysDate();
-    dnb_date.setDate(dnb_date.getDate()+0);
+    dnb_date.setDate(dnb_date.getDate());
     var dnb_koding_punch = this.addPunch(dnb_koding, dnb_date, 2);
 
     var obs = this.addCompany("OBS");
     var obs_koding = this.addDescription(obs, "obskoding");
     var obs_date = this.getTodaysDate();
-    obs_date.setDate(obs_date.getDate()+0)
+    obs_date.setDate(obs_date.getDate()-1)
     var obs_koding_punch = this.addPunch(obs_koding, obs_date, 3);
 
     var obs_koding2 = this.addDescription(obs, "obskoding2");
     var obs_koding_punch = this.addPunch(obs_koding2, obs_date, 4);
 
     var obs_koding3 = this.addDescription(obs, "obskoding3");
-    var obs_koding_punch = this.addPunch(obs_koding3, dnb_date, 5);
+    var obs_koding_punch = this.addPunch(obs_koding3, obs_date, 5);
 
     var aba = this.addCompany("ABA");
     var aba_koding = this.addDescription(aba, "adakoding");
-    var aba_koding_punch = this.addPunch(aba_koding, obs_date, 10);
+    var aba_koding_punch = this.addPunch(aba_koding, dnb_date, 10);
 }
+
+
+/**
+ * Returns array of objects with these variables:
+ * date - date of punch
+ * name - company name
+ * desc - description of work done
+ * totH - total hours worked on this punch
+ *
+ * @param dateToFetch
+ */
 
 TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
     var startDate = this.createDate(dateToFetch);
@@ -116,16 +212,17 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
     var companiesToInclude = [];
     for (compIndex in this.companies) {
         companyDate = new Date(this.companies[compIndex].desc[0].punch[0].date);
-        if (companyDate.getFullYear()>dateToFetch.getFullYear())  continue;
+        if (companyDate.getFullYear()<dateToFetch.getFullYear())  continue;
         if ((companyDate.getFullYear()==dateToFetch.getFullYear()) &&
-            (companyDate.getMonth()>dateToFetch.getMonth())) continue;
+            (companyDate.getMonth()<dateToFetch.getMonth())) continue;
         if ((companyDate.getFullYear()==dateToFetch.getFullYear()) &&
             (companyDate.getMonth()==dateToFetch.getMonth())&&
-            (companyDate.getDay()>dateToFetch.getDay())) continue;
+            (companyDate.getDay()<dateToFetch.getDay())) continue;
         companiesToInclude.push(this.companies[compIndex]);
     }
+
     var results = [];
-    for (compIdex in companiesToInclude) {
+    for (compIndex in companiesToInclude) {
         for (descIndex in companiesToInclude[compIndex].desc) {
             for (punchIndex in companiesToInclude[compIndex].desc[descIndex].punch){
                 punchDate = new Date(companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].date);
@@ -134,7 +231,7 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
                     (punchDate.getDay()==dateToFetch.getDay())) {
                     results.push({"date": companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].date,
                                   "name": companiesToInclude[compIndex].name,
-                                  "description": companiesToInclude[compIndex].desc[descIndex].description,
+                                  "desc": companiesToInclude[compIndex].desc[descIndex].description,
                                   "totH": companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].totH
                     });
                 }
@@ -160,3 +257,4 @@ TimeAppDataController.prototype.createDate = function (orgRate) {
     var onlyDate = new Date(orgRate.getFullYear(), orgRate.getMonth(), orgRate.getDate(), 13);
     return onlyDate;
 }
+
