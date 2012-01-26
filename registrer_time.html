@@ -23,7 +23,7 @@
             var tadc = new TimeAppDataController();
             tadc.loadData();
 
-            $(document).bind('pagecreate', function() {
+            $("#register_hours").live("pageinit", function() {
                 $("#mydate").bind('datebox', function (e, passed) {
                     if ( passed.method === 'set' ) {
                         changeToSelectedDay(passed.date);
@@ -31,7 +31,7 @@
                 });
             });
 
-            $(document).delegate('#new_company_link', 'click', function() {
+            $("#new_company_link").live("click", function() {
                 $(this).simpledialog({
                     'mode' : 'string',
                     'prompt' : 'Add a new company',
@@ -39,10 +39,15 @@
                     'buttons' : {
                         'OK': {
                             click: function () {
-                                var newOption = $("#new_company_link").attr('data-string');
-                                $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_company"));
-                                $("#select_company").selectmenu('refresh');
-                                
+                                var newOption = $("#new_company_link").attr('data-string').trim();
+                                if(newOption !== "") {
+                                    $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_company"));
+                                    $("#select_company").selectmenu('refresh');
+                                    $("#select_company").trigger('change');
+                                } else {
+                                    alert("Not a valid company name");
+                                }
+
                             }
                         },
                         'Cancel': {
@@ -54,7 +59,7 @@
                 })
             });
 
-            $(document).delegate('#new_description_link', 'click', function() {
+            $("#new_description_link").live('click', function() {
                 $(this).simpledialog({
                     'mode' : 'string',
                     'prompt' : 'Add a new description',
@@ -62,10 +67,14 @@
                     'buttons' : {
                         'OK': {
                             click: function () {
-                                var newOption = $("#new_description_link").attr('data-string');
-                                $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_description"));
-                                $("#select_description").selectmenu('refresh');
-
+                                var newOption = $("#new_description_link").attr('data-string').trim();
+                                if(newOption !== "") {
+                                    $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_description"));
+                                    $("#select_description").selectmenu('refresh');
+                                    $("#select_description").trigger('change');
+                                } else {
+                                    alert("Not a valid description");
+                                }
                             }
                         },
                         'Cancel': {
@@ -77,9 +86,12 @@
                 })
             });
 
-            $(document).ready(function() {
+            $("#add_details").live("pageinit", function() {
                 var last7UsedCompanies = tadc.get7companies();
-                //$("#select_company").children('option').remove();
+                $("#select_company").children('option').remove();
+                $('<option data-placeholder="Company">Company</option>').appendTo($("#select_company"));
+                $('<option value="new_company_option">Add a new company</option>').appendTo($("#select_company"));
+                $('<option value="Internal">Internal</option>').appendTo($("#select_company"));
                 for(var i = 0; i < last7UsedCompanies.length; i++) {
                     $('<option value="'+last7UsedCompanies[i] +'" selected="selected">'+last7UsedCompanies[i]+'</option>').appendTo($("#select_company"));
                     $("#select_company").selectmenu('refresh');
@@ -88,80 +100,104 @@
                 $("#select_company").selectmenu('refresh');
             });
 
-            function get7LastDescriptions(companyName) {
-                var descriptions = tadc.get7descriptions(companyName);
-                $("#select_description").children('option').remove();
-                for(var i = 0; i < descriptions.length; i++) {
-                    $('<option value="' + descriptions[i] + '" selected="selected">' + descriptions[i] + '</option>').appendTo($("#select_description"));
-                    $("#select_description").selectmenu('refresh');
+
+
+            $("#select_company").live("change", function() {
+                var companyName = $("#select_company option:selected").text();
+                if(companyName === "Add a new company") {
+                    $("#new_company_link").click();
                 }
-                $("#select_description option")[0].selected = true;
-                $("#select_description").selectmenu('refresh');
-
-            }
-
-            $(document).delegate("#select_company", "change", function() {
-                var value = this.value;
-                if(value != "Company") {
-                    get7LastDescriptions(value);
+                else if(companyName !== "Company") {
+                    get7LastDescriptions(companyName);
                 }
             });
 
-
-
-            function openNewcompanyDialog(obj) {
-                var ddValue = obj.value;
-                if(ddValue === "new_company_option") {
-                    $("#new_company_link").click();
-                }
-
-            }
-
-            function handleInternalChoice(obj) {
-                var ddValue = obj.value;
-                $("#hours_and_minutes").prop("disabled", false);
-                if(ddValue === "day_off" || ddValue === "time_off") {
-                   // $("#internal_back").click();
-                  //  $("#save_value").click();
-                } else if(ddValue === "new_description_option") {
-                    $("#new_description_link").click();
-                } else if(ddValue === "vacation") {
-                    //Show datepicker with vacation-stop
-                }
-            }
 
 
             function printDate() {
                 document.write(todaysDate.toDateString());
             }
 
-            $(document).delegate('[data-role="page"]', 'swipeleft swiperight', function(event) {
+            $("#register_hours").live("swipeleft swiperight", function(event) {
                 event.preventDefault();
                 var direction = 0;
-                if(event.type == 'swipeleft') {
+                if(event.type == "swipeleft") {
                     //show next day
                    direction = +1;
-                } else if(event.type == 'swiperight') {
+                } else if(event.type == "swiperight") {
                     //show previous day
                     direction = -1;
                 }
                 changeDay(direction);
             });
 
+
+
+            $("#add_details").live("pageinit", function() {
+                $("#first_day_after_vacation").scroller({preset : 'date',
+                    onSelect: function(valueText, inst) {
+                        $("#save_hours_btn").removeClass("ui-disabled ");
+
+                    },
+                    beforeShow: function(input, inst) {
+
+                        alert("hey");
+                    }
+                })
+            });
+
+
+            $("#add_details").live("pageinit", function() {
+                var Adate = new Date(0,0,0,0,0,0,0);
+                $("#hours_and_minutes").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
+                    stepMinute: 15, ampm: false, timeFormat : 'HH:ii',
+                    onSelect: function(valueText, inst) {
+                        $("#save_hours_btn").removeClass("ui-disabled ");
+                    }
+                });
+                $("#hours_and_minutes").scroller('setDate', Adate, true);
+            });
+
+
+            function get7LastDescriptions(companyName) {
+                var descriptions = tadc.get7descriptions(companyName);
+                $("#select_description").children('option').remove();
+                $('<option data-placeholder="Description">Description</option>').appendTo($("#select_description"));
+                $('<option value="new_description_option">Add new description</option>').appendTo($("#select_description"));
+                if(descriptions !== null) {
+                    for(var i = 0; i < descriptions.length; i++) {
+                        $('<option value="' + descriptions[i] + '" selected="selected">' + descriptions[i] + '</option>').appendTo($("#select_description"));
+                        $("#select_description").selectmenu('refresh');
+                    }
+                    $('#select_description').val("Description").selectmenu('refresh');
+                }
+            }
+
+
+
+            $("#select_description").live("change", function() {
+                var desc = $("#select_description option:selected").text();
+                if(desc === "Day off" || desc === "Time off") {
+                  $("#first_day_after_vacation").hide();
+                } else if(desc === "Add new description") {
+                    $("#new_description_link").click();
+                } else if(desc === "Vacation") {
+                    $("#first_day_after_vacation").show();
+                } else {
+                    $("#hours_and_minutes").prop("disabled", false);
+                }
+            });
+
             function changeDay(direction) {
                 todaysDate.setDate(todaysDate.getDate()+direction);
                 $("#date_heading").html(todaysDate.toDateString());
                 var list = document.getElementById("registered_hours_overview");
-                if(list === null) alert("DEN ER NULL");
-
                 if(list.hasChildNodes()) {
                     while(list.childNodes.length >= 1) {
                         list.removeChild(list.firstChild);
                     }
                 }
-
                 addMockData();
-                //load records from this day and put it in the div, in a li?
 
             }
 
@@ -201,11 +237,9 @@
             }
 
             function resetFormValues() {
-                $("#select_company option")[0].selected = true;
-                $("#select_company").selectmenu('refresh');
-                $("#select_description option")[0].selected = true;
-                $("#select_description").selectmenu('refresh');
-             //   $("#select_company").change();
+                $('#select_company').val("Company").selectmenu('refresh');
+                $('#select_description').val('Description').selectmenu('refresh');
+                //   $("#select_company").change();
 
 
             }
@@ -232,9 +266,6 @@
                 }
             }
 
-            function checkContentsOfThisDay() {
-                
-            }
 
             function editDetails(company, description) {
                 //var object = obj.attr("id");
@@ -245,17 +276,8 @@
             }
 
             function choseDate() {
-              $('#mydate').datebox('open');
+                $('#mydate').datebox('open');
             }
-
-
-
-            $(document).ready(function() {
-                var Adate = new Date(0,0,0,0,0,0,0);
-                $("#hours_and_minutes").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
-                    stepMinute: 15, ampm: false, timeFormat : 'HH:ii'});
-                $("#hours_and_minutes").scroller('setDate', Adate, true);
-            });
 
 
 
@@ -285,31 +307,29 @@
             <div data-role="content">
                 <form id="details_to_add">
                     <div data-role="fieldcontain">
-                        <select id="select_company" data-native-menu="false" onchange="openNewcompanyDialog(this)" value="Company">
-                            <option data-placeholder="company">Company</option>
-                            <option value="new_company_option">Add a new company</option>
-                            <option value="Internal">Internal</option>
+                        <select id="select_company" data-native-menu="false" value="Company">
                         </select>
                     </div>
 
                     <div data-role="fieldcontain">
-                        <select id="select_description" data-native-menu="false" onchange="handleInternalChoice(this)" value="Description">
-                            <option data-placeholder="description">Description</option>
-                            <option value="new_description_option">Add new description</option>
+                        <select id="select_description" data-native-menu="false" value="Description">
                       </select>
                     </div>
 
                     <div data-role="fieldcontain">
                         <label for="hours_and_minutes">Hours and minutes:</label>
                         <input type="time" id="hours_and_minutes" disabled="true"/>
+                        <input id="first_day_after_vacation" type="date" placeholder="First day after vacation"
+                               style="display: none;"/>
                     </div>
                     <div data-role="controlgroup" data-type="horizontal">
                         <a href="#" data-role="button" data-rel="back">Close</a>
-                        <a href="#" data-role="button" data-rel="back" onclick="pushData()">Save</a>
+                        <a href="#" data-role="button" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="pushData()">Save</a>
                     </div>
                 </form>
                 <a href="#" id="new_description_link" style="display : none;"></a>
                 <a id="new_company_link" href="#" style="display: none;"></a>
+                <a id="vacation_date" href="#" style="display: none;"></a>
                 <a href="#" data-role="button" value="clear" onclick="resetFormValues()">Clear</a>
             </div>
         </div>
