@@ -145,13 +145,16 @@ TimeAppDataController.prototype.get7descriptions = function (companyName) {
         return internalChoices;
     } else {
         var company  = this.getCompany(companyName);
-        var descr = [];
-        var i = 0;
-        for (i = 0; i < 7 && i < company.desc.length; i++) {
-            descr.push(company.desc[i].description);
+        if(company) {
+            var descr = [];
+            var i = 0;
+            for (i = 0; i < 7 && i < company.desc.length; i++) {
+                descr.push(company.desc[i].description);
+            }
+            return descr;
         }
     }
-    return descr;
+    return null;
 }
 
 function punchComparator(a, b) {
