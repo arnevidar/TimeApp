@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Register hours</title>
+    <link rel="stylesheet" type="text/css" href="../css/jquery.mobile-1.0.css" />
+    <link rel="stylesheet" type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.css" />
+
+    <script type="text/javascript" charset="utf-8" src="../js/jquery-1.7.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/jquery.mobile-1.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="../js/problemdomain.js"></script>
+    <script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        var todaysDate = new Date();
+        $.mobile.changePage.defaults.allowSamePageTransition = true;
+
+        $("#register_hours").live("pageinit", function() {
+            $("#mydate").bind('datebox', function (e, passed) {
+                if ( passed.method === 'set' ) {
+                    changeToSelectedDay(passed.date);
+                }
+            });
+        });
+
+        function changeToSelectedDay(date) {
+            todaysDate = date;
+            $("#date_heading").html(date.toDateString());
+            removeDataInDayList();
+            //kjør metode for å hente ut lagret data for denne dagen
+        }
+
+        function printDate() {
+            document.write(todaysDate.toDateString());
+        }
+
+        function changeDay(nextDay, direction) {
+            todaysDate.setDate(todaysDate.getDate()+nextDay);
+            $("#date_heading").html(todaysDate.toDateString());
+            removeDataInDayList();
+           //$.mobile.changePage( "#register_hours", {reverse: direction} );
+            addMockData();
+
+        }
+
+        function removeDataInDayList() {
+            var list = document.getElementById("registered_hours_overview");
+            if(list.hasChildNodes()) {
+                while(list.childNodes.length >= 1) {
+                    list.removeChild(list.firstChild);
+                }
+            }
+        }
+
+        function choseDate() {
+            $('#mydate').datebox('open');
+        }
+
+        function prevDay() {
+            changeDay(-1, true);
+        }
+
+        function nextDay() {
+            changeDay(1, false);
+        }
+
+        function changeDay(nextDay, direction) {
+            todaysDate.setDate(todaysDate.getDate()+nextDay);
+            $("#date_heading").html(todaysDate.toDateString());
+            var list = document.getElementById("registered_hours_overview");
+            if(list.hasChildNodes()) {
+                while(list.childNodes.length >= 1) {
+                    list.removeChild(list.firstChild);
+                }
+            }
+            $.mobile.changePage( "#register_hours", {reverse: direction} );
+            //$.mobile.changePage($("#register_hours"), 'slide', true, true);
+            addMockData();
+
+        }
+    </script>
+
+</head>
+
+<body>
+    <div data-role="page" id="register_hours">
+        <!--Add header from script -->
+        <script type="text/javascript" src="../win7phone_js/header_nav_win.js"></script>
+
+        <div data-role="content">
+            <h2 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h2>
+            <input type="date" data-role="datebox" id="mydate"
+                   data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true}' />
+
+            <h2>Register hours</h2>
+            <ul data-role="listview" id="registered_hours_overview">
+
+            </ul>
+            <a href="add_line.html" id="add_new_line" data-role="button" data-ajax="false">Add hours</a>
+
+        </div>
+        <!--Add footer from script -->
+        <script type="text/javascript" src="../win7phone_js/navbar_win_add_hours.js"></script>
+    </div>
+</body>
+</html>
