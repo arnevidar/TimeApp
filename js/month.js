@@ -1,5 +1,5 @@
-function printMonthName(month) {
-    var date = new Date();
+function printMonthName(month, y) {
+    var date = new Date(y, month);
     var month=new Array(12);
     month[0]="January";
     month[1]="February";
@@ -15,6 +15,25 @@ function printMonthName(month) {
     month[11]="December";
 
     document.write(month[date.getMonth()]);
+}
+
+/**
+ * Returns the name of the day, based on the value of the Date().getDay() method,
+ * 0 - Sunday, 1 - Monday ... 6 - Saturday
+ * @param dayNr
+ */
+function printDayName(d) {
+    var date = new Date(d.valueOf());
+    var weekdays = new Array(7);
+    weekdays[0] = "Sunday";
+    weekdays[1] = "Monday";
+    weekdays[2] = "Tuesday";
+    weekdays[3] = "Wednesday";
+    weekdays[4] = "Thursday";
+    weekdays[5] = "Friday";
+    weekdays[6] = "Saturday";
+
+    return weekdays[date.getDay()];
 }
 
 /**
@@ -72,9 +91,9 @@ function pushDaysToWeekArray(month, y) {
 
 /**
  * Finds the weeks in the month and pushes them into an array,
- * and returns it. Month is in the interval [0,11].
+ * and returns the array. Month is in the interval [0,11].
  */
-function findWeeksInMonth(month, y) {
+function getWeeksInMonth(month, y) {
     if(y == null) {
         var daysInMonth = pushDaysToWeekArray(month);
     } else {
@@ -92,30 +111,32 @@ function findWeeksInMonth(month, y) {
     return weeksInMonth;
 }
 
-function printWeeksToView(month, y) {
+/**
+ * Returns an array with the dates in a week, used for printing the
+ * dates in a week, in the Weekview.html.
+ */
+
+function printWeekDates(month, y) {
     if(y == null) {
-        var weeksInMonth = findWeeksInMonth(month);
+        var fullMonth = pushDaysToWeekArray(month); //All the days and their week number
+        var weeksInMonth = getWeeksInMonth(month); //Just the weeks in the month
     } else {
-        var weeksInMonth = findWeeksInMonth(month, year);
+        var fullMonth = pushDaysToWeekArray(month, y);
+        var weeksInMonth = getWeeksInMonth(month, y);
     }
-    for(var i = 0; i < weeksInMonth.length; ++i ) {
-        var html = '';
-        html += '<ul data-role="listview">'
-        html += '<li>';
-        html += '<a href="" onclick="" >';
-        html += '<h3>Week '+ weeksInMonth[i]+':'+'</h3>';
-        html += '<p>TestunderText</p>';
-        html += '</a>';
-        html += '</li>';
-        html += '</ul>';
-        document.write(html);
+    var datesInWeek = new Array();
+
+    for(var i = 0; i < weeksInMonth.length; ++i) {
+        for(var j = 0; j < fullMonth.length; ++j) {
+            if(fullMonth[j] !== weeksInMonth[i]) {
+                continue;
+            }
+            datesInWeek.push((j+1));
+        }
+        return datesInWeek+'<br>';
+        //datesInWeek.length = 0;
     }
 }
-
-function printDaysToView(weeknr) {
-
-}
-
 
 function todayWeek(d) {
     var date = new Date(d.valueOf());
@@ -123,6 +144,28 @@ function todayWeek(d) {
     document.writeln(weekNr);
 }
 
-function getHoursInWeek(week) {
-    document.write("7,5");
+/**
+ * Stores the weeknumber and uses this to read it in the weekview.
+ * @param week
+ */
+
+function storeWeekNr(week) {
+    localStorage.setItem("week", week);
+}
+
+function readWeekNr(){
+    var res = 'Week ' + localStorage.getItem("week");
+    return res;
+}
+
+
+function getTotalRegisteredHoursInWeek() {
+    return 30;
+}
+
+function getDatesInWeek2(d) {
+
+    var week = d.getWeekOfYear();
+    week.get
+    alert(week);
 }
