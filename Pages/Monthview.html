@@ -13,6 +13,7 @@
     <script type="text/javascript" src="../js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" src="../js/month.js"></script>
     <script type="text/javascript" src="../js/jqm.page.params.js"></script>
+    <script type="text/javascript" src="../js/date-nb-NO.js"></script>
     <script type="text/javascript">
 
         //document.write(window.sessionStorage.length);
@@ -21,22 +22,26 @@
         }
 
 
+
         function printWeeksToView(month, y) {
             if(y == null) {
                 var weeksInMonth = getWeeksInMonth(month);
             } else {
-                var weeksInMonth = getWeeksInMonth(month, year);
+                var weeksInMonth = getWeeksInMonth(month, y);
             }
             for(var i = 0; i < weeksInMonth.length; ++i ) {
                 var html = '';
-                html += '<a href="Weekview.html" name="weeklistelement" id="weeklistelement" data-ajax="false" onclick="'+storeWeekNr(weeksInMonth[i])+'">';
-                html += '<li id="listelement" name="listview" value="'+weeksInMonth[i]+'">';
+                html += '<li id="'+weeksInMonth[i]+'" name="listview" value="'+weeksInMonth[i]+'">';
+                html += '<a href="Weekview.html" name="weeklistelement" id="'+weeksInMonth+'" ' +
+                        'value="'+weeksInMonth[i]+'" data-ajax="false" ' +
+                        'onclick="storeWeekNr('+weeksInMonth[i]+')">';
                 html += '<h3 id="element">Week '+ weeksInMonth[i]+':'+'</h3>';
                 html += '<p>'+printWeekDates(month,y)+'</p>';
                 html += '</a>';
                 html += '</li>';
-                //alert($('#listelement').val());
+                //id = document.getElementById(weeksInMonth[i]).value;
                 document.write(html);
+                //alert(id);
             }
         }
     </script>
@@ -45,15 +50,17 @@
     <div data-role="page">
         <div data-role="header">
             <a href="" data-icon="arrow-l" data-iconpos="notext"></a>
-            <h2 id="monthname"><script type="text/javascript">printMonthName()</script></h2>
+            <h2 id="monthname"><script type="text/javascript">printMonthName(1, 2012)</script></h2>
             <a href="" data-icon="arrow-r" data-iconpos="notext"></a>
         </div>
         <div data-role="content">
             <div data-role="fieldcontain">
                 <ul data-role="listview" id="listview">
                     <script type="text/javascript">
-                        localStorage.clear();
-                        printWeeksToView(0);
+                        //localStorage.clear();
+                        //printWeeksToView(1);
+                        //getDaysInWeek()
+                        getDatesInWeek2(new Date(2012,0,1));
                         //printWeekDates(0);
                         //getDatesInWeek(0);
                         //alert(localStorage.getItem('week'));

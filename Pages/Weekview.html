@@ -14,25 +14,10 @@
     <script type="text/javascript" src="../js/month.js"></script>
     <script type="text/javascript">
 
-
         $("#weekview").live("pageinit",function() {
-            var res = readWeekNr();
             alert(res);
             $("#weeknr").html(res);
         });
-
-        function printWeekday(nr) {
-
-            var weekdays = new Array(7);
-            weekdays[0] = "Monday";
-            weekdays[1] = "Tuesday";
-            weekdays[2] = "Wednesday";
-            weekdays[3] = "Thursday";
-            weekdays[4] = "Friday";
-            weekdays[5] = "Saturday";
-            weekdays[6] = "Sunday";
-            return weekdays[nr];
-        }
 
 
 
@@ -43,7 +28,7 @@
     <div data-role="page" id="weekview">
         <div data-role="header" id="header0">
             <a href="" data-icon="arrow-l" data-iconpos="notext"></a>
-            <h2 id="weeknr"><script type="text/javascript"></script></h2>
+            <h2 id="weeknr"></script></h2>
             <a href="" data-icon="arrow-r" data-iconpos="notext"></a>
         </div>
     </div>

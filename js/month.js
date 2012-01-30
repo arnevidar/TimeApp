@@ -1,5 +1,5 @@
-function printMonthName(month) {
-    var date = new Date();
+function printMonthName(month, y) {
+    var date = new Date(y, month);
     var month=new Array(12);
     month[0]="January";
     month[1]="February";
@@ -144,12 +144,28 @@ function todayWeek(d) {
     document.writeln(weekNr);
 }
 
+/**
+ * Stores the weeknumber and uses this to read it in the weekview.
+ * @param week
+ */
+
 function storeWeekNr(week) {
     localStorage.setItem("week", week);
 }
 
 function readWeekNr(){
     var res = 'Week ' + localStorage.getItem("week");
-    //alert(localStorage.getItem("week"));
     return res;
+}
+
+
+function getTotalRegisteredHoursInWeek() {
+    return 30;
+}
+
+function getDatesInWeek2(d) {
+
+    var week = d.getWeekOfYear();
+    week.get
+    alert(week);
 }
