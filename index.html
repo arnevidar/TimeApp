@@ -20,134 +20,26 @@
         $(window).bind("scrollstop", function() {
             $.mobile.fixedToolbars.show(true);
         });
-
     }
 
-
-    function populateList() {
-
-          $("#contentlist").empty(); //empty the list elements we've placed in the html
-
-          //repopulate the list with data from phonegap's device api
-
-          $("#contentlist").append("<li><a href='#'>Device Name: "     +device.name+     "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Phonegap: " +device.phonegap+ "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Platform: " +device.platform+ "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device UUID: "     +device.uuid+     "</a></li>");
-
-          $("#contentlist").append("<li><a href='#'>Device Version: "  +device.version+  "</a></li>");
-
-          $("#contentlist").listview('refresh'); //must be called if you want the new list elements properly styled
-
-     }
-
-
-
-     function beepbeep() {
-    var punchcard = {"widget": {
-    "debug": "on",
-    "window": {
-        "title": "Sample Konfabulator Widget",
-        "name": "main_window",
-        "width": 500,
-        "height": 500
-    },
-    "image": { 
-        "src": "Images/Sun.png",
-        "name": "sun1",
-        "hOffset": 250,
-        "vOffset": 250,
-        "alignment": "center"
-    },
-    "text": {
-        "data": "Click Here",
-        "size": 36,
-        "style": "bold",
-        "name": "text1",
-        "hOffset": 250,
-        "vOffset": 100,
-        "alignment": "center",
-        "onMouseUp": "sun1.opacity = (sun1.opacity / 100) * 90;"
-    }
-}};
-
-
-
-        var jsonString = JSON.stringify(punchcard);
-
-        
-        var jsonTest = JSON.parse(jsonString);
-        
-        $("#jsontest").append(jsonTest.widget.text.name);
-
-
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, gotFS, fail);
-        
-
-     }
-     
-
-    function gotFS(fileSystem) {
-        fileSystem.root.getFile("readme.txt", {create: true}, gotFileEntry, fail); 
-    }
-
-    function gotFileEntry(fileEntry) {
-        fileEntry.createWriter(gotFileWriter, fail);
-    }
-
-    function gotFileWriter(writer) {
-        writer.onwrite = function(evt) {
-            console.log("write success");
-        };
-        writer.write("some sample text");
-        // contents of file now 'some sample text'
-        writer.write(" different text");
-        // contents of file now 'some different text'
-    }
-
-    function fail(error) {
-        console.log(error.code);
-    }
-
-     
-     
-     
     </script>
   </head>
   <body>
      <div data-role="page"> 
 
-          <div data-role="header"> 
+          <script type="text/javascript" src="win7phone_js/header_nav_win.js"></script>
 
-               <h1> Header Content </h1>
+          <div data-role="content">
 
-          </div>
+               <p> Main Page Content WOoo </p>
 
-          <div data-role="content"> 
 
-               <p> Main Page Content </p>
-    				
-    				     <p id="jsontest">
-                                aa
-                          </p>
-
-          <ul data-role="listview" data-theme="g" id="contentlist">
-          </ul>
+              <ul data-role="listview" data-theme="g" id="contentlist">
+              </ul>
 
           </div>
 
-         <div data-role="footer" data-position="fixed">
-             <div data-role="navbar">
-                 <ul>
-                     <li><a href="qunit.html" data-icon="home" data-ajax="false">Overview</a></li>
-                     <li><a href="registrer_time.html" data-icon="plus">Add hours</a> </li>
-                     <li><a href="settings.html" data-icon="gear">Settings</a></li>
-                 </ul>
-             </div>
-         </div>
+         <script type="text/javascript" src="win7phone_js/navbar_win_index.js"></script>
 
      </div>
   </body>
