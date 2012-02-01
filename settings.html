@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+        <title>Settings</title>
+
+        <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+
+        <script type="text/javascript">
+
+		    // Wait for PhoneGap to load
+		    //
+		    document.addEventListener("deviceready", onDeviceReady, false);
+		
+		    // PhoneGap is ready
+		    //
+		    function onDeviceReady() {
+
+		    }
+
+
+
+        </script>
+    </head>
+    <body>
+
+        <!-- Settings page-->
+
+        <div data-role="page" id="settings">
+            <div data-role="header">
+                <h2>Settings</h2>
+            </div> <!-- header -->
+
+            <div data-role="content">
+                <div data-role="controlgroup">
+                    <a href="settings_notifications.html" data-role="button"
+                       data-icon="arrow-r" data-iconpos="right" data-transition="fade" data-ajax="false">Notifications</a>
+                    <a href="settings_email.html" data-role="button"
+                       data-icon="arrow-r" data-iconpos="right" data-transition="fade" data-ajax="false">E-mail</a>
+                </div> <!-- controlgroup -->
+
+            </div> <!-- content -->
+            <script type="text/javascript" src="js/navbar.js"></script>
+        </div> <!-- Settings page -->
+
+
+
+    </body>
+</html>

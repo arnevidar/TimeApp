@@ -106,7 +106,7 @@
                 changeDate.setDate(playDate.getDate());
                 var aba_koding_punch = tadc.addPunch(aba_koding, changeDate, 4);
 
-                var correctOrder = [aba, obs, dnb];
+                var correctOrder = [dnb.name, obs.name, aba.name];
                 deepEqual(tadc.get7companies(), correctOrder, "Verify sort and get companies");
 
             });
