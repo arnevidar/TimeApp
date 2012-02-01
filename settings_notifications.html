@@ -51,16 +51,18 @@
         }
 
         function successfullyReadNotificationSettings(result) {
-            var notificationSettings = JSON.parse(result);
-            $("#toggle-notifications").val(notificationSettings.toggleNotifications).slider('refresh');
-            if (notificationSettings.monday) $("#monday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.tuesday == true) $("#tuesday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.wednesday == true) $("#wednesday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.thursday == true) $("#thursday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.friday == true) $("#friday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.saturday == true) $("#saturday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.sunday == true) $("#sunday").attr('checked', true).checkboxradio("refresh");
+            if (result) {
+             var notificationSettings = JSON.parse(result);
+             $("#toggle-notifications").val(notificationSettings.toggleNotifications).slider('refresh');
+             if (notificationSettings.monday) $("#monday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.tuesday == true) $("#tuesday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.wednesday == true) $("#wednesday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.thursday == true) $("#thursday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.friday == true) $("#friday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.saturday == true) $("#saturday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.sunday == true) $("#sunday").attr('checked', true).checkboxradio("refresh");
             $("#notification-time").val(notificationSettings.time);
+            }
             enableOrDisableInputs();
         }
 
@@ -89,7 +91,7 @@
             notificationSettings.time = $("#notification-time").val();
             var jsonString = JSON.stringify(notificationSettings);
             var p = new Persistence();
-            p.writefile("notificationsettings", notificationSettings, redirectToSettings, failSaveSettings);
+            p.writefile("notificationsettings", jsonString, redirectToSettings, failSaveSettings);
         }
 
 
