@@ -1,4 +1,4 @@
-<!DOCTYPE html  >
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
@@ -12,17 +12,18 @@
     <script type="text/javascript" src="js/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" src="js/month.js"></script>
-    <script type="text/javascript" src="../js/jqm.page.params.js"></script>
-    <script type="text/javascript" src="../js/date-nb-NO.js"></script>
     <script type="text/javascript">
+        //var today = new Date();
+        //var currentMonth = localStorage.getItem("month");
+        //alert(currentMonth);
 
-        //document.write(window.sessionStorage.length);
-        function save(value){
-            alert(value);
-        }
-
-
-
+        $("#monthview").live("pageinit",function() {
+            alert("Page is loaded");
+            var currentMonth = getCurrentMonth();
+            $("#monthname").html(printMonthName(currentMonth));
+        });
+        
+        
         function printWeeksToView(month, y) {
             if(y == null) {
                 var weeksInMonth = getWeeksInMonth(month);
@@ -49,10 +50,10 @@
     </script>
 </head>
 <body>
-    <div data-role="page">
+    <div data-role="page" id="monthview">
         <div data-role="header">
             <a href="" data-icon="arrow-l" data-iconpos="notext"></a>
-            <h2 id="monthname"><script type="text/javascript">printMonthName(1, 2012)</script></h2>
+            <h2 id="monthname"></h2>
             <a href="" data-icon="arrow-r" data-iconpos="notext"></a>
         </div>
         <div data-role="content">
@@ -71,6 +72,7 @@
                 </ul>
             </div>
         </div>
+        <script type="text/javascript" src="js/navbar.js"></script>
     </div>
 </body>
 </html>

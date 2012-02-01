@@ -13,7 +13,7 @@
 
 
 
-    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
 
     <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
@@ -51,16 +51,18 @@
         }
 
         function successfullyReadNotificationSettings(result) {
-            var notificationSettings = JSON.parse(result);
-            $("#toggle-notifications").val(notificationSettings.toggleNotifications).slider('refresh');
-            if (notificationSettings.monday) $("#monday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.tuesday == true) $("#tuesday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.wednesday == true) $("#wednesday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.thursday == true) $("#thursday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.friday == true) $("#friday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.saturday == true) $("#saturday").attr('checked', true).checkboxradio("refresh");
-            if (notificationSettings.sunday == true) $("#sunday").attr('checked', true).checkboxradio("refresh");
+            if (result) {
+             var notificationSettings = JSON.parse(result);
+             $("#toggle-notifications").val(notificationSettings.toggleNotifications).slider('refresh');
+             if (notificationSettings.monday) $("#monday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.tuesday == true) $("#tuesday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.wednesday == true) $("#wednesday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.thursday == true) $("#thursday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.friday == true) $("#friday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.saturday == true) $("#saturday").attr('checked', true).checkboxradio("refresh");
+             if (notificationSettings.sunday == true) $("#sunday").attr('checked', true).checkboxradio("refresh");
             $("#notification-time").val(notificationSettings.time);
+            }
             enableOrDisableInputs();
         }
 
@@ -89,7 +91,7 @@
             notificationSettings.time = $("#notification-time").val();
             var jsonString = JSON.stringify(notificationSettings);
             var p = new Persistence();
-            p.writefile("notificationsettings", notificationSettings, redirectToSettings, failSaveSettings);
+            p.writefile("notificationsettings", jsonString, redirectToSettings, failSaveSettings);
         }
 
 
