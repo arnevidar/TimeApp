@@ -13,7 +13,7 @@
 
 
 
-    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
 
     <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
@@ -63,11 +63,13 @@
         }
 
         function successfullyReadEmailSettings(result) {
-            var res = JSON.parse(result);
-            $("#email").val(res.email);
-            $("#toggle-email").val(res.toggleEmail).slider('refresh');
-            $("#select-weekday").val(res.weekday.toLowerCase()).selectmenu('refresh');
-            $("#email-time").val(res.time);
+            if (result) {
+                var res = JSON.parse(result);
+                $("#email").val(res.email);
+                $("#toggle-email").val(res.toggleEmail).slider('refresh');
+                $("#select-weekday").val(res.weekday.toLowerCase()).selectmenu('refresh');
+                $("#email-time").val(res.time);
+            } 
             enableOrDisableInputs();
         }
 
@@ -91,7 +93,7 @@
             emailSettings.time = $("#email-time").val();
             var jsonString = JSON.stringify(emailSettings);
             var p = new Persistence();
-            p.writefile(esFilename, emailSettings, redirectToSettings ,failSaveSettings);
+            p.writefile("emailsettings", jsonString, redirectToSettings ,failSaveSettings);
 
         }
 
@@ -132,7 +134,7 @@
 
         <div data-role="fieldcontain">
             <label for="email">Email:</label>
-            <input type="text" name="name" id="email" placeholder="Email" />
+            <input type="email" name="name" id="email" placeholder="Email" />
         </div>
 
 
@@ -155,7 +157,7 @@
 
         <div data-role="fieldcontain">
             <label for="email-time">Set the time for the email to be sent:</label>
-            <input type="time" id="email-time" />
+            <input type="email" id="email-time" />
         </div>
 
         <!-- Buttons -->
