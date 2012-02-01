@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
 	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.3.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/storage.js"></script>
 	<script type="text/javascript" charset="utf-8">
 
     // Wait for PhoneGap to load
@@ -35,7 +36,8 @@
          
           <div data-role="content"> 
                <p> Main Page Content </p>
-            <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a>
+            <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a><br/>
+            <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a>
           </div>	
 
 		<div data-role="footer" data-position="fixed">

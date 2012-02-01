@@ -14,7 +14,6 @@ function printMonthName(m) {
     month[11]="December";
 
     return month[m];
-    //document.write(month[m]);
 }
 
 /**
@@ -23,17 +22,17 @@ function printMonthName(m) {
  * @param dayNr
  */
 function printDayName(d) {
-    var date = new Date(d.valueOf());
-    var weekdays = new Array(7);
-    weekdays[0] = "Sunday";
-    weekdays[1] = "Monday";
-    weekdays[2] = "Tuesday";
-    weekdays[3] = "Wednesday";
-    weekdays[4] = "Thursday";
-    weekdays[5] = "Friday";
-    weekdays[6] = "Saturday";
+    //var date = new Date(d.valueOf());
+    var weekday = new Array(7);
+    weekday[0] = "Sunday";
+    weekday[1] = "Monday";
+    weekday[2] = "Tuesday";
+    weekday[3] = "Wednesday";
+    weekday[4] = "Thursday";
+    weekday[5] = "Friday";
+    weekday[6] = "Saturday";
 
-    return weekdays[date.getDay()];
+    return weekday[d];
 }
 
 /**
@@ -125,8 +124,7 @@ function printWeekDates(month, y) {
         var weeksInMonth = getWeeksInMonth(month, y);
     }
     var datesInWeek = new Array();
-    //alert(weeksInMonth.length);
-    //alert(fullMonth.length);
+
     for(a = 0; a < weeksInMonth.length; a++) {
         for(b = 0; b < fullMonth.length; b++) {
             if(fullMonth[b] != weeksInMonth[a]) {
@@ -135,15 +133,9 @@ function printWeekDates(month, y) {
                 datesInWeek.push((b+1));
             }
         }
-        //alert('index '+a + '\t' + datesInWeek);
-        //localStorage.clear();
-        localStorage.setItem('array'+weeksInMonth[a], datesInWeek);
-        //alert('array'+a +'\t'+ localStorage.getItem('array'+a));
-        //document.write(datesInWeek);
+        localStorage.setItem('weekArray'+weeksInMonth[a], datesInWeek);
         datesInWeek.length = 0;
     }
-    //alert(datesInWeek);
-    //return datesInWeek+'<br>';
 }
 
 function todayWeek(d) {
@@ -164,6 +156,10 @@ function storeWeekNr(week) {
 function readWeekNr(){
     var res = 'Week ' + localStorage.getItem("week");
     return res;
+}
+
+function sendIndex(index) {
+    localStorage.setItem("index", index);
 }
 
 function clearWeekNr() {

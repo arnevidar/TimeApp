@@ -13,16 +13,12 @@
     <script type="text/javascript" src="js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" src="js/month.js"></script>
     <script type="text/javascript">
-        //var today = new Date();
-        //var currentMonth = localStorage.getItem("month");
-        //alert(currentMonth);
+        var currentMonth = localStorage.getItem("month");
 
         $("#monthview").live("pageinit",function() {
-            alert("Page is loaded");
-            var currentMonth = getCurrentMonth();
             $("#monthname").html(printMonthName(currentMonth));
         });
-        
+
         
         function printWeeksToView(month, y) {
             if(y == null) {
@@ -34,12 +30,12 @@
             }
             for(i = 0; i < weeksInMonth.length; ++i ) {
                 var html = '';
-                html += '<li id="'+weeksInMonth[i]+'" name="listview" value="'+weeksInMonth[i]+'">';
+                html += '<li id="'+weeksInMonth[i]+'" name="listview" value="Week '+weeksInMonth[i]+'">';
                 html += '<a href="Weekview.html" name="weeklistelement" id="'+weeksInMonth+'" ' +
                         'value="'+weeksInMonth[i]+'" data-ajax="false" ' +
-                        'onclick="storeWeekNr('+weeksInMonth[i]+')">';
+                        'onclick="storeWeekNr('+weeksInMonth[i]+'); sendIndex('+i+')">';
                 html += '<h3 id="element">Week '+ weeksInMonth[i]+':'+'</h3>';
-                html += '<p>'+localStorage.getItem('array'+weeksInMonth[i])+'</p>';
+                html += '<p>'+localStorage.getItem('weekArray'+weeksInMonth[i])+'</p>';
                 html += '</a>';
                 html += '</li>';
                 //id = document.getElementById(weeksInMonth[i]).value;
@@ -60,14 +56,7 @@
             <div data-role="fieldcontain">
                 <ul data-role="listview" id="listview">
                     <script type="text/javascript">
-                        //localStorage.clear();
-                        printWeeksToView(0);
-                        //getDaysInWeek()
-                        //printWeekDates(0, 2012);
-                        //getDatesInWeek2(new Date(2012,0,1));
-                        //printWeekDates(0);
-                        //getDatesInWeek(0);
-                        //alert(localStorage.getItem('week'));
+                        printWeeksToView(currentMonth);
                     </script>
                 </ul>
             </div>

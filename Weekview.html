@@ -13,20 +13,51 @@
     <script type="text/javascript" src="js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" src="js/month.js"></script>
     <script type="text/javascript">
+        var index = localStorage.getItem("index");
+        var weekNr = localStorage.getItem('week');
+        alert("INDEX: "+ index);
+
 
         $("#weekview").live("pageinit",function() {
-            var res = localStorage.getItem('array2');
-            $("#weeknr").html(res);
+            var res = localStorage.getItem('week');
+            $("#weeknr").html("Week " + weekNr);
         });
+
+        function printDatesToWeekView() {
+            var datesOriginal =  localStorage.getItem("weekArray"+weekNr);
+            var datesArray = datesOriginal.split(",");
+            alert("LOCALSTORAGE: " + datesArray.length);
+            for(i = 0; i < datesArray.length; i++) {
+                alert("DAY: " +printDayName(new Date(2012, 1, datesArray[i]).getDay()));
+                var html = '';
+                html += '<li name="weekElement">';
+                html += '<a href="registrer_time.html">';
+                html += '<h3>'+printDayName(new Date(2012, 1, datesArray[i]).getDay()) +' '+ datesArray[i]+'</h3>';
+                html += '</a>';
+                html += '</li>';
+                document.write(html);
+            }
+        }
     </script>
+
+
 
 </head>
 <body>
     <div data-role="page" id="weekview">
-        <div data-role="header" id="header0">
+        <div data-role="header" id="weekviewHeader">
             <a href="" data-icon="arrow-l" data-iconpos="notext"></a>
             <h2 id="weeknr"></h2>
             <a href="" data-icon="arrow-r" data-iconpos="notext"></a>
+        </div>
+        <div data-role="content">
+            <div data-role="fieldcontain">
+                <ul data-role="listview" id="weekList">
+                    <script type="text/javascript">
+                        printDatesToWeekView();
+                    </script>
+                </ul>
+            </div>
         </div>
         <script type="text/javascript" src="js/navbar.js"></script>
     </div>
