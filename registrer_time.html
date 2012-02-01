@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>Register hours</title>
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
         <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
@@ -19,7 +19,6 @@
 
 
             var todaysDate = new Date();
-            var mockIdCreator = 0;
             var tadc = new TimeAppDataController();
             tadc.loadData();
 
@@ -135,10 +134,6 @@
                 changeDay(nextDay, direction);
             });
 
-            $("#heading").live("pageshow", function() {
-                var res = readWeek();
-                $("#heading").html(res);
-            });
 
             $("#add_details").live("pageinit", function() {
                 $("#first_day_after_vacation").scroller({preset : 'date',
@@ -283,7 +278,7 @@
                 var company = jsonObject.company;
                 var description = jsonObject.description;
                 var hours = jsonObject.number_of_hours;
-                var kk ='<li> <a href="#add_details" onclick="editDetails()"> <h3>' + company + '</h3><p>' + description + " " + hours + '</p></li>';
+                var kk ='<li> <a href="#add_details" onclick="editDetails()"> <h3>' + company + '</h3><p>' + description + " " + hours + '</p></a></li>';
                 //alert(kk);
 
                 $('#registered_hours_overview').append(kk);
@@ -293,8 +288,13 @@
             function addMockData() {
                 var daysData = tadc.getDataForDay(todaysDate);
                 var html = '';
-                for(var i =0; i<daysData.length; i++) {
-                    html = '<li> <a href="#add_details" onclick="editDetails()"> <h3>' + daysData[i].name + '</h3><p>' + daysData[i].desc + " " + daysData[i].totH + '</p></li>';
+                for(var i =0; i < daysData.length; i++) {
+                    html = '<li>
+                  <a href="#add_details" onclick="editDetails()">
+                  <h3>' + daysData[i].name + '</h3>
+                  <p>' + daysData[i].desc + " " + daysData[i].totH + '</p>
+                  </a>
+                </li>';
                     $('#registered_hours_overview').append(html);
                     $('#registered_hours_overview').listview('refresh');
                 }
