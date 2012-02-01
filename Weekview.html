@@ -15,21 +15,20 @@
     <script type="text/javascript">
 
         $("#weekview").live("pageinit",function() {
+            var res = localStorage.getItem('array2');
             $("#weeknr").html(res);
         });
-
-
-
     </script>
 
 </head>
-<body onload="">
+<body>
     <div data-role="page" id="weekview">
         <div data-role="header" id="header0">
             <a href="" data-icon="arrow-l" data-iconpos="notext"></a>
-            <h2 id="weeknr"></script></h2>
+            <h2 id="weeknr"></h2>
             <a href="" data-icon="arrow-r" data-iconpos="notext"></a>
         </div>
+        <script type="text/javascript" src="js/navbar.js"></script>
     </div>
 </body>
 </html>
