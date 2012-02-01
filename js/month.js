@@ -1,5 +1,4 @@
-function printMonthName(month, y) {
-    var date = new Date(y, month);
+function printMonthName(m) {
     var month=new Array(12);
     month[0]="January";
     month[1]="February";
@@ -14,7 +13,8 @@ function printMonthName(month, y) {
     month[10]="November";
     month[11]="December";
 
-    document.write(month[date.getMonth()]);
+    return month[m];
+    //document.write(month[m]);
 }
 
 /**
