@@ -81,7 +81,7 @@ function pushDaysToWeekArray(month, y) {
     }
     var lastDay = new Date(year, month+1, 0).getDate(); // Number of days in the month
     var weekdaysAndTheirWeekNr = [];
-    for(var i = 0; i < lastDay; ++i ) {
+    for(i = 0; i < lastDay; i++) {
         var date = new Date(year, month, i);
         weekdaysAndTheirWeekNr.push(date.getWeek(date));
     }
@@ -125,17 +125,25 @@ function printWeekDates(month, y) {
         var weeksInMonth = getWeeksInMonth(month, y);
     }
     var datesInWeek = new Array();
-
-    for(var i = 0; i < weeksInMonth.length; ++i) {
-        for(var j = 0; j < fullMonth.length; ++j) {
-            if(fullMonth[j] !== weeksInMonth[i]) {
+    //alert(weeksInMonth.length);
+    //alert(fullMonth.length);
+    for(a = 0; a < weeksInMonth.length; a++) {
+        for(b = 0; b < fullMonth.length; b++) {
+            if(fullMonth[b] != weeksInMonth[a]) {
                 continue;
+            } else {
+                datesInWeek.push((b+1));
             }
-            datesInWeek.push((j+1));
         }
-        return datesInWeek+'<br>';
-        //datesInWeek.length = 0;
+        //alert('index '+a + '\t' + datesInWeek);
+        //localStorage.clear();
+        localStorage.setItem('array'+weeksInMonth[a], datesInWeek);
+        //alert('array'+a +'\t'+ localStorage.getItem('array'+a));
+        //document.write(datesInWeek);
+        datesInWeek.length = 0;
     }
+    //alert(datesInWeek);
+    //return datesInWeek+'<br>';
 }
 
 function todayWeek(d) {
@@ -158,14 +166,11 @@ function readWeekNr(){
     return res;
 }
 
+function clearWeekNr() {
+    localStorage.clear();
+}
+
 
 function getTotalRegisteredHoursInWeek() {
     return 30;
-}
-
-function getDatesInWeek2(d) {
-
-    var week = d.getWeekOfYear();
-    week.get
-    alert(week);
 }

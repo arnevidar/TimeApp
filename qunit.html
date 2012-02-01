@@ -2,6 +2,8 @@
         "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />  
+
     <script src="js/jquery-1.7.1.js"></script>
     <link rel="stylesheet" href="qunit.css" type="text/css" media="screen" />
     <script type="text/javascript" src="qunit.js"></script>
@@ -104,8 +106,8 @@
                 changeDate.setDate(playDate.getDate());
                 var aba_koding_punch = tadc.addPunch(aba_koding, changeDate, 4);
 
-                var correctOrder = [aba, dnb, obs];
-                deepEqual(correctOrder, tadc.get7companies(), "Verify sort and get companies");
+                var correctOrder = [dnb.name, obs.name, aba.name];
+                deepEqual(tadc.get7companies(), correctOrder, "Verify sort and get companies");
 
             });
 

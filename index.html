@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>FileReader Example</title>
 
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
@@ -20,34 +21,32 @@
             $.mobile.fixedToolbars.show(true);
         });
     }
-     
+
     </script>
   </head>
   <body>
-     <div data-role="page"> 
-
+     <div data-role="page">
+      
           <div data-role="header"> 
 
                <h1> Header Content </h1>
-
+               
           </div>
-
+         
           <div data-role="content"> 
-
                <p> Main Page Content </p>
             <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a>
-          </div>
+          </div>	
 
 		<div data-role="footer" data-position="fixed">
 			<div data-role="navbar">
 				<ul>
 					<li><a href="index.html" data-icon="home" data-ajax="false">Overview</a></li>
 					<li><a href="registrer_time.html" data-icon="plus" data-ajax="false">Add hours</a> </li>
-					<li><a href="Pages/settings.html" data-icon="gear" data-ajax="false">Settings</a></li>
+					<li><a href="settings.html" data-icon="gear" data-ajax="false">Settings</a></li>
 				</ul>
 			</div>
 		</div>
-
      </div>
   </body>
 </html>

@@ -26,17 +26,19 @@
         function printWeeksToView(month, y) {
             if(y == null) {
                 var weeksInMonth = getWeeksInMonth(month);
+                printWeekDates(month);
             } else {
                 var weeksInMonth = getWeeksInMonth(month, y);
+                printWeekDates(month, y);
             }
-            for(var i = 0; i < weeksInMonth.length; ++i ) {
+            for(i = 0; i < weeksInMonth.length; ++i ) {
                 var html = '';
                 html += '<li id="'+weeksInMonth[i]+'" name="listview" value="'+weeksInMonth[i]+'">';
                 html += '<a href="Weekview.html" name="weeklistelement" id="'+weeksInMonth+'" ' +
                         'value="'+weeksInMonth[i]+'" data-ajax="false" ' +
                         'onclick="storeWeekNr('+weeksInMonth[i]+')">';
                 html += '<h3 id="element">Week '+ weeksInMonth[i]+':'+'</h3>';
-                html += '<p>'+printWeekDates(month,y)+'</p>';
+                html += '<p>'+localStorage.getItem('array'+weeksInMonth[i])+'</p>';
                 html += '</a>';
                 html += '</li>';
                 //id = document.getElementById(weeksInMonth[i]).value;
@@ -58,9 +60,10 @@
                 <ul data-role="listview" id="listview">
                     <script type="text/javascript">
                         //localStorage.clear();
-                        //printWeeksToView(1);
+                        printWeeksToView(0);
                         //getDaysInWeek()
-                        getDatesInWeek2(new Date(2012,0,1));
+                        //printWeekDates(0, 2012);
+                        //getDatesInWeek2(new Date(2012,0,1));
                         //printWeekDates(0);
                         //getDatesInWeek(0);
                         //alert(localStorage.getItem('week'));

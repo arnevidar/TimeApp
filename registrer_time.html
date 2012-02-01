@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>Register hours</title>
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
         <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
+        <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
         <link rel="stylesheet" type="text/css" href="http://dev.jtsage.com/cdn/simpledialog/latest/jquery.mobile.simpledialog.min.css" />
         <link rel="stylesheet" type="text/css" href="http://dev.jtsage.com/cdn/datebox/latest/jquery.mobile.datebox.min.css" />
 
@@ -24,7 +25,6 @@
             }
 
             var todaysDate = new Date();
-            var mockIdCreator = 0;
             var tadc = new TimeAppDataController();
             tadc.loadData();
 
@@ -139,6 +139,7 @@
                 }
                 changeDay(nextDay, direction);
             });
+
 
             $("#add_details").live("pageinit", function() {
                 $("#first_day_after_vacation").scroller({preset : 'date',
@@ -282,6 +283,7 @@
                 var description = jsonObject.description;
                 var hours = jsonObject.number_of_hours;
                 var kk ='<li> <a href="#add_details" onclick="editDetails()" data-ajax="false"> <h3>' + company + '</h3><p>' + description + " " + hours + '</p></a></li>';
+
                 //alert(kk);
 
                 $('#registered_hours_overview').append(kk);
@@ -299,6 +301,7 @@
                             '<p id="hours'+ idCounter +'">' + daysData[i].totH +" hours" + '</p>' +
                             '</a></li>';
                     idCounter++;
+
                     $('#registered_hours_overview').append(html);
                     $('#registered_hours_overview').listview('refresh');
                 }
