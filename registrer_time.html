@@ -251,7 +251,7 @@
                 var company = $("#select_company option:selected").text();
                 var description = $("#select_description option:selected").text();
                 if(company !== "Vacation") {
-                    var number_of_hours = formatTime($("#hours_and_minutes").val());
+                    var number_of_hours = minuteToNumber($("#hours_and_minutes").val());
                     tadc.updatePunch(company, description, todaysDate, number_of_hours);
                 } else {
                     var dateAfterVacation = $("#first_day_after_vacation").val();
@@ -261,7 +261,13 @@
                 resetFormValues()
             }
 
-            function formatTime(time) {
+            /**
+             * Formats the value from the scroller wheel
+             * from hh:mm to hh.MM, h.MM if the first h is a zero.
+             * MM is the minutes in a
+             */
+
+            function minuteToNumber(time) {
                 var hours = time.slice(0,2);
                 var minutes = time.slice(3,5);
                 if(hours.slice(0,1) == 0) {
@@ -283,6 +289,9 @@
                 }
                 return hours + "." + minutes;
             }
+
+
+
 
             function resetFormValues() {
                 $('#select_company').val("Company").selectmenu('refresh');
@@ -338,7 +347,6 @@
             }
 
         $("#register_hours").live('pageinit', function() {
-            //alert("yo");
            addMockData();
         });
 
@@ -402,6 +410,7 @@
                 <input type="date" id="notifyTime"/>
             </div>
         </div>
+
 
     <script type="text/javascript">
 
