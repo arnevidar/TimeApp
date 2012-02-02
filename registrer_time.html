@@ -256,32 +256,30 @@
             function formatTime(time) {
                 var hours = time.slice(0,2);
                 var minutes = time.slice(3,5);
-                var formatedMinues = 0;
                 if(hours.slice(0,1) == 0) {
-                    alert(hours);
                     hours = hours.slice(1,2);
                 }
                 switch(minutes) {
+                    case '00':
+                        minutes = 0;
+                        break;
                     case '15':
-                        formatedMinues = 25;
+                        minutes = 25;
                         break;
                     case '30':
-                        formatedMinues = 5;
+                        minutes = 5;
                         break;
                     case '45':
-                        formatedMinues = 75;
+                        minutes = 75;
                         break;
                 }
-                alert(hours);
-                return hours + "." + formatedMinues;
+                return hours + "." + minutes;
             }
 
             function resetFormValues() {
                 $('#select_company').val("Company").selectmenu('refresh');
                 $('#select_description').val('Description').selectmenu('refresh');
-                //   $("#select_company").change();
-
-
+                $("#hours_and_minutes").scroller('setDate', new Date(0,0,0,0,0,0,0), true);
             }
 
             function addMockLine(jsonString) {
@@ -290,8 +288,6 @@
                 var description = jsonObject.description;
                 var hours = jsonObject.number_of_hours;
                 var kk ='<li> <a href="#add_details" onclick="editDetails()" data-ajax="false"> <h3>' + company + '</h3><p>' + description + " " + hours + '</p></a></li>';
-
-                //alert(kk);
 
                 $('#registered_hours_overview').append(kk);
                 $('#registered_hours_overview').listview('refresh');
@@ -321,6 +317,7 @@
                 var time = $("#hours"+id).html();
                 var index = time.indexOf('hours');
                 var timeToSend = time.slice(0, index);
+                localStorage.setItem("todaysDate", todaysDate);
                 localStorage.setItem("company", company);
                 localStorage.setItem("description", descr);
                 localStorage.setItem("hours", timeToSend);
