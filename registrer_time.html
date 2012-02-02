@@ -24,14 +24,14 @@
         <script type="text/javascript">
 
             function onDeviceReady() {
-             //   $(window).bind("scrollstop", function() {
-             //       $.mobile.fixedToolbars.show(true);
-             //   });
+                $(window).bind("scrollstop", function() {
+                    $.mobile.fixedToolbars.show(true);
+                });
             }
 
             var todaysDate = new Date();
             var tadc = new TimeAppDataController();
-            tadc.loadData(function() {}, function() {});
+            tadc.loadData(function() {}, function(err) {});
 
 
             $.mobile.changePage.defaults.allowSamePageTransition = true;
@@ -222,7 +222,7 @@
                 $("#date_heading").html(todaysDate.toDateString());
                 removeDataInDayList();
                 $.mobile.changePage( "#register_hours", {reverse: direction} );
-                //addMockData();
+                addMockData();
 
             }
 
@@ -256,6 +256,9 @@
                 } else {
                     var dateAfterVacation = $("#first_day_after_vacation").val();
                 }
+
+                addMockData();
+                resetFormValues()
             }
 
             function formatTime(time) {
@@ -302,6 +305,7 @@
                 var daysData = tadc.getDataForDay(todaysDate);
                 var html = '';
                 var idCounter = 0;
+                $('#registered_hours_overview').empty();
                 for(var i =0; i<daysData.length; i++) {
                     html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
                             '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
@@ -335,12 +339,8 @@
 
         $("#register_hours").live('pageinit', function() {
             //alert("yo");
-           //addMockData();
+           addMockData();
         });
-
-            $("#registered_hours_overview").load(function() {
-                addMockData();
-            });
 
 
 
