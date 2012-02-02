@@ -34,8 +34,10 @@
                             var companyName = localStorage.getItem("company");
                             var description = localStorage.getItem("description");
                             var hours = localStorage.getItem("hours");
-
-                          //  tdac.deleteRecord(companyName, description, date, hours);
+                            tdac.deleteRecord(companyName, description, date, hours);
+                            resetFormValues();
+                            $("#close_btn").click();
+                            
 
                         }
                     },
@@ -274,7 +276,7 @@
             </div>
             <div data-role="controlgroup" data-type="horizontal">
                 <a href="#" data-role="button" data-rel="back" id="deleteLine">Delete</a>
-                <a href="registrer_time.html" data-role="button" data-rel="back">Close</a>
+                <a href="registrer_time.html" data-role="button" data-rel="back" id="close_btn">Close</a>
                 <a href="#" data-role="button" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="updateLine()">Save</a>
             </div>
         <a href="#" id="new_description_link" style="display : none;"></a>
