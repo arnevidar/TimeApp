@@ -3,32 +3,36 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>Register hours</title>
+        <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
         <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
         <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css" />
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile.datebox.css" />
 
-        <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+
         <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
 
         <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.datebox.js"></script>
-        <script type="text/javascript" charset="utf-8">
+        <script type="text/javascript">
 
             function onDeviceReady() {
-                $(window).bind("scrollstop", function() {
-                    $.mobile.fixedToolbars.show(true);
-                });
+             //   $(window).bind("scrollstop", function() {
+             //       $.mobile.fixedToolbars.show(true);
+             //   });
             }
 
             var todaysDate = new Date();
             var tadc = new TimeAppDataController();
-            tadc.loadData();
+            tadc.loadData(function() {}, function() {});
+
 
             $.mobile.changePage.defaults.allowSamePageTransition = true;
 
@@ -218,7 +222,7 @@
                 $("#date_heading").html(todaysDate.toDateString());
                 removeDataInDayList();
                 $.mobile.changePage( "#register_hours", {reverse: direction} );
-                addMockData();
+                //addMockData();
 
             }
 
@@ -239,7 +243,7 @@
                 todaysDate = date;
                 $("#date_heading").html(date.toDateString());
                 removeDataInDayList();
-                addMockData();
+                //addMockData();
                 //kjør metode for å hente ut lagret data for denne dagen
             }
 
@@ -330,8 +334,16 @@
             }
 
         $("#register_hours").live('pageinit', function() {
-           addMockData();
+            //alert("yo");
+           //addMockData();
         });
+
+            $("#registered_hours_overview").load(function() {
+                addMockData();
+            });
+
+
+
 
 
 
@@ -351,13 +363,15 @@
                 <ul data-role="listview" id="registered_hours_overview">
                 </ul>
 
-                </br>
+                <br />
                 <a href="#add_details" id="add_new_line" data-role="button">Add hours</a>
 
             </div>
             <!--Add footer from script -->
             <script type="text/javascript" src="js/navbar.js"></script>
         </div>
+
+        <!-- Add punch -->
 
         <div data-role="page" id="add_details">
             <div data-role="content">

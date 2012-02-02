@@ -5,11 +5,13 @@
     <title>FileReader Example</title>
 
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
+    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/storage.js"></script>
-	<script type="text/javascript" charset="utf-8">
+    <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>  
+    <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>    
+	<script type="text/javascript">
 
     // Wait for PhoneGap to load
     //
@@ -18,9 +20,21 @@
     // PhoneGap is ready
     //
     function onDeviceReady() {
-        $(window).bind("scrollstop", function() {
-            $.mobile.fixedToolbars.show(true);
-        });
+         // $(window).bind("scrollstop", function() {
+         //   $.mobile.fixedToolbars.show(true);
+        //});
+  
+  
+        var tadc = new TimeAppDataController();
+        tadc.loadData(
+          function() {
+            window.location.href = "registrer_time.html";
+                },
+          function(){
+            alert("Unable to load data!\nPlease restart the application.");
+        }); 
+
+
     }
 
     </script>

@@ -5,9 +5,17 @@ function TimeAppDataController () {
   this.companies = [];
 }
 
-TimeAppDataController.prototype.saveToFile = function () {
+TimeAppDataController.prototype.saveToFile = function (success, failure) {
+/*    p = new Persistence();
+    p.checkAndCreateTimeAppFolder(success, failure);
+    p.writefile("timeappdata", JSON.stringify(this.companies), function(){},function(){alert("err2")});
+ */
+    localStorage.setItem("companies", JSON.stringify(this.companies));
+
+
 
 }
+
 
 
 TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescription, newDate, newTotH,
@@ -38,6 +46,18 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
 
     //var punchObject = this.getPunch(descObject, newDate, newTotH);
     this.addPunch(descObject, newDate, newTotH);
+    this.saveToFile(function(){},function(){alert("err");});
+}
+
+TimeAppDataController.prototype.deleteRecord = function (companyName, description, date, totH) {
+        var companyObject = this.getCompany(companyName);
+        var descObject = this.getDescription(oldCompanyObject, description);
+        var punchObject = this.getPunch(descObject, date, totH);
+        this.removePunch(descObject, punchObject);
+        this.verifyDesc(companyObject, descObject);
+        this.verifyComp(companyObject);
+        this.saveToFile(function(){},function(){alert("err");});
+
 
 }
 
@@ -180,7 +200,32 @@ function companyComparator(a, b) {
  * Loads test/dummy data
  */
 
-TimeAppDataController.prototype.loadData = function () {
+
+TimeAppDataController.prototype.loadData = function (onSuccess, onFailure) {
+    if (localStorage.getItem("companies")){
+        this.companies = JSON.parse(localStorage.getItem("companies"));
+        onSuccess();
+    }
+    else {
+        onFailure();
+        this.loadMockData();
+    }
+/*
+    var p = new Persistence();
+    p.readfile("timeapp", tadc, function(data, timeappdatacontroller){
+        if (data) {
+            localStorage.setItem("companies", data);
+            timeappdatacontroller.companies = JSON.parse(data);
+        }
+        else {
+            timeappdatacontroller.loadMockData();
+        }
+        onSuccess;
+    }, onFailure);
+*/
+}
+
+TimeAppDataController.prototype.loadMockData = function () {
     var dnb = this.addCompany("DNB");
     var dnb_koding = this.addDescription(dnb, "dnbkoding");
     var dnb_date = this.getTodaysDate();
@@ -202,6 +247,8 @@ TimeAppDataController.prototype.loadData = function () {
     var aba = this.addCompany("ABA");
     var aba_koding = this.addDescription(aba, "adakoding");
     var aba_koding_punch = this.addPunch(aba_koding, dnb_date, 10);
+
+    localStorage.setItem("companies", JSON.stringify(this.companies));
 }
 
 
