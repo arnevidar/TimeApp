@@ -373,13 +373,17 @@
 
             <!-- Add header -->
 
-            <script type="text/javascript" src="win7phone_js/header_nav_win.js"></script>
+            <div data-role="header" data-position="fixed">
+                        <a href="#" data-icon="arrow-l" icon-pos="left" data-ajax="false" onclick="prevDay()">Previous</a>
+                <h3 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h3>
+                <input type="date" data-role="datebox" id="mydate"
+                       data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true}' />
+                        <a href="#" data-icon="arrow-r" icon-pos="right" data-ajax="false" onclick="nextDay()">Next</a>
+            </div>
 
 
             <div data-role="content">
-                <h2 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h2>
-                <input type="date" data-role="datebox" id="mydate"
-                       data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true}' />
+
 
                 <a href="#add_details" id="add_new_line" data-role="button">New punch!</a>
                 <br />
