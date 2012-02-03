@@ -306,6 +306,7 @@
                 var hours = jsonObject.number_of_hours;
                 var kk ='<li> <a href="#add_details" onclick="editDetails()" data-ajax="false"> <h3>' + company + '</h3><p>' + description + " " + hours + '</p></a></li>';
 
+
                 $('#registered_hours_overview').append(kk);
                 $('#registered_hours_overview').listview('refresh');
             }
@@ -350,7 +351,13 @@
            addMockData();
         });
 
+            function prevDay() {
+                changeDay(-1, true);
+            }
 
+            function nextDay() {
+                changeDay(1, false);
+            }
 
 
 
@@ -359,20 +366,26 @@
 
     </head>
     <body>
+
+        <!-- Display punches for a day -->
+
         <div data-role="page" id="register_hours">
+
+            <!-- Add header -->
+
+            <script type="text/javascript" src="win7phone_js/header_nav_win.js"></script>
+
 
             <div data-role="content">
                 <h2 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h2>
                 <input type="date" data-role="datebox" id="mydate"
                        data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true}' />
 
-                <h2>Register hours</h2>
-
+                <a href="#add_details" id="add_new_line" data-role="button">New punch!</a>
+                <br />
                 <ul data-role="listview" id="registered_hours_overview">
                 </ul>
 
-                <br />
-                <a href="#add_details" id="add_new_line" data-role="button">Add hours</a>
 
             </div>
             <!--Add footer from script -->

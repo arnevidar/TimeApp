@@ -56,13 +56,7 @@
             $('#mydate').datebox('open');
         }
 
-        function prevDay() {
-            changeDay(-1, true);
-        }
 
-        function nextDay() {
-            changeDay(1, false);
-        }
 
         function changeDay(nextDay, direction) {
             todaysDate.setDate(todaysDate.getDate()+nextDay);
