@@ -6,10 +6,10 @@ function TimeAppDataController () {
 }
 
 TimeAppDataController.prototype.saveToFile = function (success, failure) {
-/*    p = new Persistence();
+    p = new Persistence();
     p.checkAndCreateTimeAppFolder(success, failure);
     p.writefile("timeappdata", JSON.stringify(this.companies), function(){},function(){alert("err2")});
- */
+
     localStorage.setItem("companies", JSON.stringify(this.companies));
 
 
