@@ -32,7 +32,7 @@
                 'buttons' : {
                     'OK': {
                         click: function () {
-                            var date = localStorage.getItem("todaysDate");
+                            var date = new Date(localStorage.getItem("todaysDate"));
                             var companyName = localStorage.getItem("company");
                             var description = localStorage.getItem("description");
                             var hours = localStorage.getItem("hours");
@@ -176,6 +176,11 @@
             theTime.setHours(hours);
             theTime.setMinutes(minutes);
             $("#hours_and_minutes").scroller('setDate', theTime, true);
+
+
+            var selectedDate = new Date(localStorage.getItem("todaysDate"));
+
+            $('#edit_date_heading').text("Edit " + selectedDate.toDateString());
         });
 
 
@@ -267,7 +272,7 @@
             var newDescription = $("#select_description option:selected").text();
             var oldCompanyName = localStorage.getItem("company");
             var oldDescription = localStorage.getItem("description");
-            var date = localStorage.getItem("todaysDate");
+            var date = new Date(localStorage.getItem("todaysDate"));
             if(newCompanyName !== "Vacation") {
                 var oldHours = localStorage.getItem("hours");
                 var newHours = formatTime($("#hours_and_minutes").val());
@@ -286,6 +291,11 @@
 <body>
 
 <div data-role="page" id="edit_details">
+
+    <div data-role="header" data-position="fixed">
+        <h3 id="edit_date_heading" />
+    </div>
+
     <div data-role="content">
                 <div data-role="fieldcontain">
 
@@ -302,20 +312,10 @@
                     <br />
                  </div>
 
-        <fieldset class="ui-grid-b">
-            <div class="ui-block-a"><a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine">Del</a></div>
-            <div class="ui-block-b"><a href="#" data-role="button" data-rel="back">Close</a></div>
-            <div class="ui-block-c"><a href="#" data-role="button" data-icon="timeapp-ok" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="updateLine()">Save</a></div>
-        </fieldset>
+            <div data-role="controlgroup" data-type="horizontal" class="center-wrapper">
 
-
-            <div data-role="controlgroup" data-type="horizontal">
-
-
-
-
-                <a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine">Delete</a>
-                <a href="#" data-role="button" data-rel="back">Close</a>
+                <a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine">Del</a>
+                <a href="#" data-role="button" data-rel="back">Back</a>
                 <a href="#" data-role="button" data-icon="timeapp-ok" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="updateLine()">Save</a>
             </div>
         <a href="#" id="new_description_link" style="display : none;"></a>
