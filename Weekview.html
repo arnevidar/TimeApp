@@ -20,7 +20,8 @@
 
         $("#weekview").live("pageinit",function() {
             var res = localStorage.getItem('week');
-            $("#weeknr").html("Week " + weekNr);
+            var year = new Date().getFullYear();
+            $("#weeknr").html("Week " + weekNr + " - " + year);
         });
 
         function printDatesToWeekView() {

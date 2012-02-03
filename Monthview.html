@@ -16,7 +16,9 @@
         var currentMonth = localStorage.getItem("month");
 
         $("#monthview").live("pageinit",function() {
-            $("#monthname").html(printMonthName(currentMonth));
+            var month = printMonthName(currentMonth);
+            var year = new Date().getFullYear();
+            $("#monthname").html(month + " " +year);
         });
 
         
