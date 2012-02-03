@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>Register hours</title>
+    <title>Edit line</title>
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
     <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css" />
@@ -168,7 +168,8 @@
             });
             var time = localStorage.getItem("hours").split(".");
             var hours = time[0];
-            var minutes = numberToMinute(time[1].trim());
+            //add trim()
+            var minutes = numberToMinute(time[1]);
             var theTime = new Date();
             theTime.setHours(hours);
             theTime.setMinutes(minutes);
@@ -265,7 +266,7 @@
             var oldCompanyName = localStorage.getItem("company");
             var oldDescription = localStorage.getItem("description");
             var date = localStorage.getItem("todaysDate");
-            if(company !== "Vacation") {
+            if(newCompanyName !== "Vacation") {
                 var oldHours = localStorage.getItem("hours");
                 var newHours = formatTime($("#hours_and_minutes").val());
                 tadc.updatePunch(newCompanyName, newDescription, date, newHours, oldCompanyName, oldDescription, date, oldHours);
