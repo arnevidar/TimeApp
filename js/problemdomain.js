@@ -6,10 +6,10 @@ function TimeAppDataController () {
 }
 
 TimeAppDataController.prototype.saveToFile = function (success, failure) {
-/*    p = new Persistence();
+    p = new Persistence();
     p.checkAndCreateTimeAppFolder(success, failure);
     p.writefile("timeappdata", JSON.stringify(this.companies), function(){},function(){alert("err2")});
- */
+
     localStorage.setItem("companies", JSON.stringify(this.companies));
 
 
@@ -51,7 +51,7 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
 
 TimeAppDataController.prototype.deleteRecord = function (companyName, description, date, totH) {
         var companyObject = this.getCompany(companyName);
-        var descObject = this.getDescription(oldCompanyObject, description);
+        var descObject = this.getDescription(companyObject, description);
         var punchObject = this.getPunch(descObject, date, totH);
         this.removePunch(descObject, punchObject);
         this.verifyDesc(companyObject, descObject);

@@ -139,10 +139,7 @@
 
     <div data-role="content">
 
-
-
         <!-- Flip switch -->
-
 
         <div data-role="fieldcontain">
             <label for="toggle-notifications">Toggle notification:</label>
@@ -150,14 +147,13 @@
                 <option value="off">Off</option>
                 <option value="on">On</option>
             </select>
-        </div>
 
 
         <!-- Daypicker -->
 
 
 
-        <div data-role="fieldcontain">
+
             <fieldset data-role="controlgroup">
                 <legend>Notify on:</legend>
                 <input type="checkbox" name="monday" id="monday" class="custom" />
@@ -175,22 +171,20 @@
                 <input type="checkbox" name="sunday" id="sunday" class="custom" />
                 <label for="sunday">Sunday</label>
             </fieldset>
-        </div>
+
 
 
         <!-- Timepicker -->
 
-        <div data-role="fieldcontain">
+
             <label for="notification-time">Time:</label>
             <input type="time" id="notification-time" />
-        </div>
 
         <!-- Buttons -->
 
-        <div data-role="fieldcontain">
             <fieldset class="ui-grid-a">
-                <div class="ui-block-a"><button data-inline="false" data-icon="timeapp-cancel" onclick="redirectToSettings()">Cancel</button></div>
-                <div class="ui-block-b"><button data-inline="false" data-icon="timeapp-ok" onclick="saveNotificationSettings()">Ok</button></div>
+                <div class="ui-block-a"><button data-inline="false" data-icon="timeapp-cancel" onclick="redirectToSettings()">Abort</button></div>
+                <div class="ui-block-b"><button data-inline="false" data-icon="timeapp-ok" onclick="saveNotificationSettings()">Save</button></div>
             </fieldset>
 
         </div>

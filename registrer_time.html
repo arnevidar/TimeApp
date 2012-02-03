@@ -299,17 +299,6 @@
                 $("#hours_and_minutes").scroller('setDate', new Date(0,0,0,0,0,0,0), true);
             }
 
-            function addMockLine(jsonString) {
-                var jsonObject = JSON.parse(jsonString);
-                var company = jsonObject.company;
-                var description = jsonObject.description;
-                var hours = jsonObject.number_of_hours;
-                var kk ='<li> <a href="#add_details" onclick="editDetails()" data-ajax="false"> <h3>' + company + '</h3><p>' + description + " " + hours + '</p></a></li>';
-
-                $('#registered_hours_overview').append(kk);
-                $('#registered_hours_overview').listview('refresh');
-            }
-
             function addMockData() {
                 var daysData = tadc.getDataForDay(todaysDate);
                 var html = '';
@@ -350,7 +339,13 @@
            addMockData();
         });
 
+            function prevDay() {
+                changeDay(-1, true);
+            }
 
+            function nextDay() {
+                changeDay(1, false);
+            }
 
 
 
@@ -359,20 +354,30 @@
 
     </head>
     <body>
+
+        <!-- Display punches for a day -->
+
         <div data-role="page" id="register_hours">
 
-            <div data-role="content">
-                <h2 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h2>
-                <input type="date" data-role="datebox" id="mydate"
+            <!-- Add header -->
+
+            <div data-role="header" data-position="fixed">
+                <a href="#" data-icon="arrow-l" data-ajax="false" onclick="prevDay()">Prev</a>
+                <h3 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h3>
+                    <input type="date" data-role="datebox" id="mydate"
                        data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true}' />
+                <a href="#" data-icon="arrow-r" data-iconpos="right" data-ajax="false" onclick="nextDay()">Next</a>
+            </div>
 
-                <h2>Register hours</h2>
 
+            <div data-role="content">
+
+
+                <a href="#add_details" id="add_new_line" data-role="button">New punch!</a>
+                <br />
                 <ul data-role="listview" id="registered_hours_overview">
                 </ul>
 
-                <br />
-                <a href="#add_details" id="add_new_line" data-role="button">Add hours</a>
 
             </div>
             <!--Add footer from script -->
@@ -385,40 +390,29 @@
             <div data-role="content">
                 <form id="details_to_add">
                     <div data-role="fieldcontain">
-                        <select id="select_company" data-native-menu="false" value="Company">
-                        </select>
 
-                        <select id="select_description" data-native-menu="false" value="Description">
-                      </select>
-                    </div>
-
-                    <div data-role="fieldcontain">
+                        <label for="select_company"></label>
+                        <select id="select_company" data-native-menu="false" value="Company"></select>
+                        <br />
+                        <label for="select_description"></label>
+                        <select id="select_description" data-native-menu="false" value="Description"></select>
+                        <br />
+                        <label for="hours_and_minutes"></label>
                         <input type="text" id="hours_and_minutes" placeholder="Hours and minutes" disabled="true"/>
-                        <input id="first_day_after_vacation" type="date" placeholder="First day after vacation"
-                               style="display: none;"/>
-                    </div>
-                    <div data-role="controlgroup" data-type="horizontal">
-                        <a href="#" data-role="button" data-rel="back">Close</a>
-                        <a href="#" data-role="button" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="pushData()">Save</a>
+                        <label for="first_day_after_vacation"></label>
+                        <input id="first_day_after_vacation" type="date" placeholder="First day after vacation" style="display: none;"/>
+                        <br />
+                        <fieldset class="ui-grid-a">
+                            <div class="ui-block-a"><a href="#" data-role="button" data-rel="back">Back</a></div>
+                            <div class="ui-block-b"><a href="#" data-role="button" data-inline="false" data-icon="timeapp-ok" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="pushData()">Save</a></div>
+                        </fieldset>
+
                     </div>
                 </form>
                 <a href="#" id="new_description_link" style="display : none;"></a>
                 <a id="new_company_link" href="#" style="display: none;"></a>
                 <a id="vacation_date" href="#" style="display: none;"></a>
-                <a href="#" data-role="button" value="clear" onclick="resetFormValues()">Clear</a>
-                <input type="button" onclick="notifyMe()" value="notify"/>
-                <input type="date" id="notifyTime"/>
             </div>
         </div>
-
-
-    <script type="text/javascript">
-
-        function notifyMe() {
-
-            window.plugins.statusBarNotification.notify("Put your title here", "Put your message here");
-        }
-    </script>
-
     </body>
 </html>
