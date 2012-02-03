@@ -3,22 +3,25 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>Register hours</title>
+        <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
         <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
         <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css" />
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile.datebox.css" />
 
-        <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+
         <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.min.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
 
         <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.datebox.js"></script>
-        <script type="text/javascript" charset="utf-8">
+        <script type="text/javascript">
 
             function onDeviceReady() {
                 $(window).bind("scrollstop", function() {
@@ -28,7 +31,8 @@
 
             var todaysDate = new Date();
             var tadc = new TimeAppDataController();
-            tadc.loadData();
+            tadc.loadData(function() {}, function(err) {});
+
 
             $.mobile.changePage.defaults.allowSamePageTransition = true;
 
@@ -239,7 +243,7 @@
                 todaysDate = date;
                 $("#date_heading").html(date.toDateString());
                 removeDataInDayList();
-                addMockData();
+                //addMockData();
                 //kjør metode for å hente ut lagret data for denne dagen
             }
 
@@ -247,14 +251,23 @@
                 var company = $("#select_company option:selected").text();
                 var description = $("#select_description option:selected").text();
                 if(company !== "Vacation") {
-                    var number_of_hours = formatTime($("#hours_and_minutes").val());
+                    var number_of_hours = minuteToNumber($("#hours_and_minutes").val());
                     tadc.updatePunch(company, description, todaysDate, number_of_hours);
                 } else {
                     var dateAfterVacation = $("#first_day_after_vacation").val();
                 }
+
+                addMockData();
+                resetFormValues()
             }
 
-            function formatTime(time) {
+            /**
+             * Formats the value from the scroller wheel
+             * from hh:mm to hh.MM, h.MM if the first h is a zero.
+             * MM is the minutes in a
+             */
+
+            function minuteToNumber(time) {
                 var hours = time.slice(0,2);
                 var minutes = time.slice(3,5);
                 if(hours.slice(0,1) == 0) {
@@ -277,6 +290,9 @@
                 return hours + "." + minutes;
             }
 
+
+
+
             function resetFormValues() {
                 $('#select_company').val("Company").selectmenu('refresh');
                 $('#select_description').val('Description').selectmenu('refresh');
@@ -298,6 +314,7 @@
                 var daysData = tadc.getDataForDay(todaysDate);
                 var html = '';
                 var idCounter = 0;
+                $('#registered_hours_overview').empty();
                 for(var i =0; i<daysData.length; i++) {
                     html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
                             '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
@@ -335,6 +352,9 @@
 
 
 
+
+
+
         </script>
 
     </head>
@@ -351,13 +371,15 @@
                 <ul data-role="listview" id="registered_hours_overview">
                 </ul>
 
-                </br>
+                <br />
                 <a href="#add_details" id="add_new_line" data-role="button">Add hours</a>
 
             </div>
             <!--Add footer from script -->
             <script type="text/javascript" src="js/navbar.js"></script>
         </div>
+
+        <!-- Add punch -->
 
         <div data-role="page" id="add_details">
             <div data-role="content">
@@ -388,6 +410,7 @@
                 <input type="date" id="notifyTime"/>
             </div>
         </div>
+
 
     <script type="text/javascript">
 
