@@ -48,6 +48,7 @@
                         changeToSelectedDay(passed.date);
                     }
                 });
+                $('#new_date_heading').text("New " + todaysDate.toDateString());
             });
 
             $("#new_company_link").live("click", function() {
@@ -412,6 +413,11 @@
         <!-- Add punch -->
 
         <div data-role="page" id="add_details">
+
+            <div data-role="header" data-position="fixed">
+                <h3 id="new_date_heading" />
+            </div>
+
             <div data-role="content">
                 <form id="details_to_add">
                     <div data-role="fieldcontain">
