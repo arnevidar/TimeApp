@@ -10,7 +10,7 @@
 		// All widget options, including some internal runtime details
 		version: '1.0.0-2012011400', // jQMMajor.jQMMinor.DBoxMinor-YrMoDaySerial
 		theme: false,
-		defaultTheme: 'c',
+		defaultTheme: 'a',
 		pickPageTheme: 'b',
 		pickPageInputTheme: 'e',
 		pickPageButtonTheme: 'a',
@@ -21,6 +21,8 @@
 		pickPageTodayButtonTheme: 'e',
 		pickPageSlideButtonTheme: 'd',
 		pickPageFlipButtonTheme: 'b',
+        finishedDatesTheme: 'egen',
+        almostFinishedDatesTheme: 'nf',
 		forceInheritTheme: false,
 		centerWindow: false,
 		calHighToday: true,
@@ -95,9 +97,12 @@
 		blackDays: false,
 		blackDates: false,
 		enableDates: false,
+        finishedDates: false,
+        almostFinishedDates: false,
 		fixDateArrays: false,
 		durationSteppers: {'d': 1, 'h': 1, 'i': 1, 's': 1},
-		disabledDayColor: '#888',
+		disabledDayColor: '#808',
+        finishedDatesColor: '#080',
 		useLang: 'en',
 		lang: {
 			'en' : {
@@ -967,11 +972,11 @@
 			
 			calmode = {'today': -1, 'highlightDay': -1, 'presetDay': -1, 'nexttoday': 1,
 				'thisDate': new Date(), 'maxDate': new Date(), 'minDate': new Date(),
-				'currentMonth': false, 'weekMode': 0, 'weekDays': null, 'thisTheme': o.pickPageButtonTheme };
+				'currentMonth': false, 'weekMode': 0, 'weekDays': null, 'thisTheme': o.pickPageButtonTheme, 'finishedDay': -1 };
 			calmode.start = self._getFirstDay(self.theDate);
 			calmode.end = self._getLastDate(self.theDate);
 			calmode.lastend = self._getLastDateBefore(self.theDate);
-			calmode.presetDate = self._makeDate(self.input.val());	
+			calmode.presetDate = self._makeDate(self.input.val());
 						
 			if ( o.calStartDay !== false || typeof o.lang[o.useLang].calStartDay === "number" ) {
 				if ( o.calStartDay !== false ) {
@@ -983,7 +988,7 @@
 			}
 			
 			calmode.prevtoday = calmode.lastend - (calmode.start - 1);
-			calmode.checkDates = ( o.enableDates === false && ( o.afterToday !== false || o.beforeToday !== false || o.notToday !== false || o.maxDays !== false || o.minDays !== false || o.blackDates !== false || o.blackDays !== false ) );
+			calmode.checkDates = ( o.enableDates === false && ( o.afterToday !== false || o.beforeToday !== false || o.notToday !== false || o.maxDays !== false || o.minDays !== false || o.blackDates !== false || o.blackDays !== false || o.finishedDates !== false || o.almostFinishedDates !== false) );
 				
 			if ( calmode.thisDate.getMonth() === self.theDate.getMonth() && calmode.thisDate.getFullYear() === self.theDate.getFullYear() ) { calmode.currentMonth = true; calmode.highlightDay = calmode.thisDate.getDate(); } 
 			if ( self._checker(calmode.presetDate) === self._checker(self.theDate) ) { calmode.presetDay = calmode.presetDate.getDate(); }
@@ -1016,10 +1021,12 @@
 			}
 			
 			if ( o.fixDateArrays === true ) {
-				o.blackDates   = self._fixArray(o.blackDates);
-				o.highDates    = self._fixArray(o.highDates);
-				o.highDatesAlt = self._fixArray(o.highDatesAlt);
-				o.enableDates  = self._fixArray(o.enableDates);
+				o.blackDates            = self._fixArray(o.blackDates);
+				o.highDates             = self._fixArray(o.highDates);
+				o.highDatesAlt          = self._fixArray(o.highDatesAlt);
+				o.enableDates           = self._fixArray(o.enableDates);
+                o.finishedDates         = self._fixArray(o.finishedDates);
+                o.almostFinishedDates   = self._fixArray(o.almostFinishedDates);
 			}
 				
 			for ( gridWeek=0; gridWeek<=5; gridWeek++ ) {
@@ -1037,7 +1044,8 @@
 								if ( o.enableDates !== false ) {
 									if ( 
 										( $.inArray(self._isoDate(self.theDate.getFullYear(), (self.theDate.getMonth()), calmode.prevtoday), o.enableDates) > -1 ) ||
-										( $.inArray(self._isoDate(self.theDate.getFullYear(), (self.theDate.getMonth() + 2), calmode.nexttoday), o.enableDates) > -1 ) ) {
+										( $.inArray(self._isoDate(self.theDate.getFullYear(), (self.theDate.getMonth() + 2), calmode.nexttoday), o.enableDates) > -1 )
+                                        )  {
 											skipThis = false;
 									} else { skipThis = true; }
 								} else {
@@ -1113,8 +1121,8 @@
 								}
 							}
 							
-							if ( o.calHighPicked && calmode.today === calmode.presetDay ) { 
-								calmode.thisTheme = o.pickPageHighButtonTheme;
+							if ( o.calHighPicked && calmode.today === calmode.presetDay ) {
+                                calmode.thisTheme = o.pickPageHighButtonTheme;
 							} else if ( o.calHighToday && calmode.today === calmode.highlightDay ) {
 								calmode.thisTheme = o.pickPageTodayButtonTheme;
 							} else if ( $.isArray(o.highDatesAlt) && ($.inArray(self._isoDate(self.theDate.getFullYear(), self.theDate.getMonth()+1, calmode.today), o.highDatesAlt) > -1 ) ) {
@@ -1123,7 +1131,11 @@
 								calmode.thisTheme = o.pickPageOHighButtonTheme;
 							} else if ( $.isArray(o.highDays) && $.inArray(gridDay, o.highDays) > -1 ) {
 								calmode.thisTheme = o.pickPageODHighButtonTheme;
-							} else {
+                            } else if ( $.isArray(o.finishedDates) && ($.inArray(self._isoDate(self.theDate.getFullYear(), self.theDate.getMonth()+1, calmode.today), o.finishedDates) > -1 ) ) {
+                                calmode.thisTheme = o.finishedDatesTheme;
+                            } else if ( $.isArray(o.almostFinishedDates) && ($.inArray(self._isoDate(self.theDate.getFullYear(), self.theDate.getMonth()+1, calmode.today), o.almostFinishedDates) > -1 ) ) {
+                                calmode.thisTheme = o.almostFinishedDatesTheme;
+                            } else {
 								calmode.thisTheme = o.pickPageButtonTheme;
 							}
 							
@@ -1144,7 +1156,7 @@
 										self.input.trigger('datebox', {'method':'set', 'value':self._formatDate(self.theDate), 'date':self.theDate});
 										self.input.trigger('datebox', {'method':'close'});
 								})
-								.css((skipThis)?'color':'nocolor', o.disabledDayColor);
+                                .css((skipThis)?'color':'nocolor', o.disabledDayColor);
 							
 							calmode.today++;
 						}
@@ -2102,7 +2114,7 @@
 		this.input.trigger('datebox', {'method':'enable'});
 	},
 	_setOption: function( key, value ) {
-		var noReset = ['minYear','maxYear','afterToday','beforeToday','maxDays','minDays','highDays','highDates','blackDays','blackDates','enableDates'];
+		var noReset = ['minYear','maxYear','afterToday','beforeToday','maxDays','minDays','highDays','highDates','blackDays','blackDates','enableDates','finishedDates'];
 		$.Widget.prototype._setOption.apply( this, arguments );
 		if ( $.inArray(key, noReset) > -1 ) {
 			this._refresh();

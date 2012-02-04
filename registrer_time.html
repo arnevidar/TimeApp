@@ -24,6 +24,7 @@
         <script type="text/javascript">
 
             function onDeviceReady() {
+
                 $(window).bind("scrollstop", function() {
                     $.mobile.fixedToolbars.show(true);
                 });
@@ -343,6 +344,9 @@
             }
 
             function choseDate() {
+                $("#mydate").data('datebox').options.blackDates = ["2012-02-16", "2012-02-20", "2012-02-28", "2012-02-04", "2012-02-03", "2012-02-08", "2012-02-12", "2012-02-22", "2012-02-25"];
+                $("#mydate").data('datebox').options.finishedDates = ["2012-02-02", "2012-02-01", "2012-02-07"];
+                $("#mydate").data('datebox').options.almostFinishedDates = ["2012-02-03", "2012-02-05"];
                 $('#mydate').datebox('open');
             }
 
@@ -350,9 +354,11 @@
            addMockData();
         });
 
-
-
-
+        function completedDays() {
+            var array = new Array();
+            var date = new Date();
+            alert(date.toDateString());
+        }
 
 
         </script>
@@ -364,7 +370,7 @@
             <div data-role="content">
                 <h2 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h2>
                 <input type="date" data-role="datebox" id="mydate"
-                       data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true}' />
+                       data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true }' />
 
                 <h2>Register hours</h2>
 
