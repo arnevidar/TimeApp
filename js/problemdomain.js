@@ -6,17 +6,19 @@ function TimeAppDataController () {
 }
 
 TimeAppDataController.prototype.saveToFile = function (success, failure) {
-/*    p = new Persistence();
+    p = new Persistence();
     p.checkAndCreateTimeAppFolder(success, failure);
     p.writefile("timeappdata", JSON.stringify(this.companies), function(){},function(){alert("err2")});
- */
+
     localStorage.setItem("companies", JSON.stringify(this.companies));
 
 
 
 }
 
-
+TimeAppDataController.prototype.getLastWorkday = function() {
+    return new Date(this.companies[0].desc[0].punch[0].date);
+}
 
 TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescription, newDate, newTotH,
                                                        oldCompanyName, oldDescription, oldDate, oldTotH){
@@ -51,7 +53,7 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
 
 TimeAppDataController.prototype.deleteRecord = function (companyName, description, date, totH) {
         var companyObject = this.getCompany(companyName);
-        var descObject = this.getDescription(oldCompanyObject, description);
+        var descObject = this.getDescription(companyObject, description);
         var punchObject = this.getPunch(descObject, date, totH);
         this.removePunch(descObject, punchObject);
         this.verifyDesc(companyObject, descObject);
@@ -87,7 +89,15 @@ TimeAppDataController.prototype.verifyComp = function (company) {
 
 TimeAppDataController.prototype.getPunch = function (description, dateToFind, totH) {
     for (punchIndex in description.punch) {
-        if ((description.punch[punchIndex].totH = totH )&&(description.punch[punchIndex].totH = totH )) return description.punch[punchIndex];
+        var dateObjToFind = new Date(dateToFind);
+        var thisPunchDate = new Date(description.punch[punchIndex].date);
+        if ((description.punch[punchIndex].totH = totH )&&(description.punch[punchIndex].totH = totH )){
+            if ((dateObjToFind.getYear() == thisPunchDate.getYear()) &&
+                (dateObjToFind.getDate() == thisPunchDate.getDate()) &&
+                (dateObjToFind.getMonth() == thisPunchDate.getMonth())) {
+            return description.punch[punchIndex];
+            }
+        }
     }
 }
 
@@ -267,7 +277,8 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
     // startDate.getFullYear() startDate.getMonth() startDate.getDay()
 
     // find first instance of date
-    var companiesToInclude = [];
+    var companiesToInclude = this.companies
+    /*
     for (compIndex in this.companies) {
         companyDate = new Date(this.companies[compIndex].desc[0].punch[0].date);
         if (companyDate.getFullYear()<dateToFetch.getFullYear())  continue;
@@ -277,7 +288,7 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
             (companyDate.getMonth()==dateToFetch.getMonth())&&
             (companyDate.getDay()<dateToFetch.getDay())) continue;
         companiesToInclude.push(this.companies[compIndex]);
-    }
+    }*/
 
     var results = [];
     for (compIndex in companiesToInclude) {
@@ -286,7 +297,7 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
                 punchDate = new Date(companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].date);
                 if ((punchDate.getFullYear()==dateToFetch.getFullYear()) &&
                     (punchDate.getMonth()==dateToFetch.getMonth())&&
-                    (punchDate.getDay()==dateToFetch.getDay())) {
+                    (punchDate.getDate()==dateToFetch.getDate())) {
                     results.push({"date": companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].date,
                                   "name": companiesToInclude[compIndex].name,
                                   "desc": companiesToInclude[compIndex].desc[descIndex].description,
@@ -296,7 +307,6 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
             }
         }
     }
-
     return results;
     //return companiesToInclude.length;
     // find last instance of date

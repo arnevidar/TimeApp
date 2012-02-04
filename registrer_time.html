@@ -23,12 +23,17 @@
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.datebox.js"></script>
         <script type="text/javascript">
 
-            function onDeviceReady() {
+        document.addEventListener("backbutton", backKeyDown, true);
 
+            function onDeviceReady() {
                 $(window).bind("scrollstop", function() {
                     $.mobile.fixedToolbars.show(true);
                 });
+                navigator.app.overrideBackbutton(true);
+
             }
+
+            function backKeyDown() {}
 
             var todaysDate = new Date();
             var tadc = new TimeAppDataController();
@@ -43,6 +48,7 @@
                         changeToSelectedDay(passed.date);
                     }
                 });
+                $('#new_date_heading').text("New " + todaysDate.toDateString());
             });
 
             $("#new_company_link").live("click", function() {
@@ -222,9 +228,8 @@
                 todaysDate.setDate(todaysDate.getDate()+nextDay);
                 $("#date_heading").html(todaysDate.toDateString());
                 removeDataInDayList();
-                $.mobile.changePage( "#register_hours", {reverse: direction} );
+                $.mobile.changePage("#register_hours", {reverse: direction} );
                 addMockData();
-
             }
 
             function resetHoursAndMinutes() {
@@ -300,33 +305,42 @@
                 $("#hours_and_minutes").scroller('setDate', new Date(0,0,0,0,0,0,0), true);
             }
 
-            function addMockLine(jsonString) {
-                var jsonObject = JSON.parse(jsonString);
-                var company = jsonObject.company;
-                var description = jsonObject.description;
-                var hours = jsonObject.number_of_hours;
-                var kk ='<li> <a href="#add_details" onclick="editDetails()" data-ajax="false"> <h3>' + company + '</h3><p>' + description + " " + hours + '</p></a></li>';
-
-                $('#registered_hours_overview').append(kk);
-                $('#registered_hours_overview').listview('refresh');
-            }
-
             function addMockData() {
                 var daysData = tadc.getDataForDay(todaysDate);
                 var html = '';
                 var idCounter = 0;
-                $('#registered_hours_overview').empty();
-                for(var i =0; i<daysData.length; i++) {
-                    html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
-                            '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
-                            '<p id="description' + idCounter +'">' + daysData[i].desc + '</p>' +
-                            '<p id="hours'+ idCounter +'">' + daysData[i].totH +" hours" + '</p>' +
-                            '</a></li>';
-                    idCounter++;
+                if (daysData.length > 0){
+                    $('#copylastday').empty();
+                    for(var i =0; i<daysData.length; i++) {
+                        html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
+                                '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
+                                '<p id="description' + idCounter +'">' + daysData[i].desc + '</p>' +
+                                '<p id="hours'+ idCounter +'">' + daysData[i].totH +" hours" + '</p>' +
+                                '</a></li>';
+                        idCounter++;
 
-                    $('#registered_hours_overview').append(html);
-                    $('#registered_hours_overview').listview('refresh');
+                        $('#registered_hours_overview').append(html);
+                        $('#registered_hours_overview').listview('refresh');
+
                 }
+                }
+                else {
+                    $('#copylastday').empty();
+                    $('#copylastday').append('<button id="do" data-role="button" onclick="copyLastWorkday()">Copy last workday</button>');
+                    $('#copylastday').trigger( "create" );
+                }
+            }
+
+            function copyLastWorkday() {
+                var lastWorkday = tadc.getLastWorkday();
+                if (lastWorkday){
+                    var dataLastWorkday = tadc.getDataForDay(lastWorkday);
+                    alert("length: " + dataLastWorkday.length);
+                    for (i in dataLastWorkday) {
+                        tadc.updatePunch(dataLastWorkday[i].name, dataLastWorkday[i].desc, todaysDate, dataLastWorkday[i].totH);
+                    }
+                }
+                addMockData();
             }
 
 
@@ -354,31 +368,45 @@
            addMockData();
         });
 
-        function completedDays() {
-            var array = new Array();
-            var date = new Date();
-            alert(date.toDateString());
-        }
+            function prevDay() {
+                changeDay(-1, true);
+            }
+
+            function nextDay() {
+                changeDay(1, false);
+            }
+
+
 
 
         </script>
 
     </head>
     <body>
+
+        <!-- Display punches for a day -->
+
         <div data-role="page" id="register_hours">
 
+            <!-- Add header -->
+
+            <div data-role="header" data-position="fixed">
+                <a href="#" data-icon="arrow-l" data-ajax="false" onclick="prevDay()">Prev</a>
+                <h3 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h3>
+                    <input type="date" data-role="datebox" id="mydate"
+                       data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true}' />
+                <a href="#" data-icon="arrow-r" data-iconpos="right" data-ajax="false" onclick="nextDay()">Next</a>
+            </div>
+
+
             <div data-role="content">
-                <h2 id="date_heading" onclick="choseDate()"><script type="text/javascript">printDate()</script></h2>
-                <input type="date" data-role="datebox" id="mydate"
-                       data-options='{"mode" : "calbox","calStartDay" : 1, "noButton": true, "centerWindow":true, "useInlineHideInput":true }' />
 
-                <h2>Register hours</h2>
 
-                <ul data-role="listview" id="registered_hours_overview">
-                </ul>
-
+                <a href="#add_details" id="add_new_line" data-role="button">New punch!</a>
                 <br />
-                <a href="#add_details" id="add_new_line" data-role="button">Add hours</a>
+                <div id="copylastday"></div>
+
+                <ul data-role="listview" id="registered_hours_overview"></ul>
 
             </div>
             <!--Add footer from script -->
@@ -388,43 +416,37 @@
         <!-- Add punch -->
 
         <div data-role="page" id="add_details">
+
+            <div data-role="header" data-position="fixed">
+                <h3 id="new_date_heading" />
+            </div>
+
             <div data-role="content">
                 <form id="details_to_add">
                     <div data-role="fieldcontain">
-                        <select id="select_company" data-native-menu="false" value="Company">
-                        </select>
 
-                        <select id="select_description" data-native-menu="false" value="Description">
-                      </select>
-                    </div>
-
-                    <div data-role="fieldcontain">
+                        <label for="select_company"></label>
+                        <select id="select_company" data-native-menu="false" value="Company"></select>
+                        <br />
+                        <label for="select_description"></label>
+                        <select id="select_description" data-native-menu="false" value="Description"></select>
+                        <br />
+                        <label for="hours_and_minutes"></label>
                         <input type="text" id="hours_and_minutes" placeholder="Hours and minutes" disabled="true"/>
-                        <input id="first_day_after_vacation" type="date" placeholder="First day after vacation"
-                               style="display: none;"/>
-                    </div>
-                    <div data-role="controlgroup" data-type="horizontal">
-                        <a href="#" data-role="button" data-rel="back">Close</a>
-                        <a href="#" data-role="button" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="pushData()">Save</a>
+                        <label for="first_day_after_vacation"></label>
+                        <input id="first_day_after_vacation" type="date" placeholder="First day after vacation" style="display: none;"/>
+                        <br />
+                        <fieldset class="ui-grid-a">
+                            <div class="ui-block-a"><a href="#" data-role="button" data-rel="back">Back</a></div>
+                            <div class="ui-block-b"><a href="#" data-role="button" data-inline="false" data-icon="timeapp-ok" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="pushData()">Save</a></div>
+                        </fieldset>
+
                     </div>
                 </form>
                 <a href="#" id="new_description_link" style="display : none;"></a>
                 <a id="new_company_link" href="#" style="display: none;"></a>
                 <a id="vacation_date" href="#" style="display: none;"></a>
-                <a href="#" data-role="button" value="clear" onclick="resetFormValues()">Clear</a>
-                <input type="button" onclick="notifyMe()" value="notify"/>
-                <input type="date" id="notifyTime"/>
             </div>
         </div>
-
-
-    <script type="text/javascript">
-
-        function notifyMe() {
-
-            window.plugins.statusBarNotification.notify("Put your title here", "Put your message here");
-        }
-    </script>
-
     </body>
 </html>
