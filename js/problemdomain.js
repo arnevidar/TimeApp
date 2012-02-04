@@ -23,6 +23,10 @@ TimeAppDataController.prototype.getLastWorkday = function() {
 TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescription, newDate, newTotH,
                                                        oldCompanyName, oldDescription, oldDate, oldTotH){
 
+    if (newCompanyName.trim().toLowerCase() == "company" || newCompanyName.trim() == "") return;
+    if (newDescription.trim().toLowerCase() == "description" || newDescription.trim() == "") return;
+    if (newTotH == 0) return;
+
     if ((oldCompanyName)&&
         (oldDescription)&&
         (oldDate)&&
@@ -35,6 +39,7 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
             this.verifyDesc(oldCompanyObject, oldDescObject);
             this.verifyComp(oldCompanyObject);
     }
+
 
 
     var companyObject = this.getCompany(newCompanyName);
