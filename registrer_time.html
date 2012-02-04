@@ -23,11 +23,17 @@
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.datebox.js"></script>
         <script type="text/javascript">
 
+        document.addEventListener("backbutton", backKeyDown, true);
+
             function onDeviceReady() {
                 $(window).bind("scrollstop", function() {
                     $.mobile.fixedToolbars.show(true);
                 });
+                navigator.app.overrideBackbutton(true);
+
             }
+
+            function backKeyDown() {}
 
             var todaysDate = new Date();
             var tadc = new TimeAppDataController();
@@ -221,9 +227,8 @@
                 todaysDate.setDate(todaysDate.getDate()+nextDay);
                 $("#date_heading").html(todaysDate.toDateString());
                 removeDataInDayList();
-                $.mobile.changePage( "#register_hours", {reverse: direction} );
+                $.mobile.changePage("#register_hours", {reverse: direction} );
                 addMockData();
-
             }
 
             function resetHoursAndMinutes() {
@@ -303,18 +308,38 @@
                 var daysData = tadc.getDataForDay(todaysDate);
                 var html = '';
                 var idCounter = 0;
-                $('#registered_hours_overview').empty();
-                for(var i =0; i<daysData.length; i++) {
-                    html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
-                            '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
-                            '<p id="description' + idCounter +'">' + daysData[i].desc + '</p>' +
-                            '<p id="hours'+ idCounter +'">' + daysData[i].totH +" hours" + '</p>' +
-                            '</a></li>';
-                    idCounter++;
+                if (daysData.length > 0){
+                    $('#copylastday').empty();
+                    for(var i =0; i<daysData.length; i++) {
+                        html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
+                                '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
+                                '<p id="description' + idCounter +'">' + daysData[i].desc + '</p>' +
+                                '<p id="hours'+ idCounter +'">' + daysData[i].totH +" hours" + '</p>' +
+                                '</a></li>';
+                        idCounter++;
 
-                    $('#registered_hours_overview').append(html);
-                    $('#registered_hours_overview').listview('refresh');
+                        $('#registered_hours_overview').append(html);
+                        $('#registered_hours_overview').listview('refresh');
+
                 }
+                }
+                else {
+                    $('#copylastday').empty();
+                    $('#copylastday').append('<button id="do" data-role="button" onclick="copyLastWorkday()">Copy last workday</button>');
+                    $('#copylastday').trigger( "create" );
+                }
+            }
+
+            function copyLastWorkday() {
+                var lastWorkday = tadc.getLastWorkday();
+                if (lastWorkday){
+                    var dataLastWorkday = tadc.getDataForDay(lastWorkday);
+                    alert("length: " + dataLastWorkday.length);
+                    for (i in dataLastWorkday) {
+                        tadc.updatePunch(dataLastWorkday[i].name, dataLastWorkday[i].desc, todaysDate, dataLastWorkday[i].totH);
+                    }
+                }
+                addMockData();
             }
 
 
@@ -375,9 +400,9 @@
 
                 <a href="#add_details" id="add_new_line" data-role="button">New punch!</a>
                 <br />
-                <ul data-role="listview" id="registered_hours_overview">
-                </ul>
+                <div id="copylastday"></div>
 
+                <ul data-role="listview" id="registered_hours_overview"></ul>
 
             </div>
             <!--Add footer from script -->
