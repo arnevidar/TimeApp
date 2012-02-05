@@ -33,8 +33,15 @@
             }
 
             function backKeyDown() {}
+            var todaysDate = 0;
+            if (localStorage.getItem("backDate")) {
+                todaysDate = new Date(localStorage.getItem("backDate"));
+                localStorage.removeItem("backDate");
+            }
+            else {
 
-            var todaysDate = new Date();
+                todaysDate = new Date();
+            }
             var tadc = new TimeAppDataController();
             tadc.loadData(function() {}, function(err) {});
 
@@ -108,7 +115,7 @@
             $("#add_details").live("pageinit", function() {
                 var last7UsedCompanies = tadc.get7companies();
                 $("#select_company").children('option').remove();
-                $('<option data-placeholder="Company">Company</option>').appendTo($("#select_company"));
+                $('<option data-placeholder="true">Select Company</option>').appendTo($("#select_company"));
                 $('<option value="new_company_option">Add a new company</option>').appendTo($("#select_company"));
                 $('<option value="Internal">Internal</option>').appendTo($("#select_company"));
                 for(var i = 0; i < last7UsedCompanies.length; i++) {
@@ -126,7 +133,7 @@
                 if(companyName === "Add a new company") {
                     $("#new_company_link").click();
                 }
-                else if(companyName !== "Company") {
+                else if(companyName !== "Select Company") {
                     get7LastDescriptions(companyName);
                 }
             });
@@ -159,20 +166,11 @@
             });
 
 
-            $("#add_details").live("pageinit", function() {
-                $("#first_day_after_vacation").scroller({preset : 'date',
-                    onSelect: function(valueText, inst) {
-                        $("#save_hours_btn").removeClass("ui-disabled ");
-
-                    },
-                    beforeShow: function(input, inst) {
-
-                    }
-                })
-            });
 
 
-            $("#add_details").live("pageinit", function() {
+            $("#add_details").live("pageinit", bindTimeSelectorToForm);
+
+            function bindTimeSelectorToForm (){
                 var Adate = new Date(0,0,0,0,0,0,0);
                 $("#hours_and_minutes").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
                     stepMinute: 15, ampm: false, timeFormat : 'HH:ii',
@@ -181,13 +179,29 @@
                     }
                 });
                 $("#hours_and_minutes").scroller('setDate', Adate, true);
-            });
+            }
+
+
+             function bindDateSelectorToForm () {
+                var Adate = new Date(todaysDate);
+                $("#hours_and_minutes").scroller({preset : 'date', dateFormat: 'yyyy/mm/dd',
+                 onSelect: function(valueText, inst) {
+                        $("#save_hours_btn").removeClass("ui-disabled ");
+
+                    },
+                    beforeShow: function(input, inst) {
+                    }
+                });
+                $("#hours_and_minutes").scroller('setDate', Adate, true);
+
+            }
+
 
 
             function get7LastDescriptions(companyName) {
                 var descriptions = tadc.get7descriptions(companyName);
                 $("#select_description").children('option').remove();
-                $('<option data-placeholder="Description">Description</option>').appendTo($("#select_description"));
+                $('<option data-placeholder="true">Select Description</option>').appendTo($("#select_description"));
                 $('<option value="new_description_option">Add new description</option>').appendTo($("#select_description"));
                 if(descriptions !== null) {
                     for(var i = 0; i < descriptions.length; i++) {
@@ -196,29 +210,32 @@
                     }
 
                 }
-                $('#select_description').val("Description").selectmenu('refresh');
+                $('#select_description').val("Select Description").selectmenu('refresh');
             }
 
 
 
             $("#select_description").live("change", function() {
                 var desc = $("#select_description option:selected").text();
-                if(desc === "Day off" || desc === "Time off") {
+                if(desc == "Day off" || desc == "Time off") {
                     $("#hours_and_minutes").show();
-                    $("#first_day_after_vacation").hide();
+                    //$("#first_day_after_vacation").hide();
                     var fullDay = new Date();
                     fullDay.setHours(7);
                     fullDay.setMinutes(30);
                     $("#hours_and_minutes").scroller('setDate', fullDay, true);
                     $("#hours_and_minutes").scroller('destroy');
                     $("#save_hours_btn").removeClass("ui-disabled ");
-                } else if(desc === "Add new description") {
+                } else if(desc == "Add new description") {
                     $("#new_description_link").click();
-                } else if(desc === "Vacation") {
-                    $("#hours_and_minutes").hide();
-                    $("#first_day_after_vacation").show();
+                } else if(desc == "Vacation") {
+                    $("#hours_and_minutes").prop("disabled", false).show();
+                    //$("#hours_and_minutes").hide();
+                    //$("#first_day_after_vacation").show();
+                    bindDateSelectorToForm();
                 } else {
-                    $("#first_day_after_vacation").hide();
+                    bindTimeSelectorToForm();
+                    //$("#first_day_after_vacation").hide();
                     $("#hours_and_minutes").prop("disabled", false).show();
                 }
             });
@@ -256,13 +273,13 @@
             function pushData(formObject) {
                 var company = $("#select_company option:selected").text();
                 var description = $("#select_description option:selected").text();
-                if(company !== "Vacation") {
+                if(description != "Vacation") {
                     var number_of_hours = minuteToNumber($("#hours_and_minutes").val());
                     tadc.updatePunch(company, description, todaysDate, number_of_hours);
                 } else {
-                    var dateAfterVacation = $("#first_day_after_vacation").val();
+                    var dateAfterVacation = $("#hours_and_minutes").val();
+                    tadc.addVacation(company, description, todaysDate, dateAfterVacation);
                 }
-
                 addMockData();
                 resetFormValues()
             }
@@ -300,8 +317,8 @@
 
 
             function resetFormValues() {
-                $('#select_company').val("Company").selectmenu('refresh');
-                $('#select_description').val('Description').selectmenu('refresh');
+                $('#select_company').val("Select Company").selectmenu('refresh');
+                $('#select_description').val('Select Description').selectmenu('refresh');
                 $("#hours_and_minutes").scroller('setDate', new Date(0,0,0,0,0,0,0), true);
             }
 
@@ -426,15 +443,13 @@
                     <div data-role="fieldcontain">
 
                         <label for="select_company"></label>
-                        <select id="select_company" data-native-menu="false" value="Company"></select>
+                        <select id="select_company" data-native-menu="false" value="Select Company"></select>
                         <br />
                         <label for="select_description"></label>
-                        <select id="select_description" data-native-menu="false" value="Description"></select>
+                        <select id="select_description" data-native-menu="false" value="Select Description"></select>
                         <br />
                         <label for="hours_and_minutes"></label>
                         <input type="text" id="hours_and_minutes" placeholder="Hours and minutes" disabled="true"/>
-                        <label for="first_day_after_vacation"></label>
-                        <input id="first_day_after_vacation" type="date" placeholder="First day after vacation" style="display: none;"/>
                         <br />
                         <fieldset class="ui-grid-a">
                             <div class="ui-block-a"><a href="#" data-role="button" data-rel="back" onclick="resetFormValues()">Back</a></div>

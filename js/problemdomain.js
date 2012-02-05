@@ -20,11 +20,30 @@ TimeAppDataController.prototype.getLastWorkday = function() {
     return new Date(this.companies[0].desc[0].punch[0].date);
 }
 
+TimeAppDataController.prototype.addVacation = function(newCompanyName, newDescription, startDate, endDate)
+{
+    var endDateObj = new Date(endDate);
+    var startDateObj = new Date(startDate);
+    endDateObj.setHours(startDateObj.getHours());
+    endDateObj.setMinutes(startDateObj.getMinutes());
+//    alert(endDateObj.getDate()-startDateObj.getDate());
+
+    for (;startDateObj<endDateObj;) {
+        this.updatePunch(newCompanyName, newDescription, startDateObj, 8.0);
+        startDateObj.setDate(startDateObj.getDate()+1);
+    }
+    this.updatePunch(newCompanyName, newDescription, startDateObj, 8.0);
+    alert(startDateObj.toLocaleString());
+}
+
 TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescription, newDate, newTotH,
                                                        oldCompanyName, oldDescription, oldDate, oldTotH){
 
-    if (newCompanyName.trim().toLowerCase() == "company" || newCompanyName.trim() == "") return;
-    if (newDescription.trim().toLowerCase() == "description" || newDescription.trim() == "") return;
+    // todo onFailure
+    if (newCompanyName.trim().toLowerCase() == "select company" || newCompanyName.trim() == "") return;
+    if (newCompanyName.trim().toLowerCase() == "add a new company" || newCompanyName.trim() == "") return;
+    if (newDescription.trim().toLowerCase() == "select description" || newDescription.trim() == "") return;
+    if (newDescription.trim().toLowerCase() == "add new description" || newDescription.trim() == "") return;
     if (newTotH == 0) return;
 
     if ((oldCompanyName)&&
@@ -222,8 +241,11 @@ TimeAppDataController.prototype.loadData = function (onSuccess, onFailure) {
         onSuccess();
     }
     else {
-        onFailure();
-        this.loadMockData();
+        alert("ingen local storage?");
+        //var p = new Persistence();
+        //this.companies = JSON.parse(p.readfile("timeappdata", function(){},function(){alert("err2")}));
+        //onFailure();
+        //this.loadMockData();
     }
 /*
     var p = new Persistence();
@@ -245,23 +267,23 @@ TimeAppDataController.prototype.loadMockData = function () {
     var dnb_koding = this.addDescription(dnb, "dnbkoding");
     var dnb_date = this.getTodaysDate();
     dnb_date.setDate(dnb_date.getDate());
-    var dnb_koding_punch = this.addPunch(dnb_koding, dnb_date, 2);
+    var dnb_koding_punch = this.addPunch(dnb_koding, dnb_date, 2.0);
 
     var obs = this.addCompany("OBS");
     var obs_koding = this.addDescription(obs, "obskoding");
     var obs_date = this.getTodaysDate();
     obs_date.setDate(obs_date.getDate()-1)
-    var obs_koding_punch = this.addPunch(obs_koding, obs_date, 3);
+    var obs_koding_punch = this.addPunch(obs_koding, obs_date, 3.0);
 
     var obs_koding2 = this.addDescription(obs, "obskoding2");
-    var obs_koding_punch = this.addPunch(obs_koding2, obs_date, 4);
+    var obs_koding_punch = this.addPunch(obs_koding2, obs_date, 4.0);
 
     var obs_koding3 = this.addDescription(obs, "obskoding3");
-    var obs_koding_punch = this.addPunch(obs_koding3, obs_date, 5);
+    var obs_koding_punch = this.addPunch(obs_koding3, obs_date, 5.0);
 
     var aba = this.addCompany("ABA");
     var aba_koding = this.addDescription(aba, "adakoding");
-    var aba_koding_punch = this.addPunch(aba_koding, dnb_date, 10);
+    var aba_koding_punch = this.addPunch(aba_koding, dnb_date, 10.0);
 
     localStorage.setItem("companies", JSON.stringify(this.companies));
 }
