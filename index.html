@@ -20,55 +20,19 @@
     //
     document.addEventListener("deviceready", onDeviceReady, false);
      
-<<<<<<< Updated upstream
-=======
-    // PhoneGap is ready
->>>>>>> Stashed changes
-  
-  
-       /* var tadc = new TimeAppDataController();
-        tadc.loadData(
-          function() {
-            window.location.href = "registrer_time.html";
-                },
-          function(){
-            alert("Unable to load data!\nPlease restart the application.");
-        }); 
 
-*/
-        function notifyMe() {
-            window.plugins.statusBarNotification.dailyNoti();
-        }
-
-        function choseDate() {
-            $('#mydate').datebox('open');
-        }
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
-  
+ 
     
     var tadc = 0;
     function onDeviceReady() {
         window.plugins.statusBarNotification.sendMail();
         window.plugins.statusBarNotification.dailyNoti();
-         // $(window).bind("scrollstop", function() {
-         //   $.mobile.fixedToolbars.show(true);
-        //}); 
-    
-   
         tadc = new TimeAppDataController();
     }
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
-
-        function clearAllData(){
+    function clearAllData(){
             tadc.companies.length = 0;
             tadc.saveToFile(function() {alert("del ok");}, function() {alert("err saving file");});
-        }
+    }
 	  
     </script>  
   </head>
@@ -80,29 +44,24 @@
                <h1> Header Content </h1> 
                    
           </div>
-         
+                              
           <div data-role="content"> 
                <p> Main Page Content </p>
             <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a><br/>
 
             <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br />
             <a href="CalendarView.html" data-ajax="false">Calendar</a>
-          </div>
-         <input type="button" onclick="notifyMe()" value="notify"/>
+            <input type="button" onclick="notifyMe()" value="notify"/>
 
-<<<<<<< Updated upstream
-         <input type="button" onclick="sendMail()" value="Send mail"/>
+            <input type="button" onclick="sendMail()" value="Send mail"/>
 
-=======
->>>>>>> Stashed changes
-            <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a>
             <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()">Clear all data!</a>
           </div>
 
 		<div data-role="footer" data-position="fixed">
 			<div data-role="navbar">
 				<ul>
-			
+			  
 				<li><a href="index.html" data-icon="home" data-ajax="false">Overview</a></li>
 					<li><a href="registrer_time.html" data-icon="plus" data-ajax="false">Add hours</a> </li>
 					<li><a href="settings.html" data-icon="gear" data-ajax="false">Settings</a></li>

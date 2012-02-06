@@ -45,7 +45,7 @@
                 var tadc = new TimeAppDataController();
                 tadc.addCompany("Acando");
                 tadc.addDescription(tadc.companies[0], "Code");
-                tadc.addPunch(tadc.companies[0].desc[0], new Date(2012,0,1), 8);
+                tadc.addPunch(tadc.companies[0].desc[0], new Date(2012,0,1), "8.0");
                 deepEqual(tadc.companies[0].desc[0].punch[0].date, Date.parse(tadc.createDate(new Date(2012,0,1))), "timeapp...date = date");
             });
 
@@ -57,10 +57,10 @@
                 var timeapp = new TimeAppDataController();
                 timeapp.addCompany("Acando");
                 timeapp.addDescription(timeapp.companies[0], "Code");
-                timeapp.addPunch(timeapp.companies[0].desc[0], new Date(2012,0,1), 8);
+                timeapp.addPunch(timeapp.companies[0].desc[0], new Date(2012,0,1), "8.0");
                 var timeappString = JSON.stringify(timeapp.companies);
                 var timeappObj = new TimeAppDataController();
-                timeappObj.companies = JSON.parse(timeappString);;
+                timeappObj.companies = JSON.parse(timeappString);
                 deepEqual(timeappObj.companies, timeapp.companies, "Equal check");
 
                 timeapp.addCompany("DNB");
@@ -79,34 +79,34 @@
                 var tadc = new TimeAppDataController();
                 var dnb = tadc.addCompany("DNB");
                 var dnb_koding = tadc.addDescription(dnb, "dnbkoding");
-                var dnb_koding_punch = tadc.addPunch(dnb_koding, changeDate, 3);
+                var dnb_koding_punch = tadc.addPunch(dnb_koding, changeDate, "3.0");
 
                 var obs = tadc.addCompany("OBS");
                 var obs_koding = tadc.addDescription(obs, "obskoding");
 
                 changeDate.setDate(playDate.getDate()-2);
-                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, 9);
+                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, "9.0");
 
                 changeDate.setDate(playDate.getDate()-3);
-                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, 8);
+                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, "8.0");
 
                 changeDate.setDate(playDate.getDate()-4);
-                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, 7);
+                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, "7.0");
 
                 changeDate.setDate(playDate.getDate()-2);
                 var obs_koding2 = tadc.addDescription(obs, "obskoding2");
-                var obs_koding_punch = tadc.addPunch(obs_koding2, changeDate, 6);
+                var obs_koding_punch = tadc.addPunch(obs_koding2, changeDate, "6.0");
 
                 changeDate.setDate(playDate.getDate()-3);
                 var obs_koding3 = tadc.addDescription(obs, "obskoding3");
-                var obs_koding_punch = tadc.addPunch(obs_koding3, changeDate, 5);
+                var obs_koding_punch = tadc.addPunch(obs_koding3, changeDate, "5.0");
 
                 var aba = tadc.addCompany("ABA");
                 var aba_koding = tadc.addDescription(aba, "adakoding");
-                changeDate.setDate(playDate.getDate());
-                var aba_koding_punch = tadc.addPunch(aba_koding, changeDate, 4);
+                changeDate.setDate(playDate.getDate()-1);
+                var aba_koding_punch = tadc.addPunch(aba_koding, changeDate, "4.0");
 
-                var correctOrder = [dnb.name, obs.name, aba.name];
+                var correctOrder = [dnb.name, aba.name ,obs.name];
                 deepEqual(tadc.get7companies(), correctOrder, "Verify sort and get companies");
 
             });
@@ -134,35 +134,46 @@
 */
 
             test("Get data for a specific date", function () {
+                var playDate = new Date();
+                var changeDate = new Date();
+                changeDate.setDate(playDate.getDate());
                 var tadc = new TimeAppDataController();
-                tadc.loadData();
+                var dnb = tadc.addCompany("DNB");
+                var dnb_koding = tadc.addDescription(dnb, "dnbkoding");
+                var dnb_koding_punch = tadc.addPunch(dnb_koding, changeDate, "3.0");
+
+                var obs = tadc.addCompany("OBS");
+                var obs_koding = tadc.addDescription(obs, "obskoding");
+
+                changeDate.setDate(playDate.getDate()-1);
+                var obs_koding_punch = tadc.addPunch(obs_koding, changeDate, "9.0");
+
                 var today = tadc.getDataForDay(new Date());
-                var result = [  {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": 10},
-                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": 2}]
+                var result = [  {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": "3.0"}]
                 deepEqual(today, result, "got all data");
             });
 
 
             test("Update company info", function () {
                 var tadc = new TimeAppDataController();
-                tadc.updatePunch("DNB", "dnbkoding", tadc.getTodaysDate(), 2);
-                tadc.updatePunch("ABA", "adakoding", tadc.getTodaysDate(), 10);
+                tadc.updatePunch("DNB", "dnbkoding", tadc.getTodaysDate(), "2.0");
+                tadc.updatePunch("ABA", "adakoding", tadc.getTodaysDate(), "10.0");
                 var today = tadc.getDataForDay(new Date());
-                var result = [  {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": 10},
-                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": 2}]
+                var result = [  {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": "10.0"},
+                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": "2.0"}]
                 deepEqual(today, result, "got all data");
-                tadc.updatePunch("DNB", "dnbkoding2", tadc.getTodaysDate(), 3);
+                tadc.updatePunch("DNB", "dnbkoding2", tadc.getTodaysDate(), "3.0");
                 today = tadc.getDataForDay(new Date());
-                result = [      {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": 10},
-                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": 2},
-                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding2", "totH": 3}                                  ]
+                result = [      {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": "10.0"},
+                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": "2.0"},
+                                {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding2", "totH": "3.0"}                                  ]
                 deepEqual(today, result, "got all data");
-                tadc.updatePunch("DNB", "DNBnykoding", tadc.getTodaysDate(), 5,
-                                 "DNB", "dnbkoding2", tadc.getTodaysDate(), 3);
+                tadc.updatePunch("DNB", "DNBnykoding", tadc.getTodaysDate(), "5.0",
+                                 "DNB", "dnbkoding2", tadc.getTodaysDate(), "3.0");
                 today = tadc.getDataForDay(new Date());
-                result = [      {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": 10},
-                    {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "DNBnykoding", "totH": 5},
-                    {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": 2}                                              ]
+                result = [      {"date": Date.parse(tadc.getTodaysDate()), "name": "ABA", "desc": "adakoding", "totH": "10.0"},
+                    {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "DNBnykoding", "totH": "5.0"},
+                    {"date": Date.parse(tadc.getTodaysDate()), "name": "DNB", "desc": "dnbkoding", "totH": "2.0"}                                              ]
                 deepEqual(today, result, "got all data");
             });
             
@@ -216,7 +227,7 @@
                var pers = new Persistence();
                //pers.checkAndCreateTimeAppFolder();
                var tadc = new TimeAppDataController();
-               tadc.loadData();
+               tadc.loadData(function () {}, function () {});
                pers.writefile("qunit", JSON.stringify(tadc.companies), function() {
                 ok(true, "file written ok");
                 start();
@@ -231,7 +242,7 @@
                //pers.checkAndCreateTimeAppFolder();
                var tadc = new TimeAppDataController();
                var tadc2 = new TimeAppDataController();
-               tadc.loadData();
+               tadc.loadData(function() {}, function () {});
                pers.readfile("qunit", function(content) {
                 tadc2.companies = JSON.parse(content);
                 ok(true, "file read ok");
