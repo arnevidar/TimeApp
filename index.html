@@ -20,8 +20,6 @@
     //
     document.addEventListener("deviceready", onDeviceReady, false);
 
-  
-  
        /* var tadc = new TimeAppDataController();
         tadc.loadData(
           function() {
@@ -55,10 +53,19 @@
     }
 
 
-        function clearAllData(){
+
+ 
+    
+    var tadc = 0;
+    function onDeviceReady() {
+       // window.plugins.statusBarNotification.sendMail();
+        window.plugins.statusBarNotification.dailyNoti();
+        tadc = new TimeAppDataController();
+    }
+    function clearAllData(){
             tadc.companies.length = 0;
             tadc.saveToFile(function() {alert("del ok");}, function() {alert("err saving file");});
-        }
+    }
 	  
     </script>  
   </head>
@@ -70,24 +77,23 @@
                <h1> Header Content </h1> 
                    
           </div>
-         
+                              
           <div data-role="content"> 
                <p> Main Page Content </p>
             <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a><br/>
 
             <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br />
             <a href="CalendarView.html" data-ajax="false">Calendar</a>
+
+              <input type="button" onclick="notifyMe()" value="notify"/>
+
+              <input type="button" onclick="sendMail()" value="Send mail"/>
+              <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()">Clear all data!</a>
+
           </div>
-
-         <input type="button" onclick="notifyMe()" value="notify"/>
-
-            <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a>
-            <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()">Clear all data!</a>
 
         <script type="text/javascript" src="js/navbar.js"></script>
      </div>
-
-
 
   </body>
 </html>
