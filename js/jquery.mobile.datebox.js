@@ -101,7 +101,7 @@
         almostFinishedDates: false,
 		fixDateArrays: false,
 		durationSteppers: {'d': 1, 'h': 1, 'i': 1, 's': 1},
-		disabledDayColor: '#808',
+		disabledDayColor: '#888',
         finishedDatesColor: '#080',
 		useLang: 'en',
 		lang: {

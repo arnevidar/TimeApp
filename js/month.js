@@ -167,6 +167,38 @@ function clearWeekNr() {
 }
 
 
-function getTotalRegisteredHoursInWeek() {
-    return 30;
+/**
+ * The dates that get sent to the calendarView has to be in this format.
+ */
+function toISODate(y,m,d) {
+    // Return an ISO 8601 date (yyyy-mm-dd)
+    return String(y) + '-' + (( m < 10 ) ? "0" : "") + String(m) + '-' + ((d < 10 ) ? "0" : "") + String(d);
+}
+
+/**
+ * FINISH THESE METHODS!
+ */
+
+function getTotalRegisteredHoursInWeek(startDate, endDate) {
+    var duration = endDate - startDate;
+    var totalHours = 0;
+    for( i = 0; i < duration; i++ ) {
+        //Do the getting and calculations
+    }
+    return totalHours;
+}
+
+function getTotalRegisteredHoursForDay(date) {
+    var days = TimeAppDataController().getTotH(date);
+    return days;
+}
+
+function getFinishedDates(month) {
+    var finishedDates = new Array();
+    return finishedDates;
+}
+
+function notFinishedDates(month) {
+    var notFinishedDates = new Array();
+    return notFinishedDates;
 }

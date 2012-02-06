@@ -114,6 +114,40 @@ TimeAppDataController.prototype.getCompany = function (companyName) {
     }
 }
 
+TimeAppDataController.prototype.getTotHDay = function(dateToFetch) {
+    var totalHours = 0;
+    //var startDate = this.createDate(dateToFetch);
+    // startDate.getFullYear() startDate.getMonth() startDate.getDay()
+
+    // find first instance of date
+    var startDate = this.createDate(dateToFetch);
+    // startDate.getFullYear() startDate.getMonth() startDate.getDay()
+
+    // find first instance of date
+    var companiesToInclude = this.companies;
+    for (compIndex in companiesToInclude) {
+        for (descIndex in companiesToInclude[compIndex].desc) {
+            for (punchIndex in companiesToInclude[compIndex].desc[descIndex].punch){
+                punchDate = new Date(companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].date);
+                if ((punchDate.getFullYear()==dateToFetch.getFullYear()) &&
+                    (punchDate.getMonth()==dateToFetch.getMonth())&&
+                    (punchDate.getDate()==dateToFetch.getDate())) {
+                    totalHours += companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].totH;
+                }
+            }
+        }
+    }
+    return totalHours;
+}
+
+TimeAppDataController.prototype.getTotHWeek = function(startDate, endDate) {
+    var totalHours = 0;
+    var diff = endDate - startDate;
+    for( j = startDate; j < diff; j++ ) {
+        totalHours += this.getTotHDay(j);
+    }
+    return totalHours;
+}
 
 
 TimeAppDataController.prototype.addCompany = function (name){
@@ -311,7 +345,6 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
     //return companiesToInclude.length;
     // find last instance of date
     //var lastInstance;
-
 }
 
 TimeAppDataController.prototype.getTodaysDate = function () {
@@ -325,4 +358,3 @@ TimeAppDataController.prototype.createDate = function (orgRate) {
     var onlyDate = new Date(orgRate.getFullYear(), orgRate.getMonth(), orgRate.getDate(), 13);
     return onlyDate;
 }
-

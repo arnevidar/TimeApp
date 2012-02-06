@@ -12,16 +12,22 @@
     <script type="text/javascript" src="js/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" src="js/month.js"></script>
+    <script type="text/javascript" src="js/problemdomain.js"></script>
     <script type="text/javascript">
-        var currentMonth = localStorage.getItem("month");
+        var tadc = new TimeAppDataController();
+        var currentMonth = localStorage.getItem("Month");
 
+        tadc.loadData(function() {}, function(err) {});
         $("#monthview").live("pageinit",function() {
+
             var month = printMonthName(currentMonth);
             var year = new Date().getFullYear();
             $("#monthname").html(month + " " +year);
         });
 
-        
+        var tt = tadc.getDataForDay(new Date(2012, 1, 4));
+        alert(tt);
+
         function printWeeksToView(month, y) {
             if(y == null) {
                 var weeksInMonth = getWeeksInMonth(month);
@@ -38,6 +44,7 @@
                         'onclick="storeWeekNr('+weeksInMonth[i]+'); sendIndex('+i+')">';
                 html += '<h3 id="element">Week '+ weeksInMonth[i]+':'+'</h3>';
                 html += '<p>'+localStorage.getItem('weekArray'+weeksInMonth[i])+'</p>';
+                html += '<span class="ui-li-count ui-btn-up-c ui-btn-corner-all">'+tadc.getTotHDay(new Date(2012, 1, 5))+'</span>';
                 html += '</a>';
                 html += '</li>';
                 //id = document.getElementById(weeksInMonth[i]).value;
@@ -45,6 +52,9 @@
                 //alert(id);
             }
         }
+
+
+
     </script>
 </head>
 <body>

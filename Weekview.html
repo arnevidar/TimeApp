@@ -12,11 +12,11 @@
     <script type="text/javascript" src="js/jquery-1.7.1.js"></script>
     <script type="text/javascript" src="js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" src="js/month.js"></script>
+    <script type="text/javascript" src="js/problemdomain.js"></script>
     <script type="text/javascript">
-        var index = localStorage.getItem("index");
         var weekNr = localStorage.getItem('week');
-        alert("INDEX: "+ index);
-
+        var tadc = new TimeAppDataController();
+        tadc.loadData(function() {}, function(err) {});
 
         $("#weekview").live("pageinit",function() {
             var res = localStorage.getItem('week');
@@ -27,13 +27,12 @@
         function printDatesToWeekView() {
             var datesOriginal =  localStorage.getItem("weekArray"+weekNr);
             var datesArray = datesOriginal.split(",");
-            alert("LOCALSTORAGE: " + datesArray.length);
             for(i = 0; i < datesArray.length; i++) {
-                alert("DAY: " +printDayName(new Date(2012, 1, datesArray[i]).getDay()));
                 var html = '';
                 html += '<li name="weekElement">';
                 html += '<a href="registrer_time.html">';
                 html += '<h3>'+printDayName(new Date(2012, 1, datesArray[i]).getDay()) +' '+ datesArray[i]+'</h3>';
+                html += '<span class="ui-li-count ui-btn-up-c ui-btn-corner-all">'+tadc.getTotHDay(new Date(2012, 1, datesArray[i]))+'</span>';
                 html += '</a>';
                 html += '</li>';
                 document.write(html);
