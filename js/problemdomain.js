@@ -42,14 +42,12 @@ TimeAppDataController.prototype.addVacation = function(newCompanyName, newDescri
     var startDateObj = new Date(startDate);
     endDateObj.setHours(startDateObj.getHours());
     endDateObj.setMinutes(startDateObj.getMinutes());
-//    alert(endDateObj.getDate()-startDateObj.getDate());
 
     for (;startDateObj<endDateObj;) {
         this.updatePunch(newCompanyName, newDescription, startDateObj, 8.0);
         startDateObj.setDate(startDateObj.getDate()+1);
     }
     this.updatePunch(newCompanyName, newDescription, startDateObj, 8.0);
-    alert(startDateObj.toLocaleString());
 }
 
 /**
@@ -125,7 +123,9 @@ TimeAppDataController.prototype.get7companies = function() {
     var comp = [];
     var i = 0;
     for (i = 0; i < 7 && i < this.companies.length; i++) {
-        comp.push(this.companies[i].name);
+        if (this.companies[i].name != "Internal"){
+            comp.push(this.companies[i].name);
+        }
     }
     return comp;
 }

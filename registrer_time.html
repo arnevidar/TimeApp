@@ -23,378 +23,395 @@
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.datebox.js"></script>
         <script type="text/javascript">
 
+
+        // Document listeners
+
+        document.addEventListener("deviceready", onDeviceReady, false);
         document.addEventListener("backbutton", backKeyDown, true);
 
-            function onDeviceReady() {
-                $(window).bind("scrollstop", function() {
-                    $.mobile.fixedToolbars.show(true);
-                });
-                navigator.app.overrideBackbutton(true);
-            }
 
-            function backKeyDown() {}
-            var todaysDate = 0;
-            if (localStorage.getItem("backDate")) {
-                todaysDate = new Date(localStorage.getItem("backDate"));
-                localStorage.removeItem("backDate");
+        // Special functions
+
+        function onDeviceReady() {
+            //$(window).bind("scrollstop", keepFooterToolbarAtBottom);
+            navigator.app.overrideBackbutton(true);
+            $.mobile.changePage.defaults.allowSamePageTransition = true;
+        }
+
+
+        // Variables
+
+        var todaysDate = 0;
+        var tadc = new TimeAppDataController();
+
+
+        // Initialization
+
+        if (localStorage.getItem("backDate")) {
+            todaysDate = new Date(localStorage.getItem("backDate"));
+            localStorage.removeItem("backDate");
+        }
+        else {
+
+            todaysDate = new Date();
+        }
+
+        tadc.loadData(function() {}, function(err) {});
+
+
+        // Bindings connected to events
+
+        // List page
+        $("#register_hours").live('pageinit', addMockData);
+        $("#register_hours").live("pageinit", bindDatepicker);
+        $("#register_hours").live("swipeleft swiperight", onSwipe);
+
+        // Add punches page
+        $("#add_details").live("pageinit", setScrollerDetails);
+        $("#add_details").live("pageinit", bindTimeSelectorToForm);
+        $("#add_details").live("pageinit", setCompaniesToChooseFrom);
+        $("#select_company").live("change", updateChosenCompany);
+        $("#select_description").live("change", handleTimefieldAfterDescriptionIsChanged);
+        $("#new_company_link").live("click", popupDialogAddNewCompany);
+        $("#new_description_link").live('click', popupDialogAddNewDescription);
+        $("#add_details").live('pagebeforeshow', setHeaderDateForNewPunch);
+
+        // Functions
+
+        function setHeaderDateForNewPunch() {
+            $("#new_date_heading").text("New " + todaysDate.toDateString());
+        }
+
+        function keepFooterToolbarAtBottom () {
+            $.mobile.fixedToolbars.show(true);
+        }
+
+
+        /**
+         * Bind back key to nothing
+         */
+        function backKeyDown() {}
+
+        function bindDatepicker() {
+            $("#mydate").bind('datebox', function (e, passed) {
+                if ( passed.method === 'set' ) {
+                    changeToSelectedDay(passed.date);
+                }
+            });
+        };
+
+        function popupDialogAddNewCompany () {
+            $(this).simpledialog({
+                'mode' : 'string',
+                'prompt' : 'Add a new company',
+                'useDialogForceFalse' : true,
+                'buttons' : {
+                    'OK': {
+                        click: function () {
+                            var newOption = $("#new_company_link").attr('data-string').trim();
+                            if(newOption !== "") {
+                                $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_company"));
+                                $("#select_company").selectmenu('refresh');
+                                $("#select_company").trigger('change');
+                            } else {
+                                alert("Not a valid company name");
+                            }
+
+                        }
+                    },
+                    'Cancel': {
+                        click: function () { },
+                        icon: "delete",
+                        theme: "c"
+                    }
+                }
+            })
+        }
+
+        function popupDialogAddNewDescription() {
+            $(this).simpledialog({
+                'mode' : 'string',
+                'prompt' : 'Add a new description',
+                'useDialogForceFalse' : true,
+                'buttons' : {
+                    'OK': {
+                        click: function () {
+                            var newOption = $("#new_description_link").attr('data-string').trim();
+                            if(newOption !== "") {
+                                $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_description"));
+                                $("#select_description").selectmenu('refresh');
+                                $("#select_description").trigger('change');
+                            } else {
+                                alert("Not a valid description");
+                            }
+                        }
+                    },
+                    'Cancel': {
+                        click: function () { },
+                        icon: "delete",
+                        theme: "a"
+                    }
+                }
+            })
+        }
+
+        function setCompaniesToChooseFrom () {
+            var last7UsedCompanies = tadc.get7companies();
+            $("#select_company").children('option').remove();
+            $('<option data-placeholder="true">Select Company</option>').appendTo($("#select_company"));
+            $('<option value="new_company_option">Add a new company</option>').appendTo($("#select_company"));
+            $('<option value="Internal">Internal</option>').appendTo($("#select_company"));
+            for(var i = 0; i < last7UsedCompanies.length; i++) {
+                $('<option value="'+last7UsedCompanies[i] +'" selected="selected">'+last7UsedCompanies[i]+'</option>').appendTo($("#select_company"));
+                $("#select_company").selectmenu('refresh');
+            }
+            $("#select_company option")[0].selected = true;
+            $("#select_company").selectmenu('refresh');
+        }
+
+        function updateChosenCompany () {
+            var companyName = $("#select_company option:selected").text();
+            if(companyName == "Add a new company") {
+                $("#new_company_link").click();
+            }
+            else if(companyName != "Select Company") {
+                get7LastDescriptions(companyName);
+            }
+        }
+
+        function printDate() {
+            document.write(todaysDate.toDateString());
+        }
+
+        function onSwipe (event) {
+            var direction = false;
+            event.preventDefault();
+            var nextDay = 0;
+            if(event.type == "swipeleft") {
+                //show next day
+                nextDay = +1;
+            } else if(event.type == "swiperight") {
+                //show previous day
+                direction = true;
+                nextDay = -1;
+            }
+            changeDay(nextDay, direction);
+        }
+
+        function setScrollerDetails () {
+            $("#notifyTime").scroller({preset : 'time'});
+            var newDate = new Date();
+            $("#notifyTime").scroller('setDate', newDate, true);
+        }
+
+        function bindTimeSelectorToForm (){
+            var Adate = new Date(0,0,0,0,0,0,0);
+            $("#hours_and_minutes").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
+                stepMinute: 15, ampm: false, timeFormat : 'HH:ii',
+                onSelect: function(valueText, inst) {
+                    $("#save_hours_btn").removeClass("ui-disabled ");
+                }
+            });
+            $("#hours_and_minutes").scroller('setDate', Adate, true);
+        }
+
+        function bindDateSelectorToForm () {
+            var Adate = new Date(todaysDate);
+            $("#hours_and_minutes").scroller({preset : 'date', dateFormat: 'yyyy/mm/dd',
+             onSelect: function(valueText, inst) {
+                    $("#save_hours_btn").removeClass("ui-disabled ");
+
+                },
+                beforeShow: function(input, inst) {
+                }
+            });
+            $("#hours_and_minutes").scroller('setDate', Adate, true);
+
+        }
+
+        function get7LastDescriptions(companyName) {
+            var descriptions = tadc.get7descriptions(companyName);
+            $("#select_description").children('option').remove();
+            $('<option data-placeholder="true">Select Description</option>').appendTo($("#select_description"));
+            $('<option value="new_description_option">Add new description</option>').appendTo($("#select_description"));
+            if(descriptions !== null) {
+                for(var i = 0; i < descriptions.length; i++) {
+                    $('<option value="' + descriptions[i] + '" selected="selected">' + descriptions[i] + '</option>').appendTo($("#select_description"));
+                    $("#select_description").selectmenu('refresh');
+                }
+
+            }
+            $('#select_description').val("Select Description").selectmenu('refresh');
+        }
+
+        function handleTimefieldAfterDescriptionIsChanged () {
+            var desc = $("#select_description option:selected").text();
+            if(desc == "Day off" || desc == "Time off") {
+                $("#hours_and_minutes").show();
+                //$("#first_day_after_vacation").hide();
+                var fullDay = new Date();
+                fullDay.setHours(7);
+                fullDay.setMinutes(30);
+                $("#hours_and_minutes").scroller('setDate', fullDay, true);
+                $("#hours_and_minutes").scroller('destroy');
+                $("#save_hours_btn").removeClass("ui-disabled ");
+            } else if(desc == "Add new description") {
+                $("#new_description_link").click();
+            } else if(desc == "Vacation") {
+                $("#hours_and_minutes").prop("disabled", false).show();
+                //$("#hours_and_minutes").hide();
+                //$("#first_day_after_vacation").show();
+                bindDateSelectorToForm();
+            } else {
+                bindTimeSelectorToForm();
+                //$("#first_day_after_vacation").hide();
+                $("#hours_and_minutes").prop("disabled", false).show();
+            }
+        }
+
+        function changeDay(nextDay, direction) {
+            todaysDate.setDate(todaysDate.getDate()+nextDay);
+            $("#date_heading").html(todaysDate.toDateString());
+            removeDataInDayList();
+            $.mobile.changePage("#register_hours", {reverse: direction} );
+            //$.mobile.changePage("#register_hours", {transition: "fade"} );
+            addMockData();
+        }
+
+        function resetHoursAndMinutes() {}
+
+        function removeDataInDayList() {
+            var list = document.getElementById("registered_hours_overview");
+            if(list.hasChildNodes()) {
+                while(list.childNodes.length >= 1) {
+                    list.removeChild(list.firstChild);
+                }
+            }
+        }
+
+        function changeToSelectedDay(date) {
+            todaysDate = date;
+            $("#date_heading").html(date.toDateString());
+            removeDataInDayList();
+            //addMockData();
+            //kjør metode for å hente ut lagret data for denne dagen
+        }
+
+        function pushData(formObject) {
+            var company = $("#select_company option:selected").text();
+            var description = $("#select_description option:selected").text();
+            if(description != "Vacation") {
+                var number_of_hours = minuteToNumber($("#hours_and_minutes").val());
+                tadc.updatePunch(company, description, todaysDate, number_of_hours);
+            } else {
+                var dateAfterVacation = $("#hours_and_minutes").val();
+                tadc.addVacation(company, description, todaysDate, dateAfterVacation);
+            }
+            addMockData();
+            resetFormValues()
+        }
+
+        /**
+         * Formats the value from the scroller wheel
+         * from hh:mm to hh.MM, h.MM if the first h is a zero.
+         * MM is the minutes in a
+         */
+
+        function minuteToNumber(time) {
+            var hours = time.slice(0,2);
+            var minutes = time.slice(3,5);
+            if(hours.slice(0,1) == 0) {
+                hours = hours.slice(1,2);
+            }
+            switch(minutes) {
+                case '00':
+                    minutes = 0;
+                    break;
+                case '15':
+                    minutes = 25;
+                    break;
+                case '30':
+                    minutes = 5;
+                    break;
+                case '45':
+                    minutes = 75;
+                    break;
+            }
+            return hours + "." + minutes;
+        }
+
+        function resetFormValues() {
+            $('#select_company').val("Select Company").selectmenu('refresh');
+            $('#select_description').val('Select Description').selectmenu('refresh');
+            $("#hours_and_minutes").scroller('setDate', new Date(0,0,0,0,0,0,0), true);
+            $("#save_hours_btn").addClass("ui-disabled ");
+        }
+
+        function addMockData() {
+            var daysData = tadc.getDataForDay(todaysDate);
+            var html = '';
+            var idCounter = 0;
+            if (daysData.length > 0){
+                $('#registered_hours_overview').empty();
+                $('#copylastday').empty();
+                for(var i =0; i<daysData.length; i++) {
+                    html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
+                            '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
+                            '<p id="description' + idCounter +'">' + daysData[i].desc + '</p>' +
+                            '<p id="hours'+ idCounter +'">' + daysData[i].totH +" hours" + '</p>' +
+                            '</a></li>';
+                    idCounter++;
+
+                    $('#registered_hours_overview').append(html);
+                    $('#registered_hours_overview').listview('refresh');
+
+            }
             }
             else {
-
-                todaysDate = new Date();
+                $('#copylastday').empty();
+                $('#copylastday').append('<button id="do" data-role="button" onclick="copyLastWorkday()">Copy last workday</button>');
+                $('#copylastday').trigger( "create" );
             }
-            var tadc = new TimeAppDataController();
-            tadc.loadData(function() {}, function(err) {});
+        }
 
-
-            $.mobile.changePage.defaults.allowSamePageTransition = true;
-
-            $("#register_hours").live("pageinit", function() {
-                $("#mydate").bind('datebox', function (e, passed) {
-                    if ( passed.method === 'set' ) {
-                        changeToSelectedDay(passed.date);
-                    }
-                });
-                $('#new_date_heading').text("New " + todaysDate.toDateString());
-            });
-
-            $("#new_company_link").live("click", function() {
-                $(this).simpledialog({
-                    'mode' : 'string',
-                    'prompt' : 'Add a new company',
-                    'useDialogForceFalse' : true,
-                    'buttons' : {
-                        'OK': {
-                            click: function () {
-                                var newOption = $("#new_company_link").attr('data-string').trim();
-                                if(newOption !== "") {
-                                    $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_company"));
-                                    $("#select_company").selectmenu('refresh');
-                                    $("#select_company").trigger('change');
-                                } else {
-                                    alert("Not a valid company name");
-                                }
-
-                            }
-                        },
-                        'Cancel': {
-                            click: function () { },
-                            icon: "delete",
-                            theme: "c"
-                        }
-                    }
-                })
-            });
-
-            $("#new_description_link").live('click', function() {
-                $(this).simpledialog({
-                    'mode' : 'string',
-                    'prompt' : 'Add a new description',
-                    'useDialogForceFalse' : true,
-                    'buttons' : {
-                        'OK': {
-                            click: function () {
-                                var newOption = $("#new_description_link").attr('data-string').trim();
-                                if(newOption !== "") {
-                                    $('<option value="'+newOption+'" selected="selected">'+newOption+'</option>').appendTo($("#select_description"));
-                                    $("#select_description").selectmenu('refresh');
-                                    $("#select_description").trigger('change');
-                                } else {
-                                    alert("Not a valid description");
-                                }
-                            }
-                        },
-                        'Cancel': {
-                            click: function () { },
-                            icon: "delete",
-                            theme: "a"
-                        }
-                    }
-                })
-            });
-
-            $("#add_details").live("pageinit", function() {
-                var last7UsedCompanies = tadc.get7companies();
-                $("#select_company").children('option').remove();
-                $('<option data-placeholder="true">Select Company</option>').appendTo($("#select_company"));
-                $('<option value="new_company_option">Add a new company</option>').appendTo($("#select_company"));
-                $('<option value="Internal">Internal</option>').appendTo($("#select_company"));
-                for(var i = 0; i < last7UsedCompanies.length; i++) {
-                    $('<option value="'+last7UsedCompanies[i] +'" selected="selected">'+last7UsedCompanies[i]+'</option>').appendTo($("#select_company"));
-                    $("#select_company").selectmenu('refresh');
-                }
-                $("#select_company option")[0].selected = true;
-                $("#select_company").selectmenu('refresh');
-            });
-
-
-
-            $("#select_company").live("change", function() {
-                var companyName = $("#select_company option:selected").text();
-                if(companyName === "Add a new company") {
-                    $("#new_company_link").click();
-                }
-                else if(companyName !== "Select Company") {
-                    get7LastDescriptions(companyName);
-                }
-            });
-
-
-
-            function printDate() {
-                document.write(todaysDate.toDateString());
-            }
-
-            $("#register_hours").live("swipeleft swiperight", function(event) {
-                var direction = false;
-                event.preventDefault();
-                var nextDay = 0;
-                if(event.type == "swipeleft") {
-                    //show next day
-                   nextDay = +1;
-                } else if(event.type == "swiperight") {
-                    //show previous day
-                    direction = true;
-                    nextDay = -1;
-                }
-                changeDay(nextDay, direction);
-            });
-
-            $("#add_details").live("pageinit", function() {
-                $("#notifyTime").scroller({preset : 'time'});
-                var newDate = new Date();
-                $("#notifyTime").scroller('setDate', newDate, true);
-            });
-
-
-
-
-            $("#add_details").live("pageinit", bindTimeSelectorToForm);
-
-            function bindTimeSelectorToForm (){
-                var Adate = new Date(0,0,0,0,0,0,0);
-                $("#hours_and_minutes").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
-                    stepMinute: 15, ampm: false, timeFormat : 'HH:ii',
-                    onSelect: function(valueText, inst) {
-                        $("#save_hours_btn").removeClass("ui-disabled ");
-                    }
-                });
-                $("#hours_and_minutes").scroller('setDate', Adate, true);
-            }
-
-
-             function bindDateSelectorToForm () {
-                var Adate = new Date(todaysDate);
-                $("#hours_and_minutes").scroller({preset : 'date', dateFormat: 'yyyy/mm/dd',
-                 onSelect: function(valueText, inst) {
-                        $("#save_hours_btn").removeClass("ui-disabled ");
-
-                    },
-                    beforeShow: function(input, inst) {
-                    }
-                });
-                $("#hours_and_minutes").scroller('setDate', Adate, true);
-
-            }
-
-
-
-            function get7LastDescriptions(companyName) {
-                var descriptions = tadc.get7descriptions(companyName);
-                $("#select_description").children('option').remove();
-                $('<option data-placeholder="true">Select Description</option>').appendTo($("#select_description"));
-                $('<option value="new_description_option">Add new description</option>').appendTo($("#select_description"));
-                if(descriptions !== null) {
-                    for(var i = 0; i < descriptions.length; i++) {
-                        $('<option value="' + descriptions[i] + '" selected="selected">' + descriptions[i] + '</option>').appendTo($("#select_description"));
-                        $("#select_description").selectmenu('refresh');
-                    }
-
-                }
-                $('#select_description').val("Select Description").selectmenu('refresh');
-            }
-
-
-
-            $("#select_description").live("change", function() {
-                var desc = $("#select_description option:selected").text();
-                if(desc == "Day off" || desc == "Time off") {
-                    $("#hours_and_minutes").show();
-                    //$("#first_day_after_vacation").hide();
-                    var fullDay = new Date();
-                    fullDay.setHours(7);
-                    fullDay.setMinutes(30);
-                    $("#hours_and_minutes").scroller('setDate', fullDay, true);
-                    $("#hours_and_minutes").scroller('destroy');
-                    $("#save_hours_btn").removeClass("ui-disabled ");
-                } else if(desc == "Add new description") {
-                    $("#new_description_link").click();
-                } else if(desc == "Vacation") {
-                    $("#hours_and_minutes").prop("disabled", false).show();
-                    //$("#hours_and_minutes").hide();
-                    //$("#first_day_after_vacation").show();
-                    bindDateSelectorToForm();
-                } else {
-                    bindTimeSelectorToForm();
-                    //$("#first_day_after_vacation").hide();
-                    $("#hours_and_minutes").prop("disabled", false).show();
-                }
-            });
-
-            function changeDay(nextDay, direction) {
-                todaysDate.setDate(todaysDate.getDate()+nextDay);
-                $("#date_heading").html(todaysDate.toDateString());
-                removeDataInDayList();
-                $.mobile.changePage("#register_hours", {reverse: direction} );
-                //$.mobile.changePage("#register_hours", {transition: "fade"} );
-                addMockData();
-            }
-
-            function resetHoursAndMinutes() {
-
-            }
-
-            function removeDataInDayList() {
-                var list = document.getElementById("registered_hours_overview");
-                if(list.hasChildNodes()) {
-                    while(list.childNodes.length >= 1) {
-                        list.removeChild(list.firstChild);
-                    }
+        function copyLastWorkday() {
+            var lastWorkday = tadc.getLastWorkday();
+            if (lastWorkday){
+                var dataLastWorkday = tadc.getDataForDay(lastWorkday);
+                for (i in dataLastWorkday) {
+                    tadc.updatePunch(dataLastWorkday[i].name, dataLastWorkday[i].desc, todaysDate, dataLastWorkday[i].totH);
                 }
             }
+            addMockData();
+        }
 
-            function changeToSelectedDay(date) {
-                todaysDate = date;
-                $("#date_heading").html(date.toDateString());
-                removeDataInDayList();
-                //addMockData();
-                //kjør metode for å hente ut lagret data for denne dagen
-            }
+        function editDetails(id) {
+            var company = $("#company"+id).html();
+            var descr = $("#description"+id).html();
+            var time = $("#hours"+id).html();
+            var index = time.indexOf('hours');
+            var timeToSend = time.slice(0, index);
+            localStorage.setItem("todaysDate", todaysDate);
+            localStorage.setItem("company", company);
+            localStorage.setItem("description", descr);
+            localStorage.setItem("hours", timeToSend);
 
-            function pushData(formObject) {
-                var company = $("#select_company option:selected").text();
-                var description = $("#select_description option:selected").text();
-                if(description != "Vacation") {
-                    var number_of_hours = minuteToNumber($("#hours_and_minutes").val());
-                    tadc.updatePunch(company, description, todaysDate, number_of_hours);
-                } else {
-                    var dateAfterVacation = $("#hours_and_minutes").val();
-                    tadc.addVacation(company, description, todaysDate, dateAfterVacation);
-                }
-                addMockData();
-                resetFormValues()
-            }
+        }
 
-            /**
-             * Formats the value from the scroller wheel
-             * from hh:mm to hh.MM, h.MM if the first h is a zero.
-             * MM is the minutes in a
-             */
+        function choseDate() {
+            $("#mydate").data('datebox').options.blackDates = ["2012-02-16", "2012-02-20", "2012-02-28", "2012-02-04", "2012-02-03", "2012-02-08", "2012-02-12", "2012-02-22", "2012-02-25"];
+            $("#mydate").data('datebox').options.finishedDates = ["2012-02-02", "2012-02-01", "2012-02-07"];
+            $("#mydate").data('datebox').options.almostFinishedDates = ["2012-02-03", "2012-02-05"];
+            $('#mydate').datebox('open');
+        }
 
-            function minuteToNumber(time) {
-                var hours = time.slice(0,2);
-                var minutes = time.slice(3,5);
-                if(hours.slice(0,1) == 0) {
-                    hours = hours.slice(1,2);
-                }
-                switch(minutes) {
-                    case '00':
-                        minutes = 0;
-                        break;
-                    case '15':
-                        minutes = 25;
-                        break;
-                    case '30':
-                        minutes = 5;
-                        break;
-                    case '45':
-                        minutes = 75;
-                        break;
-                }
-                return hours + "." + minutes;
-            }
+        function prevDay() {
+            changeDay(-1, true);
+        }
 
-
-
-
-            function resetFormValues() {
-                $('#select_company').val("Select Company").selectmenu('refresh');
-                $('#select_description').val('Select Description').selectmenu('refresh');
-                $("#hours_and_minutes").scroller('setDate', new Date(0,0,0,0,0,0,0), true);
-            }
-
-            function addMockData() {
-                var daysData = tadc.getDataForDay(todaysDate);
-                var html = '';
-                var idCounter = 0;
-                if (daysData.length > 0){
-                    $('#registered_hours_overview').empty();
-                    $('#copylastday').empty();
-                    for(var i =0; i<daysData.length; i++) {
-                        html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
-                                '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
-                                '<p id="description' + idCounter +'">' + daysData[i].desc + '</p>' +
-                                '<p id="hours'+ idCounter +'">' + daysData[i].totH +" hours" + '</p>' +
-                                '</a></li>';
-                        idCounter++;
-
-                        $('#registered_hours_overview').append(html);
-                        $('#registered_hours_overview').listview('refresh');
-
-                }
-                }
-                else {
-                    $('#copylastday').empty();
-                    $('#copylastday').append('<button id="do" data-role="button" onclick="copyLastWorkday()">Copy last workday</button>');
-                    $('#copylastday').trigger( "create" );
-                }
-            }
-
-            function copyLastWorkday() {
-                var lastWorkday = tadc.getLastWorkday();
-                if (lastWorkday){
-                    var dataLastWorkday = tadc.getDataForDay(lastWorkday);
-                    for (i in dataLastWorkday) {
-                        tadc.updatePunch(dataLastWorkday[i].name, dataLastWorkday[i].desc, todaysDate, dataLastWorkday[i].totH);
-                    }
-                }
-                addMockData();
-            }
-
-
-            function editDetails(id) {
-                var company = $("#company"+id).html();
-                var descr = $("#description"+id).html();
-                var time = $("#hours"+id).html();
-                var index = time.indexOf('hours');
-                var timeToSend = time.slice(0, index);
-                localStorage.setItem("todaysDate", todaysDate);
-                localStorage.setItem("company", company);
-                localStorage.setItem("description", descr);
-                localStorage.setItem("hours", timeToSend);
-
-            }
-
-            function choseDate() {
-                $("#mydate").data('datebox').options.blackDates = ["2012-02-16", "2012-02-20", "2012-02-28", "2012-02-04", "2012-02-03", "2012-02-08", "2012-02-12", "2012-02-22", "2012-02-25"];
-                $("#mydate").data('datebox').options.finishedDates = ["2012-02-02", "2012-02-01", "2012-02-07"];
-                $("#mydate").data('datebox').options.almostFinishedDates = ["2012-02-03", "2012-02-05"];
-                $('#mydate').datebox('open');
-            }
-
-        $("#register_hours").live('pageinit', function() {
-           addMockData();
-        });
-
-            function prevDay() {
-                changeDay(-1, true);
-            }
-
-            function nextDay() {
-                changeDay(1, false);
-            }
-
-
-
+        function nextDay() {
+            changeDay(1, false);
+        }
 
         </script>
 
@@ -435,7 +452,7 @@
         <div data-role="page" id="add_details">
 
             <div data-role="header" data-position="fixed">
-                <h3 id="new_date_heading" />
+                <h3 id="new_date_heading" >New <script type="text/javascript">printDate()</script></h3>
             </div>
 
             <div data-role="content">

@@ -3,7 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>FileReader Example</title>
-    
+     
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
     <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
@@ -15,53 +15,41 @@
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/startservices.js"></script>
 	<script type="text/javascript">
-
+      
     // Wait for PhoneGap to load
     //
     document.addEventListener("deviceready", onDeviceReady, false);
 
-       /* var tadc = new TimeAppDataController();
-        tadc.loadData(
-          function() {
-            window.location.href = "registrer_time.html";
-                },
-          function(){
-            alert("Unable to load data!\nPlease restart the application.");
-        }); 
+
+    /* var tadc = new TimeAppDataController();
+    tadc.loadData(
+      function() {
+        window.location.href = "registrer_time.html";
+            },
+      function(){
+        alert("Unable to load data!\nPlease restart the application.");
+    });
 
 */
-        function notifyMe() {
-            window.plugins.statusBarNotification.dailyNoti();
-        }
+    function notifyMe() {
+        window.plugins.statusBarNotification.dailyNoti();
+    }
 
-        function choseDate() {
-            $('#mydate').datebox('open');
-        }
-
-  
-    
-    var tadc = 0;
-    function onDeviceReady() {
-       // window.plugins.statusBarNotification.sendMail();
-        //window.plugins.statusBarNotification.dailyNoti();
-         // $(window).bind("scrollstop", function() {
-         //   $.mobile.fixedToolbars.show(true);
-        //}); 
-    
-   
-        tadc = new TimeAppDataController();
+    function choseDate() {
+        $('#mydate').datebox('open');
     }
 
 
 
- 
-    
+
     var tadc = 0;
+
     function onDeviceReady() {
        // window.plugins.statusBarNotification.sendMail();
         window.plugins.statusBarNotification.dailyNoti();
         tadc = new TimeAppDataController();
     }
+
     function clearAllData(){
             tadc.companies.length = 0;
             tadc.saveToFile(function() {alert("del ok");}, function() {alert("err saving file");});
@@ -75,7 +63,7 @@
           <div data-role="header"> 
 
                <h1> Header Content </h1> 
-                   
+                     
           </div>
                               
           <div data-role="content"> 
