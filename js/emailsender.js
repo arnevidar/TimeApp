@@ -2,25 +2,27 @@
  *
  *	Constructor
  */
-var emailManager = function() {
+var EmailSender = function() {
 }
 
 /**
- * @param title Title of the notification
- * @param body Body of the notification
+ * @param day - weekday to send mail
+ * @param time - time of day to send mail
+ * @param email - recipient's email address
  */
-emailManager.prototype.notify = function(title, body) {
-    return PhoneGap.exec(null, null, 'StatusBarNotification',	'notify', [title, body]);
+EmailSender.prototype.sendMail = function(day, time, email) {
+    return PhoneGap.exec(null, null, 'emailSender',	'sendMail', [day, time, email]);
+};
+
+EmailSender.prototype.cancelMail = function(email) {
+    return PhoneGap.exec(null, null, "emailSender", "abortMail", [email]);
 };
 
 /**
- * 	Load StatusBarNotification
+ * 	Load EmailSender
  * */
 
 PhoneGap.addConstructor(function() {
-    PhoneGap.addPlugin('emailSender', new emailManager());
+    PhoneGap.addPlugin("emailSender", new EmailSender());
 
-//	@deprecated: No longer needed in PhoneGap 1.0. Uncomment the addService code for earlier
-//	PhoneGap releases.
-//	PluginManager.addService("StatusBarNotificationPlugin","com.trial.phonegap.plugin.directorylisting.StatusBarNotificationPlugin");
 });

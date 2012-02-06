@@ -13,8 +13,14 @@
 
         <script type="text/javascript" src="js/jquery-1.7.1.js"></script>
         <script type="text/javascript" src="js/jquery.mobile-1.0.js"></script>
-        <script src="js/jquery.mobile.datebox.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile.datebox.js"></script>
         <script type="text/javascript">
+
+
+            function choseDate() {
+                $('#mydate').datebox('open');
+            }
+
         </script>
     </head>
     <body>
@@ -22,8 +28,8 @@
         <div data-role="content">
             <label for="mydate">Some Date</label>
 
-            <input name="mydate" id="mydate" type="date" data-role="datebox"
-                   data-options='{"mode": "calbox", "calStartDay": 1, "disableManualInput": true, "useDialogForceTrue": true, "centerWindow": true}'>
+            <input name="mydate" id="mydate" type="date" data-role="datebox" onclick="choseDate()"
+                   data-options='{"mode": "calbox", "calStartDay": 1, "noButton": true, "centerWindow": true}'/>
         </div>
     </div>
 </body>

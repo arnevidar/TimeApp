@@ -24,7 +24,7 @@
         tadc.loadData(function() {}, function() {});
 
 
-        $("#deleteLine").live('click', function() {
+        function iniateDeletePopup() {
             $(this).simpledialog({
                 'mode' : 'bool',
                 'prompt' : 'Do you want to delete this record?',
@@ -32,16 +32,14 @@
                 'buttons' : {
                     'OK': {
                         click: function () {
-                            var date = new Date(localStorage.getItem("todaysDate"));
-                            var companyName = localStorage.getItem("company");
-                            var description = localStorage.getItem("description");
-                            var hours = localStorage.getItem("hours");
-                            tadc.deleteRecord(companyName, description, date, hours);
-                            resetFormValues();
-                            $("#close_btn").click();
-
-
-                        }
+            var date = new Date(localStorage.getItem("todaysDate"));
+            var companyName = localStorage.getItem("company");
+            var description = localStorage.getItem("description");
+            var hours = localStorage.getItem("hours");
+            tadc.deleteRecord(companyName, description, date, hours);
+            resetFormValues();
+            goBack();
+        }
                     },
                     'Cancel': {
                         click: function () {
@@ -52,7 +50,14 @@
                     }
                 }
             })
-        });
+        }
+
+
+
+        function goBack(){
+            localStorage.setItem("backDate", localStorage.getItem("todaysDate"));
+            window.location.href = "registrer_time.html";
+        }
 
         $("#new_company_link").live("click", function() {
             $(this).simpledialog({
@@ -140,7 +145,7 @@
             var companyToEdit = localStorage.getItem("company");
             var last7UsedCompanies = tadc.get7companies();
             $("#select_company").children('option').remove();
-            $('<option data-placeholder="Company">Company</option>').appendTo($("#select_company"));
+            $('<option data-placeholder="true">Select Company</option>').appendTo($("#select_company"));
             $('<option value="new_company_option">Add a new company</option>').appendTo($("#select_company"));
             $('<option value="Internal">Internal</option>').appendTo($("#select_company"));
             for(var i = 0; i < last7UsedCompanies.length; i++) {
@@ -152,7 +157,7 @@
             var desc = localStorage.getItem("description");
             var descriptions = tadc.get7descriptions(companyToEdit);
             $("#select_description").children('option').remove();
-            $('<option data-placeholder="Description">Description</option>').appendTo($("#select_description"));
+            $('<option data-placeholder="true">Select Description</option>').appendTo($("#select_description"));
             $('<option value="new_description_option">Add new description</option>').appendTo($("#select_description"));
             if(descriptions !== null) {
                 for(var i = 0; i < descriptions.length; i++) {
@@ -190,7 +195,7 @@
             if(companyName === "Add a new company") {
                 $("#new_company_link").click();
             }
-            else if(companyName !== "Company") {
+            else if(companyName !== "Select Company") {
                 get7LastDescriptions(companyName);
             }
         });
@@ -201,7 +206,7 @@
         function get7LastDescriptions(companyName) {
             var descriptions = tadc.get7descriptions(companyName);
             $("#select_description").children('option').remove();
-            $('<option data-placeholder="Description">Description</option>').appendTo($("#select_description"));
+            $('<option data-placeholder="true">Select Description</option>').appendTo($("#select_description"));
             $('<option value="new_description_option">Add new description</option>').appendTo($("#select_description"));
             if(descriptions !== null) {
                 for(var i = 0; i < descriptions.length; i++) {
@@ -209,7 +214,7 @@
                     $("#select_description").selectmenu('refresh');
                 }
             }
-            $('#select_description').val("Description").selectmenu('refresh');
+            $('#select_description').val("Select Description").selectmenu('refresh');
         }
 
 
@@ -238,8 +243,8 @@
         });
 
         function resetFormValues() {
-            $('#select_company').val("Company").selectmenu('refresh');
-            $('#select_description').val('Description').selectmenu('refresh');
+            $('#select_company').val("Select Company").selectmenu('refresh');
+            $('#select_description').val('Select Description').selectmenu('refresh');
             $("#hours_and_minutes").scroller('setDate', new Date(0,0,0,0,0,0,0), true);
 
         }
@@ -281,6 +286,7 @@
                 var dateAfterVacation = $("#first_day_after_vacation").val();
             }
             resetFormValues();
+            goBack();
         }
 
 
@@ -306,7 +312,7 @@
                     <select id="select_description" data-native-menu="false" value="Description"></select>
                     <br />
                     <label for="hours_and_minutes"></label>
-                    <input type="text" id="hours_and_minutes" placeholder="Hours and minutes" disabled="true"/>
+                    <input type="text" id="hours_and_minutes" placeholder="Hours and minutes"/>
                     <label for="first_day_after_vacation"></label>
                     <input id="first_day_after_vacation" type="date" placeholder="First day after vacation" style="display: none;"/>
                     <br />
@@ -314,9 +320,9 @@
 
             <div data-role="controlgroup" data-type="horizontal" class="center-wrapper">
 
-                <a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine">Del</a>
-                <a href="#" data-role="button" data-rel="back">Back</a>
-                <a href="#" data-role="button" data-icon="timeapp-ok" id="save_hours_btn" data-rel="back" class="ui-disabled" onclick="updateLine()">Save</a>
+                <a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine" onclick="iniateDeletePopup()">Del</a>
+                <a href="#" data-role="button" onclick="goBack()">Back</a>
+                <a href="#" data-role="button" data-icon="timeapp-ok" id="save_hours_btn" class="" onclick="updateLine()">Save</a>
             </div>
         <a href="#" id="new_description_link" style="display : none;"></a>
         <a id="new_company_link" href="#" style="display: none;"></a>

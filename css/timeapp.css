@@ -17,3 +17,7 @@
 .center-button{
     margin: 0 auto;
 }
+
+.ui-page {
+    -webkit-backface-visibility: hidden;
+}

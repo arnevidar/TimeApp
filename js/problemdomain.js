@@ -16,10 +16,35 @@ TimeAppDataController.prototype.saveToFile = function (success, failure) {
 
 }
 
+TimeAppDataController.prototype.getLastWorkday = function() {
+    return new Date(this.companies[0].desc[0].punch[0].date);
+}
 
+TimeAppDataController.prototype.addVacation = function(newCompanyName, newDescription, startDate, endDate)
+{
+    var endDateObj = new Date(endDate);
+    var startDateObj = new Date(startDate);
+    endDateObj.setHours(startDateObj.getHours());
+    endDateObj.setMinutes(startDateObj.getMinutes());
+//    alert(endDateObj.getDate()-startDateObj.getDate());
+
+    for (;startDateObj<endDateObj;) {
+        this.updatePunch(newCompanyName, newDescription, startDateObj, 8.0);
+        startDateObj.setDate(startDateObj.getDate()+1);
+    }
+    this.updatePunch(newCompanyName, newDescription, startDateObj, 8.0);
+    alert(startDateObj.toLocaleString());
+}
 
 TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescription, newDate, newTotH,
                                                        oldCompanyName, oldDescription, oldDate, oldTotH){
+
+    // todo onFailure
+    if (newCompanyName.trim().toLowerCase() == "select company" || newCompanyName.trim() == "") return;
+    if (newCompanyName.trim().toLowerCase() == "add a new company" || newCompanyName.trim() == "") return;
+    if (newDescription.trim().toLowerCase() == "select description" || newDescription.trim() == "") return;
+    if (newDescription.trim().toLowerCase() == "add new description" || newDescription.trim() == "") return;
+    if (newTotH == 0) return;
 
     if ((oldCompanyName)&&
         (oldDescription)&&
@@ -33,6 +58,7 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
             this.verifyDesc(oldCompanyObject, oldDescObject);
             this.verifyComp(oldCompanyObject);
     }
+
 
 
     var companyObject = this.getCompany(newCompanyName);
@@ -87,7 +113,15 @@ TimeAppDataController.prototype.verifyComp = function (company) {
 
 TimeAppDataController.prototype.getPunch = function (description, dateToFind, totH) {
     for (punchIndex in description.punch) {
-        if ((description.punch[punchIndex].totH = totH )&&(description.punch[punchIndex].totH = totH )) return description.punch[punchIndex];
+        var dateObjToFind = new Date(dateToFind);
+        var thisPunchDate = new Date(description.punch[punchIndex].date);
+        if ((description.punch[punchIndex].totH = totH )&&(description.punch[punchIndex].totH = totH )){
+            if ((dateObjToFind.getYear() == thisPunchDate.getYear()) &&
+                (dateObjToFind.getDate() == thisPunchDate.getDate()) &&
+                (dateObjToFind.getMonth() == thisPunchDate.getMonth())) {
+            return description.punch[punchIndex];
+            }
+        }
     }
 }
 
@@ -207,8 +241,11 @@ TimeAppDataController.prototype.loadData = function (onSuccess, onFailure) {
         onSuccess();
     }
     else {
-        onFailure();
-        this.loadMockData();
+        alert("ingen local storage?");
+        //var p = new Persistence();
+        //this.companies = JSON.parse(p.readfile("timeappdata", function(){},function(){alert("err2")}));
+        //onFailure();
+        //this.loadMockData();
     }
 /*
     var p = new Persistence();
@@ -230,23 +267,23 @@ TimeAppDataController.prototype.loadMockData = function () {
     var dnb_koding = this.addDescription(dnb, "dnbkoding");
     var dnb_date = this.getTodaysDate();
     dnb_date.setDate(dnb_date.getDate());
-    var dnb_koding_punch = this.addPunch(dnb_koding, dnb_date, 2);
+    var dnb_koding_punch = this.addPunch(dnb_koding, dnb_date, 2.0);
 
     var obs = this.addCompany("OBS");
     var obs_koding = this.addDescription(obs, "obskoding");
     var obs_date = this.getTodaysDate();
     obs_date.setDate(obs_date.getDate()-1)
-    var obs_koding_punch = this.addPunch(obs_koding, obs_date, 3);
+    var obs_koding_punch = this.addPunch(obs_koding, obs_date, 3.0);
 
     var obs_koding2 = this.addDescription(obs, "obskoding2");
-    var obs_koding_punch = this.addPunch(obs_koding2, obs_date, 4);
+    var obs_koding_punch = this.addPunch(obs_koding2, obs_date, 4.0);
 
     var obs_koding3 = this.addDescription(obs, "obskoding3");
-    var obs_koding_punch = this.addPunch(obs_koding3, obs_date, 5);
+    var obs_koding_punch = this.addPunch(obs_koding3, obs_date, 5.0);
 
     var aba = this.addCompany("ABA");
     var aba_koding = this.addDescription(aba, "adakoding");
-    var aba_koding_punch = this.addPunch(aba_koding, dnb_date, 10);
+    var aba_koding_punch = this.addPunch(aba_koding, dnb_date, 10.0);
 
     localStorage.setItem("companies", JSON.stringify(this.companies));
 }
@@ -267,7 +304,8 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
     // startDate.getFullYear() startDate.getMonth() startDate.getDay()
 
     // find first instance of date
-    var companiesToInclude = [];
+    var companiesToInclude = this.companies
+    /*
     for (compIndex in this.companies) {
         companyDate = new Date(this.companies[compIndex].desc[0].punch[0].date);
         if (companyDate.getFullYear()<dateToFetch.getFullYear())  continue;
@@ -277,7 +315,7 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
             (companyDate.getMonth()==dateToFetch.getMonth())&&
             (companyDate.getDay()<dateToFetch.getDay())) continue;
         companiesToInclude.push(this.companies[compIndex]);
-    }
+    }*/
 
     var results = [];
     for (compIndex in companiesToInclude) {
@@ -286,7 +324,7 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
                 punchDate = new Date(companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].date);
                 if ((punchDate.getFullYear()==dateToFetch.getFullYear()) &&
                     (punchDate.getMonth()==dateToFetch.getMonth())&&
-                    (punchDate.getDay()==dateToFetch.getDay())) {
+                    (punchDate.getDate()==dateToFetch.getDate())) {
                     results.push({"date": companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].date,
                                   "name": companiesToInclude[compIndex].name,
                                   "desc": companiesToInclude[compIndex].desc[descIndex].description,
@@ -296,7 +334,6 @@ TimeAppDataController.prototype.getDataForDay = function (dateToFetch) {
             }
         }
     }
-
     return results;
     //return companiesToInclude.length;
     // find last instance of date
