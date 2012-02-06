@@ -20,7 +20,6 @@
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/emailsender.js"></script>
 
     <script type="text/javascript">
         // Wait for PhoneGap to load
@@ -34,16 +33,25 @@
         // PhoneGap is ready
         //
         function onDeviceReady() {
-            $(window).bind("scrollstop", function() {
-                $.mobile.fixedToolbars.show(true);
-            });
+
             readEmailSettingsFile("emailsettings");
-            $("#toggle-email").change(enableOrDisableInputs);
+        }
+        $(window).bind("scrollstop", function() {
+            $.mobile.fixedToolbars.show(true);
+        });
+
+        $("#emailSettings").live('pageinit', function() {
             var Adate = new Date(0,0,0,0,0,0,0);
             $("#email-time").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
                 stepMinute: 1, ampm: false, timeFormat : 'HH:ii'});
             $("#email-time").scroller('setDate', Adate, true);
-        }
+
+        });
+
+
+        $("#toggle-email").live("change", function(event, ui) {
+            enableOrDisableInputs(event, ui);
+        });
 
 
         function enableOrDisableInputs (event, ui) {
@@ -55,13 +63,13 @@
                 $("#email").addClass('ui-disabled');
             }
             else {
-
                 $("#select-weekday").selectmenu('enable');
                 $("#select-weekday").selectmenu('refresh', true);
                 $("#email-time").removeClass('ui-disabled');
                 $("#email").removeClass('ui-disabled');
             }
         }
+
 
         function failSaveSettings(error) {
             console.log(error.code);
@@ -104,6 +112,7 @@
                 var jsonString = JSON.stringify(emailSettings);
                 var p = new Persistence();
                 p.writefile("emailsettings", jsonString, redirectToSettings ,failSaveSettings);
+
                 if($("#toggle-email").val() === "on") {
                     window.plugins.statusBarNotification.sendMail();
                 }
@@ -147,7 +156,7 @@
 
         <div data-role="fieldcontain">
             <label for="toggle-email">Toggle email notification:</label>
-            <select name="slider" id="toggle-email" data-role="slider">
+            <select name="slider" id="toggle-email" data-role="slider" data-native-menu="false">
                 <option value="off">Off</option>
                 <option value="on">On</option>
             </select>
@@ -166,7 +175,7 @@
 
         <div data-role="fieldcontain">
             <label for="select-weekday">Select day to send Email:</label>
-            <select name="select-weekday" id="select-weekday">
+            <select name="select-weekday" id="select-weekday" data-native-menu="false">
                 <option value="monday">Monday</option>
                 <option value="tuesday">Tuesday</option>
                 <option value="wednesday">Wednesday</option>
@@ -195,11 +204,9 @@
 
         </div>
 
-        <!-- Footer -->
-
-        <script type="text/javascript" src="js/navbar.js"></script>
-
     </div>
+    <!-- Footer -->
+    <script type="text/javascript" src="js/navbar.js"></script>
 </div>
 
 </body>
