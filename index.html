@@ -9,8 +9,11 @@
 	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/storage.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/emailsender.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>  
-    <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>    
+    <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/startservices.js"></script>
 	<script type="text/javascript">
 
     // Wait for PhoneGap to load
@@ -18,14 +21,16 @@
     document.addEventListener("deviceready", onDeviceReady, false);
 
     // PhoneGap is ready
-    //
     function onDeviceReady() {
-         // $(window).bind("scrollstop", function() {
-         //   $.mobile.fixedToolbars.show(true);
-        //});
+        window.plugins.statusBarNotification.sendMail();
+        window.plugins.statusBarNotification.dailyNoti();
+          $(window).bind("scrollstop", function() {
+            $.mobile.fixedToolbars.show(true);
+        });
+    }
   
   
-        var tadc = new TimeAppDataController();
+       /* var tadc = new TimeAppDataController();
         tadc.loadData(
           function() {
             window.location.href = "registrer_time.html";
@@ -34,8 +39,19 @@
             alert("Unable to load data!\nPlease restart the application.");
         }); 
 
+*/
+        function notifyMe() {
+            window.plugins.statusBarNotification.dailyNoti();
+        }
 
-    }
+        function choseDate() {
+            $('#mydate').datebox('open');
+        }
+
+        function sendMail() {
+         //   window.plugins.emailSender.sendMail("saturday", "10.00", "miss_michelle64@hotmail.com");
+        }
+
 
     </script>
   </head>
@@ -51,8 +67,13 @@
           <div data-role="content"> 
                <p> Main Page Content </p>
             <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a><br/>
-            <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a>
-          </div>	
+            <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br />
+            <a href="CalendarView.html" data-ajax="false">Calendar</a>
+          </div>
+         <input type="button" onclick="notifyMe()" value="notify"/>
+
+         <input type="button" onclick="sendMail()" value="Send mail"/>
+
 
 		<div data-role="footer" data-position="fixed">
 			<div data-role="navbar">
@@ -64,6 +85,9 @@
 			</div>
 		</div>
      </div>
+
+
+
   </body>
 </html>
 
