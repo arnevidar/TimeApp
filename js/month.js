@@ -64,7 +64,7 @@ Date.prototype.getWeek = function (d) {
 
     // The weeknumber is the number of weeks between the
     // first thursday of the year and the thursday in the target week
-    var weekNr =  1 + Math.ceil((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000
+    var weekNr =  1 + Math.floor((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000
     return weekNr;
 }
 
@@ -158,6 +158,18 @@ function readWeekNr(){
     return res;
 }
 
+function getFirstDayOfWeek(week) {
+    var week = localStorage.getItem('weekArray'+week);
+    var weekA = week.split(",");
+    return weekA[0];
+}
+
+function getLastDayOfWeek(week) {
+    var week = localStorage.getItem('weekArray'+week);
+    var weekA = week.split(",");
+    return weekA[weekA.length-1];
+}
+
 function sendIndex(index) {
     localStorage.setItem("index", index);
 }
@@ -179,23 +191,22 @@ function toISODate(y,m,d) {
  * FINISH THESE METHODS!
  */
 
-function getTotalRegisteredHoursInWeek(startDate, endDate) {
-    var duration = endDate - startDate;
-    var totalHours = 0;
-    for( i = 0; i < duration; i++ ) {
-        //Do the getting and calculations
+
+/**
+ * Pushes the finishedDates to localeStorage
+ */
+
+
+function getFinishedDates() {
+    var finishedDates = localStorage.getItem("finishedDates");
+    alert("THIS IS MONTH: " +finishedDates);
+    var finishedDatesA = finishedDates.split(",");
+    var res = '[';
+    for( u = 0; u < finishedDatesA.length; u++ ) {
+        res += finishedDatesA[u] + ", ";
     }
-    return totalHours;
-}
-
-function getTotalRegisteredHoursForDay(date) {
-    var days = TimeAppDataController().getTotH(date);
-    return days;
-}
-
-function getFinishedDates(month) {
-    var finishedDates = new Array();
-    return finishedDates;
+    res += ']';
+    return res;
 }
 
 function notFinishedDates(month) {

@@ -25,8 +25,6 @@
             $("#monthname").html(month + " " +year);
         });
 
-        var tt = tadc.getDataForDay(new Date(2012, 1, 4));
-        alert(tt);
 
         function printWeeksToView(month, y) {
             if(y == null) {
@@ -36,7 +34,10 @@
                 var weeksInMonth = getWeeksInMonth(month, y);
                 printWeekDates(month, y);
             }
+            //var endDate = new Date(2012, 1, getLastDayOfWeek(weeksInMonth[i]));
             for(i = 0; i < weeksInMonth.length; ++i ) {
+                var startDate = new Date(2012, 1, getFirstDayOfWeek(weeksInMonth[i]));
+                var endDate = new Date(2012, 1, getLastDayOfWeek(weeksInMonth[i]));
                 var html = '';
                 html += '<li id="'+weeksInMonth[i]+'" name="listview" value="Week '+weeksInMonth[i]+'">';
                 html += '<a href="Weekview.html" name="weeklistelement" id="'+weeksInMonth+'" ' +
@@ -44,7 +45,7 @@
                         'onclick="storeWeekNr('+weeksInMonth[i]+'); sendIndex('+i+')">';
                 html += '<h3 id="element">Week '+ weeksInMonth[i]+':'+'</h3>';
                 html += '<p>'+localStorage.getItem('weekArray'+weeksInMonth[i])+'</p>';
-                html += '<span class="ui-li-count ui-btn-up-c ui-btn-corner-all">'+tadc.getTotHDay(new Date(2012, 1, 5))+'</span>';
+                html += '<span class="ui-li-count ui-btn-up-c ui-btn-corner-all">'+tadc.getTotHWeek(startDate, endDate)+'</span>';
                 html += '</a>';
                 html += '</li>';
                 //id = document.getElementById(weeksInMonth[i]).value;

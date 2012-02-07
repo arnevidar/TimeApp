@@ -161,16 +161,46 @@ TimeAppDataController.prototype.getTotHDay = function(dateToFetch) {
             }
         }
     }
+    alert("THIS IS TOTH: " +totalHours);
     return totalHours;
 }
 
 TimeAppDataController.prototype.getTotHWeek = function(startDate, endDate) {
     var totalHours = 0;
-    var diff = endDate - startDate;
-    for( j = startDate; j < diff; j++ ) {
-        totalHours += this.getTotHDay(j);
+    var one_day = 1000 * 60 * 60 * 24;
+    var startDate_m = startDate.getTime(), endDate_m = endDate.getTime();
+    var diff = Math.abs(endDate.getTime() - startDate.getTime());
+    for( j = startDate_m; j <= endDate_m; j += one_day ) {
+        var jj = new Date(j);
+        totalHours += this.getTotHDay(jj);
     }
     return totalHours;
+}
+
+/**
+ * Pushes the finisted dates (dates with more than 7 hours registered) to localstorage.
+ * The dates are converted into the ISO standard, which is used in the Datebox-plugin,
+ */
+
+TimeAppDataController.prototype.pushFinishedDatesToLS = function(d) {
+    var finishedDatesArray = new Array();
+    var notFinishedDatesArray = new Array();
+    var one_day = 1000 * 3600 * 24;
+    var firstDayInMonth_m = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+    var lastDayInMonth_m = new Date(d.getFullYear(), d.getMonth()+1, 0).getTime();
+    for( m = firstDayInMonth_m; m <= lastDayInMonth_m; m += one_day ) {
+        var newDate = new Date(m);
+        alert("THIS IS newDATE " + newDate);
+        var isoDay = toISODate(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+        if( this.getTotHDay(newDate) > 7 ) {
+            finishedDatesArray.push("\""+isoDay+"\"");
+        } else {
+            notFinishedDatesArray.push("\""+isoDay+"\"");
+        }
+    }
+    alert("THIS IS FINISHEDDATES " + finishedDatesArray);
+    localStorage.setItem('finishedDates', finishedDatesArray);
+    localStorage.setItem('notFinishedDates', notFinishedDatesArray);
 }
 
 
@@ -181,6 +211,7 @@ TimeAppDataController.prototype.addCompany = function (name){
     this.companies.push(company);
     return company;
 }
+
 
 TimeAppDataController.prototype.addDescription = function (company, descriptionTxt) {
     var description = new Object();
