@@ -354,7 +354,7 @@
             if (daysData.length > 0){
                 $('#registered_hours_overview').empty();
                 $('#copylastday').empty();
-                for(var i =0; i<daysData.length; i++) {
+                for(var i =0; i < daysData.length; i++) {
                     html = '<li> <a href="edit_line.html" id="'+ idCounter +'" onclick="editDetails(this.id)" data-ajax="false"> ' +
                             '<h3 id="company' + idCounter +'">' + daysData[i].name + '</h3>' +
                             '<p id="description' + idCounter +'">' + daysData[i].desc + '</p>' +
