@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>Register hours</title>
+    <title>Edit line</title>
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
     <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css" />
@@ -54,10 +54,7 @@
 
 
 
-        function goBack(){
-            localStorage.setItem("backDate", localStorage.getItem("todaysDate"));
-            window.location.href = "registrer_time.html";
-        }
+
 
         $("#new_company_link").live("click", function() {
             $(this).simpledialog({
@@ -175,7 +172,8 @@
             });
             var time = localStorage.getItem("hours").split(".");
             var hours = time[0];
-            var minutes = numberToMinute(time[1].trim());
+            //add trim()
+            var minutes = numberToMinute(time[1]);
             var theTime = new Date();
             theTime.setHours(hours);
             theTime.setMinutes(minutes);

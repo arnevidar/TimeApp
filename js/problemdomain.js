@@ -161,7 +161,6 @@ TimeAppDataController.prototype.getTotHDay = function(dateToFetch) {
             }
         }
     }
-    alert("THIS IS TOTH: " +totalHours);
     return totalHours;
 }
 
@@ -198,7 +197,6 @@ TimeAppDataController.prototype.pushFinishedDatesToLS = function(d) {
             notFinishedDatesArray.push("\""+isoDay+"\"");
         }
     }
-    alert("THIS IS FINISHEDDATES " + finishedDatesArray);
     localStorage.setItem('finishedDates', finishedDatesArray);
     localStorage.setItem('notFinishedDates', notFinishedDatesArray);
 }

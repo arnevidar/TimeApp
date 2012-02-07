@@ -24,13 +24,19 @@
             $("#weeknr").html("Week " + weekNr + " - " + year);
         });
 
+
+        function goToRegHours(d){
+            localStorage.setItem("backDate", new Date(d));
+            window.location.href = "registrer_time.html";
+        }
+
         function printDatesToWeekView() {
             var datesOriginal =  localStorage.getItem("weekArray"+weekNr);
             var datesArray = datesOriginal.split(",");
             for(i = 0; i < datesArray.length; i++) {
                 var html = '';
                 html += '<li name="weekElement">';
-                html += '<a href="registrer_time.html">';
+                html += '<a href="registrer_time.html" onclick="goToRegHours(new Date(2012, 1, '+datesArray[i]+'))">';
                 html += '<h3>'+printDayName(new Date(2012, 1, datesArray[i]).getDay()) +' '+ datesArray[i]+'</h3>';
                 html += '<span class="ui-li-count ui-btn-up-c ui-btn-corner-all">'+tadc.getTotHDay(new Date(2012, 1, datesArray[i]))+'</span>';
                 html += '</a>';

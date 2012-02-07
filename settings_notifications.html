@@ -10,9 +10,6 @@
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
     <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
-
-
-
     <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
 
     <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
@@ -21,6 +18,7 @@
     <script type="text/javascript" charset="utf-8" src="js/jquery.toaster.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
 
 
 
@@ -33,12 +31,22 @@
         //
         function onDeviceReady() {
             readNotificationSettingsFile("notificationsettings");
-            $("#toggle-notifications").change(enableOrDisableInputs);
+        }
+
+        $("#notificationSettings").live("pageinit", function() {
             var Adate = new Date(0,0,0,0,0,0,0);
             $("#notification-time").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
                 stepMinute: 1, ampm: false, timeFormat : 'HH:ii'});
             $("#notification-time").scroller('setDate', Adate, true);
-        }
+        });
+
+        $(window).bind("scrollstop", function() {
+            $.mobile.fixedToolbars.show(true);
+        });
+
+        $("#toggle-notifications").live("change", function(event, ui) {
+            $("#toggle-notifications").change(enableOrDisableInputs);
+        });
 
 
         function loadEmailSettings() {
@@ -77,6 +85,9 @@
         }
 
         function saveNotificationSettings() {
+            if($("#toggle-notifications").val() === "off") {
+                window.plugins.statusBarNotification.cancelDailyNoti();
+            }
             var toaster = $.toaster({showTime:1000, centerX:true, centerY:true}); // create a toaster
             toaster.toast("Information updated");//show a toast message
             var notificationSettings = new Object();
@@ -92,6 +103,11 @@
             var jsonString = JSON.stringify(notificationSettings);
             var p = new Persistence();
             p.writefile("notificationsettings", jsonString, redirectToSettings, failSaveSettings);
+
+            if($("#toggle-notifications").val() === "on") {
+                window.plugins.statusBarNotification.dailyNoti();
+            }
+
         }
 
 

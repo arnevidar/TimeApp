@@ -1,11 +1,11 @@
 	/**
 	*  Folder to store Time App data files
-	*
+	*   TODO fix local variables
+     *  TODO fix race condition, so phonegap can load before window.requestFileSystem is used
 	*/
 	function Persistence () {
-        this.TIMEAPPFOLDER = "TimeApp"; // borked
-        this.APPDATASIZE = 1*1024*1024;  // borked
-        this.DEBUG = true;
+        this.TIMEAPPFOLDER = "TimeApp";
+        this.APPDATASIZE = 1*1024*1024;
     }
 
     /**

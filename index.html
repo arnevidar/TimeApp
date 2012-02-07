@@ -3,39 +3,57 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>FileReader Example</title>
-
+     
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
     <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/storage.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/emailsender.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>  
-    <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>    
+    <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/startservices.js"></script>
 	<script type="text/javascript">
-
+      
     // Wait for PhoneGap to load
     //
     document.addEventListener("deviceready", onDeviceReady, false);
-     
-    // PhoneGap is ready
-    //      
-  
-    
+
+
+    /* var tadc = new TimeAppDataController();
+    tadc.loadData(
+      function() {
+        window.location.href = "registrer_time.html";
+            },
+      function(){
+        alert("Unable to load data!\nPlease restart the application.");
+    });
+
+*/
+    function notifyMe() {
+        window.plugins.statusBarNotification.dailyNoti();
+    }
+
+    function choseDate() {
+        $('#mydate').datebox('open');
+    }
+
+
+
+
     var tadc = 0;
+
     function onDeviceReady() {
-         // $(window).bind("scrollstop", function() {
-         //   $.mobile.fixedToolbars.show(true);
-        //}); 
-    
-   
+       // window.plugins.statusBarNotification.sendMail();
+        window.plugins.statusBarNotification.dailyNoti();
         tadc = new TimeAppDataController();
     }
 
-        function clearAllData(){
+    function clearAllData(){
             tadc.companies.length = 0;
             tadc.saveToFile(function() {alert("del ok");}, function() {alert("err saving file");});
-        }
+    }
 	  
     </script>  
   </head>
@@ -45,26 +63,25 @@
           <div data-role="header"> 
 
                <h1> Header Content </h1> 
-                   
+                     
           </div>
-         
+                              
           <div data-role="content"> 
                <p> Main Page Content </p>
             <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a><br/>
-            <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a>
-            <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()">Clear all data!</a>
-          </div>	
 
-		<div data-role="footer" data-position="fixed">
-			<div data-role="navbar">
-				<ul>
-			
-				<li><a href="index.html" data-icon="home" data-ajax="false">Overview</a></li>
-					<li><a href="registrer_time.html" data-icon="plus" data-ajax="false">Add hours</a> </li>
-					<li><a href="settings.html" data-icon="gear" data-ajax="false">Settings</a></li>
-				</ul>
-			</div>
-		</div> 
+            <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br />
+            <a href="CalendarView.html" data-ajax="false">Calendar</a>
+
+              <input type="button" onclick="notifyMe()" value="notify"/>
+
+              <input type="button" onclick="sendMail()" value="Send mail"/>
+              <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()">Clear all data!</a>
+
+          </div>
+
+        <script type="text/javascript" src="js/navbar.js"></script>
      </div>
+
   </body>
 </html>
