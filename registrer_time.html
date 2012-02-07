@@ -87,18 +87,19 @@
             $.mobile.fixedToolbars.show(true);
         }
 
-
         /**
          *  Bind back key
          */
 
         function bindBackKeyForDisplayDay () {
+            document.removeEventListener("backbutton",bindBackKeyForNewPunch ,false);
             document.addEventListener("backbutton", backKeyForDisplayDay, false);
         }
 
         function backKeyForDisplayDay() {}
 
         function bindBackKeyForNewPunch() {
+            document.removeEventListener("backbutton", backKeyForDisplayDay, false)
             document.addEventListener("backbutton", backKeyForNewPunch, false);
         }
 
@@ -323,7 +324,7 @@
                 tadc.addVacation(company, description, todaysDate, dateAfterVacation);
             }
             addMockData();
-            resetFormValues()
+            resetFormValues();
         }
 
         /**

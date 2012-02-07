@@ -20,21 +20,35 @@
     <script type="text/javascript" charset="utf-8">
 
 
-        var tadc = new TimeAppDataController();
-        tadc.loadData(function() {}, function() {});
-
-        document.addEventListener("backbutton", goBack, false);
-
-
-        $("#edit_details").live("pageinit", setupPage);
-        $("#select_company").live("change", onChangeCompanySelector);
-        $("#new_company_link").live("click", popupDialogAddNewCompany);
-        $("#select_description").live("change", onChangeDescriptionSelector);
-        $("#new_description_link").live('click', popupDialogAddNewDescription);
+    window.addEventListener('load', function () {
+        document.addEventListener('deviceready', onDeviceReady, false);
+    }, false);
 
 
 
-        function initateDeletePopup() {
+    document.addEventListener("deviceready", onDeviceReady, false);
+    tadc = new TimeAppDataController();
+    tadc.loadData(function() {}, function(e) {alert("err" + e)});
+    function onDeviceReady ()  {
+        //alert("ondeviceready");
+
+
+    }
+
+    $("#edit_details").live("pageinit", setupPage);
+    $("#select_company").live("change", onChangeCompanySelector);
+    $("#new_company_link").live("click", popupDialogAddNewCompany);
+    $("#select_description").live("change", onChangeDescriptionSelector);
+    $("#new_description_link").live('click', popupDialogAddNewDescription);
+
+
+
+
+    document.addEventListener("backbutton", goBack, false);
+
+
+
+        function initiateDeletePopup() {
             $(this).simpledialog({
                 'mode' : 'bool',
                 'prompt' : 'Do you want to delete this record?',
@@ -46,9 +60,7 @@
             var companyName = localStorage.getItem("company");
             var description = localStorage.getItem("description");
             var hours = localStorage.getItem("hours");
-            tadc.deleteRecord(companyName, description, date, hours);
-            resetFormValues();
-            goBack();
+            tadc.deleteRecord(companyName, description, date, hours, goBack);
         }
                     },
                     'Cancel': {
@@ -276,15 +288,10 @@
             var oldCompanyName = localStorage.getItem("company");
             var oldDescription = localStorage.getItem("description");
             var date = new Date(localStorage.getItem("todaysDate"));
-            if(newCompanyName !== "Vacation") {
-                var oldHours = localStorage.getItem("hours");
-                var newHours = formatTime($("#hours_and_minutes").val());
-                tadc.updatePunch(newCompanyName, newDescription, date, newHours, oldCompanyName, oldDescription, date, oldHours);
-            } else {
-                var dateAfterVacation = $("#first_day_after_vacation").val();
-            }
-            resetFormValues();
-            goBack();
+            var oldHours = localStorage.getItem("hours");
+            var newHours = formatTime($("#hours_and_minutes").val());
+            tadc.updatePunch(newCompanyName, newDescription, date, newHours, oldCompanyName, oldDescription, date, oldHours, goBack);
+
         }
 
     </script>
@@ -316,7 +323,7 @@
 
             <div data-role="controlgroup" data-type="horizontal" class="center-wrapper">
 
-                <a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine" onclick="initateDeletePopup()">Del</a>
+                <a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine" onclick="initiateDeletePopup()">Del</a>
                 <a href="#" data-role="button" onclick="goBack()">Back</a>
                 <a href="#" data-role="button" data-icon="timeapp-ok" id="save_hours_btn" class="" onclick="updateLine()">Save</a>
             </div>
@@ -325,8 +332,6 @@
         <a id="vacation_date" href="#" style="display: none;"></a>
     </div>
 </div>
-
-
 
 
 </body>
