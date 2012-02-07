@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -21,7 +21,6 @@
     <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
 
 
-
     <script type="text/javascript">
         // Wait for PhoneGap to load
         //
@@ -33,7 +32,7 @@
             readNotificationSettingsFile("notificationsettings");
         }
 
-        $("#notificationSettings").live("pageinit", function() {
+        $(document).on("pageinit", "#notificationSettings", function() {
             var Adate = new Date(0,0,0,0,0,0,0);
             $("#notification-time").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
                 stepMinute: 1, ampm: false, timeFormat : 'HH:ii'});
@@ -44,7 +43,7 @@
             $.mobile.fixedToolbars.show(true);
         });
 
-        $("#toggle-notifications").live("change", function(event, ui) {
+        $(document).on("change", "#toggle-notifications", function(event, ui) {
             $("#toggle-notifications").change(enableOrDisableInputs);
         });
 

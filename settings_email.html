@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -20,6 +20,7 @@
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/emailSender.js"></script>
 
     <script type="text/javascript">
         // Wait for PhoneGap to load
@@ -40,7 +41,7 @@
             $.mobile.fixedToolbars.show(true);
         });
 
-        $("#emailSettings").live('pageinit', function() {
+        $(document).on('pageinit',"#emailSettings", function() {
             var Adate = new Date(0,0,0,0,0,0,0);
             $("#email-time").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
                 stepMinute: 1, ampm: false, timeFormat : 'HH:ii'});
@@ -49,7 +50,7 @@
         });
 
 
-        $("#toggle-email").live("change", function(event, ui) {
+        $(document).on("change", "#toggle-email", function(event, ui) {
             enableOrDisableInputs(event, ui);
         });
 
@@ -100,7 +101,7 @@
         function saveEmailSettings() {
             if(checkEmail()) {
                 if($("#toggle-email").val() === "off") {
-                    window.plugins.statusBarNotification.cancelEmail();
+                    window.plugins.emailSender.cancelMail();
                 }
                 var toaster = $.toaster({showTime:1000, centerX:true, centerY:true}); // create a toaster
                 toaster.toast("Saving data");//show a toast message
@@ -114,7 +115,7 @@
                 p.writefile("emailsettings", jsonString, redirectToSettings ,failSaveSettings);
 
                 if($("#toggle-email").val() === "on") {
-                    window.plugins.statusBarNotification.sendMail();
+                    window.plugins.emailSender.sendMail();
                 }
 
             }
