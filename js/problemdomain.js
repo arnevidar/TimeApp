@@ -399,7 +399,9 @@ TimeAppDataController.prototype.get7companies = function() {
     var comp = [];
     var i = 0;
     for (i = 0; i < 7 && i < this.companies.length; i++) {
-        comp.push(this.companies[i].name);
+        if(this.companies[i].name!= "Internal") {
+            comp.push(this.companies[i].name);
+        }
     }
     return comp;
 }
