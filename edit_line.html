@@ -54,7 +54,10 @@
 
 
 
-
+        function goBack(){
+            localStorage.setItem("backDate", localStorage.getItem("todaysDate"));
+            window.location.href = "registrer_time.html";
+        }
 
         $("#new_company_link").live("click", function() {
             $(this).simpledialog({
