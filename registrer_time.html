@@ -27,7 +27,6 @@
         // Document listeners
 
         document.addEventListener("deviceready", onDeviceReady, false);
-        document.addEventListener("backbutton", backKeyDown, true);
 
 
         // Special functions
@@ -64,6 +63,7 @@
         $("#register_hours").live('pageinit', addMockData);
         $("#register_hours").live("pageinit", bindDatepicker);
         $("#register_hours").live("swipeleft swiperight", onSwipe);
+        $("#register_hours").live('pagebeforeshow', bindBackKeyForDisplayDay);
 
         // Add punches page
         $("#add_details").live("pageinit", setScrollerDetails);
@@ -74,6 +74,8 @@
         $("#new_company_link").live("click", popupDialogAddNewCompany);
         $("#new_description_link").live('click', popupDialogAddNewDescription);
         $("#add_details").live('pagebeforeshow', setHeaderDateForNewPunch);
+        $("#add_details").live('pagebeforeshow', bindBackKeyForNewPunch);
+
 
         // Functions
 
@@ -87,9 +89,23 @@
 
 
         /**
-         * Bind back key to nothing
+         *  Bind back key
          */
-        function backKeyDown() {}
+
+        function bindBackKeyForDisplayDay () {
+            document.addEventListener("backbutton", backKeyForDisplayDay, false);
+        }
+
+        function backKeyForDisplayDay() {}
+
+        function bindBackKeyForNewPunch() {
+            document.addEventListener("backbutton", backKeyForNewPunch, false);
+        }
+
+        function backKeyForNewPunch()  {
+            resetFormValues();
+            history.back();
+        }
 
         function bindDatepicker() {
             $("#mydate").bind('datebox', function (e, passed) {

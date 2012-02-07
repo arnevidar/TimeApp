@@ -23,8 +23,18 @@
         var tadc = new TimeAppDataController();
         tadc.loadData(function() {}, function() {});
 
+        document.addEventListener("backbutton", goBack, false);
 
-        function iniateDeletePopup() {
+
+        $("#edit_details").live("pageinit", setupPage);
+        $("#select_company").live("change", onChangeCompanySelector);
+        $("#new_company_link").live("click", popupDialogAddNewCompany);
+        $("#select_description").live("change", onChangeDescriptionSelector);
+        $("#new_description_link").live('click', popupDialogAddNewDescription);
+
+
+
+        function initateDeletePopup() {
             $(this).simpledialog({
                 'mode' : 'bool',
                 'prompt' : 'Do you want to delete this record?',
@@ -52,14 +62,12 @@
             })
         }
 
-
-
         function goBack(){
             localStorage.setItem("backDate", localStorage.getItem("todaysDate"));
             window.location.href = "registrer_time.html";
         }
 
-        $("#new_company_link").live("click", function() {
+        function popupDialogAddNewCompany () {
             $(this).simpledialog({
                 'mode' : 'string',
                 'prompt' : 'Add a new company',
@@ -85,9 +93,9 @@
                     }
                 }
             })
-        });
+        }
 
-        $("#new_description_link").live('click', function() {
+        function popupDialogAddNewDescription() {
             $(this).simpledialog({
                 'mode' : 'string',
                 'prompt' : 'Add a new description',
@@ -112,9 +120,7 @@
                     }
                 }
             })
-        });
-
-
+        }
 
         /**
          * Formats the number hh.MM to hh:MM
@@ -137,11 +143,10 @@
             return minute;
         }
 
-
         /** Get's the 7 last used companies and descriptions.
         ** Then sets the value to the item which is to be edited
         **/
-        $("#edit_details").live("pageinit", function() {
+        function setupPage() {
             var companyToEdit = localStorage.getItem("company");
             var last7UsedCompanies = tadc.get7companies();
             $("#select_company").children('option').remove();
@@ -173,6 +178,7 @@
                     $("#save_hours_btn").removeClass("ui-disabled ");
                 }
             });
+
             var time = localStorage.getItem("hours").split(".");
             var hours = time[0];
             //add trim()
@@ -182,15 +188,12 @@
             theTime.setMinutes(minutes);
             $("#hours_and_minutes").scroller('setDate', theTime, true);
 
-
             var selectedDate = new Date(localStorage.getItem("todaysDate"));
 
             $('#edit_date_heading').text("Edit " + selectedDate.toDateString());
-        });
+        }
 
-
-
-        $("#select_company").live("change", function() {
+        function onChangeCompanySelector() {
             var companyName = $("#select_company option:selected").text();
             if(companyName === "Add a new company") {
                 $("#new_company_link").click();
@@ -198,10 +201,7 @@
             else if(companyName !== "Select Company") {
                 get7LastDescriptions(companyName);
             }
-        });
-
-
-
+        }
 
         function get7LastDescriptions(companyName) {
             var descriptions = tadc.get7descriptions(companyName);
@@ -217,9 +217,7 @@
             $('#select_description').val("Select Description").selectmenu('refresh');
         }
 
-
-
-        $("#select_description").live("change", function() {
+        function onChangeDescriptionSelector() {
             var desc = $("#select_description option:selected").text();
             if(desc === "Day off" || desc === "Time off") {
                 $("#hours_and_minutes").show();
@@ -240,7 +238,7 @@
                 $("#hours_and_minutes").prop("disabled", false).show();
                 $("#save_hours_btn").removeClass("ui-disabled ");
             }
-        });
+        }
 
         function resetFormValues() {
             $('#select_company').val("Select Company").selectmenu('refresh');
@@ -289,8 +287,6 @@
             goBack();
         }
 
-
-
     </script>
 </head>
 
@@ -320,7 +316,7 @@
 
             <div data-role="controlgroup" data-type="horizontal" class="center-wrapper">
 
-                <a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine" onclick="iniateDeletePopup()">Del</a>
+                <a href="#" data-role="button" data-icon="timeapp-cancel" id="deleteLine" onclick="initateDeletePopup()">Del</a>
                 <a href="#" data-role="button" onclick="goBack()">Back</a>
                 <a href="#" data-role="button" data-icon="timeapp-ok" id="save_hours_btn" class="" onclick="updateLine()">Save</a>
             </div>
