@@ -87,6 +87,7 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
         (oldTotH)){
             this.deleteRecord(oldCompanyName, oldDescription, oldDate, oldTotH, function() {
                 var t = new TimeAppDataController();
+                t.loadData(function() {}, function() {});
                 t.updatePunch(newCompanyName, newDescription, newDate, newTotH, undefined, undefined, undefined, undefined, onWriteFileSuccess);
             });
             return;
