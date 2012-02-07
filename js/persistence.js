@@ -20,7 +20,7 @@
     	}, onFailure); 
 	  }, onFailure);        
     }
-    
+
     /**
     *  Reads content of TimeApp folder. Passes array of files as parameter to onSuccess.
     *	
@@ -41,7 +41,7 @@
 	*/
 	
     Persistence.prototype.writefile = function (filename, content, onSuccess, onFailure) {
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) { // henter filsystem
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
           fileSystem.root.getFile("TimeApp"+"/"+filename+".json", {create: true}, function (fileEntry) {
             fileEntry.createWriter(function (writer) {
 			  writer.onwrite = function(evt) {

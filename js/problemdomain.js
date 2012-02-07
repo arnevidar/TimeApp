@@ -14,10 +14,9 @@ function TimeAppDataController () {
  * @param onFailure
  */
 TimeAppDataController.prototype.saveToFile = function (success, failure) {
-    p = new Persistence();
-    p.checkAndCreateTimeAppFolder(success, failure);
-    p.writefile("timeappdata", JSON.stringify(this.companies), function(){},function(){alert("err2")});
-
+    var p = new Persistence();
+    //p.checkAndCreateTimeAppFolder(success, failure);
+    p.writefile("timeappdata", JSON.stringify(this.companies), success ,function(){alert("err2")});
     localStorage.setItem("companies", JSON.stringify(this.companies));
 }
 
@@ -57,7 +56,7 @@ TimeAppDataController.prototype.addVacation = function(newCompanyName, newDescri
  * Adds a new punch or updates an existing punch.
  * Update is actually delete -> create new.
  *
- * TODO onsuccess/onfailure
+ * TODO proper onsuccess/onfailure
  * @param newCompanyName
  * @param newDescription
  * @param newDate
@@ -70,7 +69,11 @@ TimeAppDataController.prototype.addVacation = function(newCompanyName, newDescri
 
 
 TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescription, newDate, newTotH,
-                                                       oldCompanyName, oldDescription, oldDate, oldTotH){
+                                                       oldCompanyName, oldDescription, oldDate, oldTotH,
+                                                       onSuccess){
+    var onWriteFileSuccess = onSuccess;
+    if (!onWriteFileSuccess) onWriteFileSuccess = function () {};
+
 
     if (newCompanyName.trim().toLowerCase() == "select company" || newCompanyName.trim() == "") return;
     if (newCompanyName.trim().toLowerCase() == "add a new company" || newCompanyName.trim() == "") return;
@@ -82,7 +85,11 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
         (oldDescription)&&
         (oldDate)&&
         (oldTotH)){
-            this.deleteRecord(oldCompanyName, oldDescription, oldDate, oldTotH);
+            this.deleteRecord(oldCompanyName, oldDescription, oldDate, oldTotH, function() {
+                var t = new TimeAppDataController();
+                t.updatePunch(newCompanyName, newDescription, newDate, newTotH, undefined, undefined, undefined, undefined, onWriteFileSuccess);
+            });
+            return;
     }
 
     var companyObject = this.getCompany(newCompanyName);
@@ -96,7 +103,7 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
 
     //var punchObject = this.getPunch(descObject, newDate, newTotH);
     this.addPunch(descObject, newDate, newTotH);
-    this.saveToFile(function(){},function(){alert("err");});
+    this.saveToFile(onWriteFileSuccess,function(){alert("err");});
 }
 
 /**
@@ -107,14 +114,15 @@ TimeAppDataController.prototype.updatePunch = function(newCompanyName, newDescri
  * @param totH
  */
 
-TimeAppDataController.prototype.deleteRecord = function (companyName, description, date, totH) {
+TimeAppDataController.prototype.deleteRecord = function (companyName, description, date, totH, onSuccess) {
+
         var companyObject = this.getCompany(companyName);
         var descObject = this.getDescription(companyObject, description);
         var punchObject = this.getPunch(descObject, date, totH);
         this.removePunch(descObject, punchObject);
         this.verifyDesc(companyObject, descObject);
         this.verifyComp(companyObject);
-        this.saveToFile(function(){},function(){alert("err");});
+        this.saveToFile(onSuccess, function(e){alert("err" + e);});
 }
 
 
