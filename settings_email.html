@@ -89,12 +89,12 @@
         function successfullyReadEmailSettings(result) {
             if (result) {
                 var res = JSON.parse(result);
-                $("#email").val(res.email);
+                $("#email").val(res.recipient);
                 $("#toggle-email").val(res.toggleEmail).slider('refresh');
                 $("#select-weekday").val(res.weekday.toLowerCase()).selectmenu('refresh');
                 $("#email-time").val(res.time);
                 $("#settings_email_smtpserver").val(res.smtpserver);
-                $("#settings_email_username").val(res.username);
+                $("#settings_email_username").val(res.sender);
                 $("#settings_email_password").val(res.password);
             } 
             enableOrDisableInputs();
@@ -120,12 +120,12 @@
                 var toaster = $.toaster({showTime:1000, centerX:true, centerY:true}); // create a toaster
                 toaster.toast("Saving data");//show a toast message
                 var emailSettings = new Object();
-                emailSettings.email = $("#email").val();
+                emailSettings.recipient = $("#email").val();
                 emailSettings.toggleEmail = $("#toggle-email").val();
                 emailSettings.weekday = $("#select-weekday").val();
                 emailSettings.time = $("#email-time").val();
                 emailSettings.smtpserver = $("#settings_email_smtpserver").val();
-                emailSettings.username = $("#settings_email_username").val();
+                emailSettings.sender = $("#settings_email_username").val();
                 emailSettings.password = $("#settings_email_password").val();
                 var jsonString = JSON.stringify(emailSettings);
                 var p = new Persistence();
@@ -186,7 +186,7 @@
         <!-- Email input field -->
 
         <div data-role="fieldcontain">
-            <label for="email">Email:</label>
+            <label for="email">Recipient email address:</label>
             <input type="email" name="name" id="email" placeholder="Email" />
         </div>
 
