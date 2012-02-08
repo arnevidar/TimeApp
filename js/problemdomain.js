@@ -319,7 +319,7 @@ TimeAppDataController.prototype.getTotHDay = function(dateToFetch) {
                 if ((punchDate.getFullYear()==dateToFetch.getFullYear()) &&
                     (punchDate.getMonth()==dateToFetch.getMonth())&&
                     (punchDate.getDate()==dateToFetch.getDate())) {
-                    totalHours += companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].totH;
+                    totalHours = totalHours + parseFloat(companiesToInclude[compIndex].desc[descIndex].punch[punchIndex].totH);
                 }
             }
         }
@@ -334,7 +334,7 @@ TimeAppDataController.prototype.getTotHWeek = function(startDate, endDate) {
     var diff = Math.abs(endDate.getTime() - startDate.getTime());
     for( j = startDate_m; j <= endDate_m; j += one_day ) {
         var jj = new Date(j);
-        totalHours += this.getTotHDay(jj);
+        totalHours = ( totalHours + this.getTotHDay(jj) );
     }
     return totalHours;
 }
@@ -349,19 +349,18 @@ TimeAppDataController.prototype.pushFinishedDatesToLS = function(d) {
     var notFinishedDatesArray = new Array();
     var one_day = 1000 * 3600 * 24;
     var firstDayInMonth_m = new Date(d.getFullYear(), d.getMonth(), 1).getTime();
-    var lastDayInMonth_m = new Date(d.getFullYear(), d.getMonth()+1, 0).getTime();
+    var lastDayInMonth_m = new Date().getTime();
     for( m = firstDayInMonth_m; m <= lastDayInMonth_m; m += one_day ) {
         var newDate = new Date(m);
-        alert("THIS IS newDATE " + newDate);
         var isoDay = toISODate(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
-        if( this.getTotHDay(newDate) > 7 ) {
-            finishedDatesArray.push("\""+isoDay+"\"");
+        if( this.getTotHDay(newDate) >= 8 ) {
+            finishedDatesArray.push(isoDay);
         } else {
-            notFinishedDatesArray.push("\""+isoDay+"\"");
+            notFinishedDatesArray.push(isoDay);
         }
     }
-    localStorage.setItem('finishedDates', finishedDatesArray);
-    localStorage.setItem('notFinishedDates', notFinishedDatesArray);
+    localStorage.setItem("finishedDates", finishedDatesArray);
+    localStorage.setItem("notFinishedDates", notFinishedDatesArray);
 }
 
 
