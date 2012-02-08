@@ -83,6 +83,7 @@
             $(this).simpledialog({
                 'mode' : 'string',
                 'prompt' : 'Add a new company',
+                'useModal': true,
                 'useDialogForceFalse' : true,
                 'buttons' : {
                     'OK': {
@@ -112,6 +113,7 @@
                 'mode' : 'string',
                 'prompt' : 'Add a new description',
                 'useDialogForceFalse' : true,
+                'useModal': true,
                 'buttons' : {
                     'OK': {
                         click: function () {
@@ -212,6 +214,7 @@
             }
             else if(companyName !== "Select Company") {
                 get7LastDescriptions(companyName);
+                $("#select_description").trigger('click');
             }
         }
 
@@ -231,22 +234,17 @@
 
         function onChangeDescriptionSelector() {
             var desc = $("#select_description option:selected").text();
-            if(desc === "Day off" || desc === "Time off") {
+            if(desc == "Holiday") {
                 $("#hours_and_minutes").show();
-                $("#first_day_after_vacation").hide();
                 var fullDay = new Date();
-                fullDay.setHours(7);
-                fullDay.setMinutes(30);
+                fullDay.setHours(8);
+                fullDay.setMinutes(00);
                 $("#hours_and_minutes").scroller('setDate', fullDay, true);
-                $("#hours_and_minutes").scroller('destroy');
-                $("#save_hours_btn").removeClass("ui-disabled ");
+                $("#hours_and_minutes").prop("disabled", false).show();
+                $("#save_hours_btn").removeClass("ui-disabled");
             } else if(desc === "Add new description") {
                 $("#new_description_link").click();
-            } else if(desc === "Vacation") {
-                $("#hours_and_minutes").hide();
-                $("#first_day_after_vacation").show();
             } else {
-                $("#first_day_after_vacation").hide();
                 $("#hours_and_minutes").prop("disabled", false).show();
                 $("#save_hours_btn").removeClass("ui-disabled ");
             }
@@ -316,8 +314,6 @@
                     <br />
                     <label for="hours_and_minutes"></label>
                     <input type="text" id="hours_and_minutes" placeholder="Hours and minutes"/>
-                    <label for="first_day_after_vacation"></label>
-                    <input id="first_day_after_vacation" type="date" placeholder="First day after vacation" style="display: none;"/>
                     <br />
                  </div>
 

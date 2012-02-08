@@ -121,6 +121,7 @@
             $(this).simpledialog({
                 'mode' : 'string',
                 'prompt' : 'Add a new company',
+                'useModal': true,
                 'useDialogForceFalse' : true,
                 'buttons' : {
                     'OK': {
@@ -150,6 +151,7 @@
                 'mode' : 'string',
                 'prompt' : 'Add a new description',
                 'useDialogForceFalse' : true,
+                'useModal': true,
                 'buttons' : {
                     'OK': {
                         click: function () {
@@ -266,7 +268,6 @@
             $("#hours_and_minutes").removeClass("ui-disabled");
             if(desc == "Holiday") {
                 $("#hours_and_minutes").show();
-                //$("#first_day_after_vacation").hide();
                 bindTimeSelectorToForm();
                 var fullDay = new Date();
                 fullDay.setHours(8);
@@ -280,11 +281,9 @@
             } else if(desc == "Vacation") {
                 $("#hours_and_minutes").prop("disabled", false).show();
                 //$("#hours_and_minutes").hide();
-                //$("#first_day_after_vacation").show();
                 bindDateSelectorToForm();
             } else {
                 bindTimeSelectorToForm();
-                //$("#first_day_after_vacation").hide();
                 $("#hours_and_minutes").prop("disabled", false).show();
             }
         }
