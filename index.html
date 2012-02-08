@@ -9,9 +9,10 @@
 	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/storage.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/statusbarnotificationAndroid.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>  
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/emailSenderAndroid.js"></script>
 	<script type="text/javascript">
       
     // Wait for PhoneGap to load
@@ -30,7 +31,7 @@
 
 */
     function notifyMe() {
-        window.plugins.statusBarNotification.dailyNoti();
+        window.plugins.statusBarNotificationAndroid.dailyNoti();
     }
 
     function choseDate() {
@@ -38,13 +39,16 @@
     }
 
 
+    function sendMail() {
+        window.plugins.emailSenderAndroid.sendMail();
+    }
 
 
     var tadc = 0;
 
     function onDeviceReady() {
-       // window.plugins.statusBarNotification.sendMail();
-        window.plugins.statusBarNotification.dailyNoti();
+
+       // window.plugins.statusBarNotification.dailyNoti();
         tadc = new TimeAppDataController();
     }
 
