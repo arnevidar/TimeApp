@@ -18,18 +18,20 @@
     <script type="text/javascript" charset="utf-8" src="js/jquery.toaster.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/statusbarnotificationAndroid.js"></script>
 
 
     <script type="text/javascript">
         // Wait for PhoneGap to load
         //
         document.addEventListener("deviceready", onDeviceReady, false);
+        var devicePlatform = "";
 
         // PhoneGap is ready
         //
         function onDeviceReady() {
             readNotificationSettingsFile("notificationsettings");
+            devicePlatform = device.platform;
         }
 
         $(document).on("pageinit", "#notificationSettings", function() {
@@ -85,7 +87,9 @@
 
         function saveNotificationSettings() {
             if($("#toggle-notifications").val() === "off") {
-                window.plugins.statusBarNotification.cancelDailyNoti();
+                if(devicePlatform.toLowerCase() == "android") {
+                    window.plugins.statusBarNotificationAndroid.cancelDailyNoti();
+                }
             }
             var toaster = $.toaster({showTime:1000, centerX:true, centerY:true}); // create a toaster
             toaster.toast("Information updated");//show a toast message
@@ -104,7 +108,9 @@
             p.writefile("notificationsettings", jsonString, redirectToSettings, failSaveSettings);
 
             if($("#toggle-notifications").val() === "on") {
-                window.plugins.statusBarNotification.dailyNoti();
+                if(devicePlatform.toLocaleLowerCase() == "android") {
+                    window.plugins.statusBarNotificationAndroid.dailyNoti();
+                }
             }
 
         }
