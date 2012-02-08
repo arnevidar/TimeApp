@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>FileReader Example</title>
+    <title>Menu</title>
      
     <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
     <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
@@ -63,19 +63,19 @@
      <div data-role="page">
       
           <div data-role="header">  
-               <h1> Header Content </h1>    
+               <h1>Menu</h1>
           </div>     
                               
-          <div data-role="content"> 
-               <p> Main Page Content </p>
+          <div data-role="content">
             <a href="qunit.html"  type="button" data-ajax="false"> qUnit - test me plz </a><br/>
 
             <a href="Monthview.html"  type="button" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br />
 
-              <input type="button" onclick="notifyMe()" value="notify"/>
+            <input type="button" onclick="notifyMe()" value="notify"/>
 
-              <input type="button" onclick="sendMail()" value="Send mail"/>
-              <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()"  type="button">Clear all data!</a>
+            <input type="button" onclick="sendMail()" value="Send mail"/>
+
+            <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()"  type="button">Clear all data!</a>
 
           </div>
 
