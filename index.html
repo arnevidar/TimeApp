@@ -14,11 +14,11 @@
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/emailSenderAndroid.js"></script>
 	<script type="text/javascript">
-      
+       
     // Wait for PhoneGap to load
     //
     document.addEventListener("deviceready", onDeviceReady, false);
-
+    
 
     /* var tadc = new TimeAppDataController();
     tadc.loadData(
@@ -65,20 +65,19 @@
           <div data-role="header"> 
 
                <h1> Header Content </h1> 
-                     
+                                       
           </div>
                               
           <div data-role="content"> 
                <p> Main Page Content </p>
-            <a href="qunit.html" data-ajax="false"> qUnit - test me plz </a><br/>
+            <a href="qunit.html"  type="button" data-ajax="false"> qUnit - test me plz </a><br/>
 
-            <a href="Monthview.html" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br />
-            <a href="CalendarView.html" data-ajax="false">Calendar</a>
+            <a href="Monthview.html"  type="button" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br />
 
               <input type="button" onclick="notifyMe()" value="notify"/>
 
               <input type="button" onclick="sendMail()" value="Send mail"/>
-              <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()">Clear all data!</a>
+              <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()"  type="button">Clear all data!</a>
 
           </div>
 

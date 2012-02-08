@@ -353,7 +353,7 @@ TimeAppDataController.prototype.pushFinishedDatesToLS = function(d) {
     for( m = firstDayInMonth_m; m <= lastDayInMonth_m; m += one_day ) {
         var newDate = new Date(m);
         var isoDay = toISODate(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
-        if( this.getTotHDay(newDate) >= 8 ) {
+        if( parseFloat(this.getTotHDay(newDate)) >= 8.0 ) {
             finishedDatesArray.push(isoDay);
         } else {
             notFinishedDatesArray.push(isoDay);
@@ -420,20 +420,28 @@ TimeAppDataController.prototype.get7companies = function() {
  */
 
 TimeAppDataController.prototype.get7descriptions = function (companyName) {
-    var internalChoices = ["Time off", "Day off", "Vacation"];
-    if(companyName === "Internal") {
-        return internalChoices;
-    } else {
-        var company  = this.getCompany(companyName);
-        if(company) {
-            var descr = [];
-            var i = 0;
-            for (i = 0; i < 7 && i < company.desc.length; i++) {
-                descr.push(company.desc[i].description);
-            }
-            return descr;
+
+    var internalChoices = ["Time off", "Holiday", "Vacation"];
+    var descr = [];
+
+    var company  = this.getCompany(companyName);
+    if(company) {
+        for (var i = 0; i < 7 && i < company.desc.length; i++) {
+            descr.push(company.desc[i].description);
         }
+        if(companyName == "Internal") {
+            if (descr.indexOf("Time off")<0) descr.push("Time off");
+            if (descr.indexOf("Holiday")<0) descr.push("Holiday");
+            if (descr.indexOf("Vacation")<0) descr.push("Vacation");
+        }
+        return descr;
     }
+    if (companyName == "Internal") {
+        descr = ["Time off", "Holiday", "Vacation"];
+        return descr;
+    }
+
+
     return null;
 }
 

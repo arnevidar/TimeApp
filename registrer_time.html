@@ -10,9 +10,9 @@
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
         <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
         <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
-
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css" />
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile.datebox.css" />
+
 
 
         <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>
@@ -57,8 +57,6 @@
         }
 
         tadc.loadData(function() {}, function(err) {});
-        tadc.pushFinishedDatesToLS(todaysDate);
-
 
         // Bindings connected to events
 
@@ -265,15 +263,18 @@
 
         function handleTimefieldAfterDescriptionIsChanged () {
             var desc = $("#select_description option:selected").text();
-            if(desc == "Day off" || desc == "Time off") {
+            $("#hours_and_minutes").removeClass("ui-disabled");
+            if(desc == "Holiday") {
                 $("#hours_and_minutes").show();
                 //$("#first_day_after_vacation").hide();
+                bindTimeSelectorToForm();
                 var fullDay = new Date();
-                fullDay.setHours(7);
-                fullDay.setMinutes(30);
+                fullDay.setHours(8);
+                fullDay.setMinutes(00);
                 $("#hours_and_minutes").scroller('setDate', fullDay, true);
-                $("#hours_and_minutes").scroller('destroy');
-                $("#save_hours_btn").removeClass("ui-disabled ");
+                //$("#hours_and_minutes").scroller('destroy');
+                $("#hours_and_minutes").prop("disabled", false).show();
+                $("#save_hours_btn").removeClass("ui-disabled");
             } else if(desc == "Add new description") {
                 $("#new_description_link").click();
             } else if(desc == "Vacation") {
@@ -367,6 +368,7 @@
         }
 
         function addMockData() {
+            tadc.pushFinishedDatesToLS(todaysDate);
             var daysData = tadc.getDataForDay(todaysDate);
             var html = '';
             var idCounter = 0;

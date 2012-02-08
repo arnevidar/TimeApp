@@ -40,11 +40,11 @@ function printDayName(d) {
  */
 Date.prototype.getWeek = function (d) {
     // Create a copy of this date object
-    var target  = new Date(this.valueOf()) || new Date(d.valueOf());
+    var target  = new Date(d.valueOf());
 
     // ISO week date weeks start on monday
     // so correct the day number
-    var dayNr = (this.getDay() + 6) % 7 || (d.getDay() + 6) % 7;
+    var dayNr = (d.getDay() + 6) % 7;
 
     // ISO 8601 states that week 1 is the week
     // with the first thursday of that year.
@@ -64,7 +64,7 @@ Date.prototype.getWeek = function (d) {
 
     // The weeknumber is the number of weeks between the
     // first thursday of the year and the thursday in the target week
-    var weekNr =  1 + Math.floor((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000
+    var weekNr =  1 + Math.ceil((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000
     return weekNr;
 }
 
@@ -76,12 +76,17 @@ function pushDaysToWeekArray(month, y) {
     if(y == null) {
         var year = new Date().getFullYear();
     } else {
-        var year = new Date(y);
+        var year = new Date(y).getFullYear();
     }
-    var lastDay = new Date(year, month+1, 0).getDate(); // Number of days in the month
+
+    var monthInt = parseInt(month);
+    var dddd = new Date(year, (monthInt+1), 1);
+    dddd.setDate(dddd.getDate()-1);
+    var lastDay = dddd.getDate(); // Number of days in the month
     var weekdaysAndTheirWeekNr = [];
-    for(i = 0; i < lastDay; i++) {
-        var date = new Date(year, month, i);
+    for(i = 1; i <= lastDay; i++) {
+        var date = new Date(year, monthInt, i);
+        console.log("Date " + date.toLocaleDateString() + " week " + date.getWeek(date));
         weekdaysAndTheirWeekNr.push(date.getWeek(date));
     }
     //alert(weekdaysAndTheirWeekNr);
@@ -124,7 +129,7 @@ function printWeekDates(month, y) {
         var weeksInMonth = getWeeksInMonth(month, y);
     }
     var datesInWeek = new Array();
-
+    console.log("pdtw "+JSON.stringify(pushDaysToWeekArray(month)));
     for(a = 0; a < weeksInMonth.length; a++) {
         for(b = 0; b < fullMonth.length; b++) {
             if(fullMonth[b] != weeksInMonth[a]) {
@@ -184,32 +189,5 @@ function clearWeekNr() {
  */
 function toISODate(y,m,d) {
     // Return an ISO 8601 date (yyyy-mm-dd)
-    return String(y) + '-' + (( m < 10 ) ? "0" : "") + String(m) + '-' + ((d < 10 ) ? "0" : "") + String(d);
-}
-
-/**
- * FINISH THESE METHODS!
- */
-
-
-/**
- * Pushes the finishedDates to localeStorage
- */
-
-
-function getFinishedDates() {
-    var finishedDates = localStorage.getItem("finishedDates");
-    alert("THIS IS MONTH: " +finishedDates);
-    var finishedDatesA = finishedDates.split(",");
-    var res = '[';
-    for( u = 0; u < finishedDatesA.length; u++ ) {
-        res += finishedDatesA[u] + ", ";
-    }
-    res += ']';
-    return res;
-}
-
-function notFinishedDates(month) {
-    var notFinishedDates = new Array();
-    return notFinishedDates;
+    return String(y) + '-' + (( (m+1) < 10 ) ? "0" : "") + String(m+1) + '-' + ((d < 10 ) ? "0" : "") + String(d);
 }
