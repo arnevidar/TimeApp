@@ -19,13 +19,14 @@
     <script type="text/javascript" charset="utf-8" src="js/jquery.toaster.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/emailSender.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/statusbarnotificationAndroid.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/emailSenderAndroid.js"></script>
 
     <script type="text/javascript">
         // Wait for PhoneGap to load
 
         var esFilename = "emailsettings";
+        var devicePlatform = "";
 
         document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -34,6 +35,7 @@
         // PhoneGap is ready
         //
         function onDeviceReady() {
+            devicePlatform = device.platform;
 
             readEmailSettingsFile("emailsettings");
         }
@@ -101,7 +103,9 @@
         function saveEmailSettings() {
             if(checkEmail()) {
                 if($("#toggle-email").val() === "off") {
-                    window.plugins.emailSender.cancelMail();
+                    if(devicePlatform.toLocaleLowerCase() == "android") {
+                        window.plugins.emailSenderAndroid.cancelMail();
+                    }
                 }
                 var toaster = $.toaster({showTime:1000, centerX:true, centerY:true}); // create a toaster
                 toaster.toast("Saving data");//show a toast message
@@ -115,7 +119,9 @@
                 p.writefile("emailsettings", jsonString, redirectToSettings ,failSaveSettings);
 
                 if($("#toggle-email").val() === "on") {
-                    window.plugins.emailSender.sendMail();
+                    if(devicePlatform.toLocaleLowerCase() == "android") {
+                        window.plugins.emailSenderAndroid.sendMail();
+                    }
                 }
 
             }
