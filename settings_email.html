@@ -64,12 +64,19 @@
                 $("#select-weekday").selectmenu('refresh', true);
                 $("#email-time").addClass('ui-disabled');
                 $("#email").addClass('ui-disabled');
+                $("#settings_email_smtpserver").addClass('ui-disabled');
+                $("#settings_email_username").addClass('ui-disabled');
+                $("#settings_email_password").addClass('ui-disabled');
+
             }
             else {
                 $("#select-weekday").selectmenu('enable');
                 $("#select-weekday").selectmenu('refresh', true);
                 $("#email-time").removeClass('ui-disabled');
                 $("#email").removeClass('ui-disabled');
+                $("#settings_email_smtpserver").removeClass('ui-disabled');
+                $("#settings_email_username").removeClass('ui-disabled');
+                $("#settings_email_password").removeClass('ui-disabled');
             }
         }
 
@@ -86,6 +93,9 @@
                 $("#toggle-email").val(res.toggleEmail).slider('refresh');
                 $("#select-weekday").val(res.weekday.toLowerCase()).selectmenu('refresh');
                 $("#email-time").val(res.time);
+                $("#settings_email_smtpserver").val(res.smtpserver);
+                $("#settings_email_username").val(res.username);
+                $("#settings_email_password").val(res.password);
             } 
             enableOrDisableInputs();
         }
@@ -114,6 +124,9 @@
                 emailSettings.toggleEmail = $("#toggle-email").val();
                 emailSettings.weekday = $("#select-weekday").val();
                 emailSettings.time = $("#email-time").val();
+                emailSettings.smtpserver = $("#settings_email_smtpserver").val();
+                emailSettings.username = $("#settings_email_username").val();
+                emailSettings.password = $("#settings_email_password").val();
                 var jsonString = JSON.stringify(emailSettings);
                 var p = new Persistence();
                 p.writefile("emailsettings", jsonString, redirectToSettings ,failSaveSettings);
@@ -198,6 +211,29 @@
         <div data-role="fieldcontain">
             <label for="email-time">Set the time for the email to be sent:</label>
             <input type="email" id="email-time" />
+        </div>
+
+
+        <!-- SMTP server -->
+
+        <div data-role="fieldcontain">
+            <label for="settings_email_smtpserver">Mail server:</label>
+            <input type="url" name="name" id="settings_email_smtpserver" placeholder="" />
+        </div>
+
+        <!-- Username -->
+
+        <div data-role="fieldcontain">
+            <label for="settings_email_username">Username:</label>
+            <input type="text" name="name" id="settings_email_username" placeholder="" />
+        </div>
+
+
+        <!-- Password -->
+
+        <div data-role="fieldcontain">
+            <label for="settings_email_password">Password:</label>
+            <input type="password" name="name" id="settings_email_password" placeholder="" />
         </div>
 
         <!-- Buttons -->
