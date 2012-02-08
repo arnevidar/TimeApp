@@ -74,7 +74,7 @@
                 $("#select-weekday").selectmenu('refresh', true);
                 $("#email-time").removeClass('ui-disabled');
                 $("#email").removeClass('ui-disabled');
-                $("#settings_email_smtpserver").removeClass('ui-disabled');
+                //$("#settings_email_smtpserver").removeClass('ui-disabled');
                 $("#settings_email_username").removeClass('ui-disabled');
                 $("#settings_email_password").removeClass('ui-disabled');
             }
@@ -218,7 +218,7 @@
 
         <div data-role="fieldcontain">
             <label for="settings_email_smtpserver">Mail server:</label>
-            <input type="url" name="name" id="settings_email_smtpserver" placeholder="" />
+            <input type="url" name="name" id="settings_email_smtpserver" value="smtp.gmail.com" class="ui-disabled" />
         </div>
 
         <!-- Username -->
@@ -233,7 +233,7 @@
 
         <div data-role="fieldcontain">
             <label for="settings_email_password">Password:</label>
-            <input type="password" name="name" id="settings_email_password" placeholder="" />
+            <input type="password" name="name" id="settings_email_password" placeholder=""/>
         </div>
 
         <!-- Buttons -->
