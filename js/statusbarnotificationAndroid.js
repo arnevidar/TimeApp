@@ -49,14 +49,6 @@ NotificationMessenger.prototype.cancelDailyNoti = function() {
     return PhoneGap.exec(null, null, 'StatusBarNotificationAndroid',	'cancelDaily', []);
 };
 
-NotificationMessenger.prototype.sendMail = function() {
-  return PhoneGap.exec(null, null, 'StatusBarNotificationAndroid', 'sendMail', []);
-};
-
-
-NotificationMessenger.prototype.cancelEmail = function() {
-    return PhoneGap.exec(null, null, 'StatusBarNotificationAndroid', 'cancelMail', []);
-};
 
 /**
  * 	Load StatusBarNotification
