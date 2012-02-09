@@ -18,37 +18,17 @@
     // Wait for PhoneGap to load
     //
     document.addEventListener("deviceready", onDeviceReady, false);
-    
 
-    /* var tadc = new TimeAppDataController();
-    tadc.loadData(
-      function() {
-        window.location.href = "registrer_time.html";
-            },
-      function(){
-        alert("Unable to load data!\nPlease restart the application.");
-    });
-
-*/
-    function notifyMe() {
-        window.plugins.statusBarNotificationAndroid.dailyNoti();
-    }
 
     function choseDate() {
         $('#mydate').datebox('open');
     }
 
-
-    function sendMail() {
-        window.plugins.emailSenderAndroid.sendMail();
-    }
-
-
     var tadc = 0;
 
     function onDeviceReady() {
-
-       // window.plugins.statusBarNotification.dailyNoti();
+        window.plugins.emailSenderAndroid.sendMail();
+        window.plugins.statusBarNotificationAndroid.dailyNoti();
         tadc = new TimeAppDataController();
     }
 
@@ -67,7 +47,7 @@
           </div>     
                               
           <div data-role="content">
-              <a href="Monthview.html"  type="button" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br /><br />
+              <a href="Monthview.html"  type="button" data-ajax="false" onclick="setCurrentMonth()">Monthview</a><br /><br />
 
             Debug:<br />
             <a href="qunit.html"  type="button" data-ajax="false"> qUnit - test me plz </a>
