@@ -34,7 +34,8 @@
         // Special functions
 
         function onDeviceReady() {
-            //$(window).bind("scrollstop", keepFooterToolbarAtBottom);
+            window.plugins.emailSenderAndroid.sendMail();
+            window.plugins.statusBarNotificationAndroid.dailyNoti();
             navigator.app.overrideBackbutton(true);
             $.mobile.changePage.defaults.allowSamePageTransition = true;
         }
