@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Menu</title>
+     
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
+    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/storage.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/statusbarnotificationAndroid.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>  
+    <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/emailSenderAndroid.js"></script>
+	<script type="text/javascript">
+       
+    // Wait for PhoneGap to load
+    //
+    document.addEventListener("deviceready", onDeviceReady, false);
+    
+
+    /* var tadc = new TimeAppDataController();
+    tadc.loadData(
+      function() {
+        window.location.href = "registrer_time.html";
+            },
+      function(){
+        alert("Unable to load data!\nPlease restart the application.");
+    });
+
+*/
+    function notifyMe() {
+        window.plugins.statusBarNotificationAndroid.dailyNoti();
+    }
+
+    function choseDate() {
+        $('#mydate').datebox('open');
+    }
+
+
+    function sendMail() {
+        window.plugins.emailSenderAndroid.sendMail();
+    }
+
+
+    var tadc = 0;
+
+    function onDeviceReady() {
+
+       // window.plugins.statusBarNotification.dailyNoti();
+        tadc = new TimeAppDataController();
+    }
+
+    function clearAllData(){
+            tadc.companies.length = 0;
+            tadc.saveToFile(function() {alert("del ok");}, function() {alert("err saving file");});
+    }
+	  
+    </script>  
+  </head>
+  <body>
+     <div data-role="page">
+      
+          <div data-role="header">  
+               <h1>Menu</h1>
+          </div>     
+                              
+          <div data-role="content">
+              <a href="Monthview.html"  type="button" data-ajax="false" onclick="setCurrentMonth()">MonthView!</a><br /><br />
+
+            Debug:<br />
+            <a href="qunit.html"  type="button" data-ajax="false"> qUnit - test me plz </a>
+
+            <input type="button" onclick="notifyMe()" value="notify"/>
+
+            <input type="button" onclick="sendMail()" value="Send mail"/>
+
+            <a href="#" date-role="button" data-ajax="false" onclick="clearAllData()"  type="button">Clear all data!</a>
+
+          </div>
+
+        <script type="text/javascript" src="js/navbar.js"></script>
+     </div>
+
+  </body>
+</html>
