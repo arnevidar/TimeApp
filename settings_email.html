@@ -4,31 +4,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
     <title>Settings</title>
+    <script type="text/javascript" charset="utf-8" src="js/cordova-1.5.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.1.0-rc.1.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
-    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.1.0-rc.1.min.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+    <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
 
 
-    <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/jquery.toaster.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/statusbarnotificationAndroid.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/emailSenderAndroid.js"></script>
 
     <script type="text/javascript">
         // Wait for PhoneGap to load
+        document.addEventListener("deviceready", onDeviceReady, false);
 
         var esFilename = "emailsettings";
         var devicePlatform = "";
 
-        document.addEventListener("deviceready", onDeviceReady, false);
+
 
 
 
@@ -36,21 +38,17 @@
         //
         function onDeviceReady() {
             devicePlatform = device.platform;
-
-            readEmailSettingsFile("emailsettings");
         }
-        $(window).bind("scrollstop", function() {
-            $.mobile.fixedToolbars.show(true);
-        });
 
-        $(document).on('pageinit',"#emailSettings", function() {
+        $(document).on('pageinit',"#emailSettings", setScrollerSettings);
+        $(document).on('pageinit',"#emailSettings",readEmailSettingsFromLocalStorage);
+
+        function setScrollerSettings()  {
             var Adate = new Date(0,0,0,0,0,0,0);
             $("#email-time").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
                 stepMinute: 1, ampm: false, timeFormat : 'HH:ii'});
             $("#email-time").scroller('setDate', Adate, true);
-
-        });
-
+        }
 
         $(document).on("change", "#toggle-email", function(event, ui) {
             enableOrDisableInputs(event, ui);
@@ -101,13 +99,26 @@
         }
 
 
-        function redirectToSettings() {
+        function redirectToSettings(settings_email_jsonstrin) {
+            if (settings_email_jsonstrin) {
+                localStorage.setItem("settings_email", settings_email_jsonstrin);
+            }
             window.location.href = "settings.html";
         }
 
         function readEmailSettingsFile() {
             var p = new Persistence();
-            p.readfile("emailsettings", successfullyReadEmailSettings, failSaveSettings );
+            p.readfile("emailsettings", successfullyReadEmailSettings, failSaveSettings);
+        }
+
+        function readEmailSettingsFromLocalStorage(){
+
+            if (localStorage.getItem("settings_email")) {
+                successfullyReadEmailSettings(localStorage.getItem("settings_email"));
+            }
+            else {
+                document.addEventListener("deviceready", readEmailSettingsFile, false);
+            }
         }
 
         function saveEmailSettings() {
@@ -129,7 +140,7 @@
                 emailSettings.password = $("#settings_email_password").val();
                 var jsonString = JSON.stringify(emailSettings);
                 var p = new Persistence();
-                p.writefile("emailsettings", jsonString, redirectToSettings ,failSaveSettings);
+                p.writefile("emailsettings", jsonString, redirectToSettings(jsonString) ,failSaveSettings);
 
                 if($("#toggle-email").val() === "on") {
                     if(devicePlatform.toLocaleLowerCase() == "android") {
@@ -163,7 +174,7 @@
 
     <!-- header -->
 
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
         <h2>Email settings</h2>
     </div>
 

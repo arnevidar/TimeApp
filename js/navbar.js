@@ -1,5 +1,5 @@
 var cText = '';
-cText += '<div data-role="footer" data-position="fixed">';
+cText += '<div data-role="footer" data-position="fixed" data-id="samefooter">';
 cText +=    '<div data-role="navbar">';
 cText +=        '<ul>';
 cText +=            '<li><a href="menu.html" data-icon="home" data-ajax="false">Menu</a></li>';

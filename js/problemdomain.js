@@ -466,7 +466,7 @@ function companyComparator(a, b) {
 
 // DEBUG
 
-
+/*
 TimeAppDataController.prototype.loadData = function (onSuccess, onFailure) {
     if (localStorage.getItem("companies")){
         this.companies = JSON.parse(localStorage.getItem("companies"));
@@ -491,8 +491,9 @@ TimeAppDataController.prototype.loadData = function (onSuccess, onFailure) {
         }
         onSuccess;
     }, onFailure);
-*/
 }
+ */
+
 
 TimeAppDataController.prototype.loadMockData = function () {
     var dnb = this.addCompany("DNB");

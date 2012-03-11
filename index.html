@@ -3,24 +3,26 @@
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <title>Register hours</title>
-        <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/cordova-1.5.0.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.1.0-rc.1.min.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.css" />
-        <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.1.0-rc.1.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.min.css"/>
         <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css" />
         <link rel="stylesheet" type="text/css" href="css/jquery.mobile.datebox.css" />
+        <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
 
 
 
         <script type="text/javascript" charset="utf-8" src="js/problemdomain.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.min.js"></script>
-        <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.min.js"></script>
 
-        <script type="text/javascript" charset="utf-8" src="js/statusbarnotification.js"></script>
+        <script type="text/javascript" charset="utf-8" src="js/statusbarnotificationAndroid.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.datebox.js"></script>
         <script type="text/javascript" charset="utf-8" src="js/month.js"></script>
         <script type="text/javascript">
@@ -34,8 +36,8 @@
         // Special functions
 
         function onDeviceReady() {
-            window.plugins.emailSenderAndroid.sendMail();
-            window.plugins.statusBarNotificationAndroid.dailyNoti();
+            //window.plugins.emailSenderAndroid.sendMail();
+            //window.plugins.statusBarNotificationAndroid.dailyNoti();
             navigator.app.overrideBackbutton(true);
             $.mobile.changePage.defaults.allowSamePageTransition = true;
         }
@@ -86,7 +88,7 @@
         }
 
         function keepFooterToolbarAtBottom () {
-            $.mobile.fixedToolbars.show(true);
+            //$.mobile.fixedToolbars.show(true);
         }
 
         /**

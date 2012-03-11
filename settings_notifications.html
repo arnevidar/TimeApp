@@ -5,24 +5,28 @@
 
     <title>Settings</title>
 
-    <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.css"/>
-    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.0.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/style.css"/>
-    <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
-    <script type="text/javascript" charset="utf-8" src="js/phonegap-1.4.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/cordova-1.5.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.1.0-rc.1.min.js"></script>
 
-    <script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.0.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile-1.1.0-rc.1.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+    <link rel="stylesheet" type="text/css" href="css/mobiscroll-1.5.3.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/jquery.mobile.simpledialog.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/timeapp.css"/>
+
+
+    <script type="text/javascript" charset="utf-8" src="js/jquery.mobile.simpledialog.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/jquery.toaster.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/persistence.js"></script>
-    <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/mobiscroll-1.5.3.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/statusbarnotificationAndroid.js"></script>
 
 
     <script type="text/javascript">
         // Wait for PhoneGap to load
+        //
         //
         document.addEventListener("deviceready", onDeviceReady, false);
         var devicePlatform = "";
@@ -30,24 +34,22 @@
         // PhoneGap is ready
         //
         function onDeviceReady() {
-            readNotificationSettingsFile("notificationsettings");
+
             devicePlatform = device.platform;
         }
 
-        $(document).on("pageinit", "#notificationSettings", function() {
+        $(document).on("pageinit", "#notificationSettings", setScrollerSettings);
+        $(document).on("pageinit", "#notificationSettings", readNotificationSettingsFromLocalStorage);
+
+        function setScrollerSettings()  {
             var Adate = new Date(0,0,0,0,0,0,0);
             $("#notification-time").scroller({ preset: 'time', hourText: 'Hours',minuteText:'Minutes',
                 stepMinute: 1, ampm: false, timeFormat : 'HH:ii'});
             $("#notification-time").scroller('setDate', Adate, true);
-        });
+        }
 
-        $(window).bind("scrollstop", function() {
-            $.mobile.fixedToolbars.show(true);
-        });
 
-        $(document).on("change", "#toggle-notifications", function(event, ui) {
-            $("#toggle-notifications").change(enableOrDisableInputs);
-        });
+        $(document).on("change", "#toggle-notifications", enableOrDisableInputs);
 
 
         function loadEmailSettings() {
@@ -62,7 +64,7 @@
         function successfullyReadNotificationSettings(result) {
             if (result) {
              var notificationSettings = JSON.parse(result);
-             $("#toggle-notifications").val(notificationSettings.toggleNotifications).slider('refresh');
+             $("#toggle-notifications").val(notificationSettings.toggleNotifications).slider("refresh");
              if (notificationSettings.monday) $("#monday").attr('checked', true).checkboxradio("refresh");
              if (notificationSettings.tuesday == true) $("#tuesday").attr('checked', true).checkboxradio("refresh");
              if (notificationSettings.wednesday == true) $("#wednesday").attr('checked', true).checkboxradio("refresh");
@@ -76,13 +78,25 @@
         }
 
 
-        function redirectToSettings() {
+        function redirectToSettings(settings_notifications_jsonstrin) {
+            if (settings_notifications_jsonstrin) {
+                localStorage.setItem("settings_notifications", settings_notifications_jsonstrin);
+            }
             window.location.href = "settings.html";
         }
 
-        function readNotificationSettingsFile(filename) {
+        function readNotificationSettingsFromLocalStorage(){
+            if (localStorage.getItem("settings_notifications")) {
+                successfullyReadNotificationSettings(localStorage.getItem("settings_notifications"));
+            }
+            else {
+                document.addEventListener("deviceready", readNotificationSettingsFile, false);
+            }
+        }
+
+        function readNotificationSettingsFile() {
             var p = new Persistence();
-            p.readfile(filename, successfullyReadNotificationSettings, failSaveSettings );
+            p.readfile("notificationsettings", successfullyReadNotificationSettings, failSaveSettings );
         }
 
         function saveNotificationSettings() {
@@ -105,7 +119,7 @@
             notificationSettings.time = $("#notification-time").val();
             var jsonString = JSON.stringify(notificationSettings);
             var p = new Persistence();
-            p.writefile("notificationsettings", jsonString, redirectToSettings, failSaveSettings);
+            p.writefile("notificationsettings", jsonString, redirectToSettings(jsonString), failSaveSettings);
 
             if($("#toggle-notifications").val() === "on") {
                 if(devicePlatform.toLocaleLowerCase() == "android") {
@@ -154,7 +168,7 @@
 <!-- Notification settings -->
 
 <div data-role="page" id="notificationSettings">
-    <div data-role="header">
+    <div data-role="header" data-position="fixed">
         <h2>Notification settings</h2>
     </div><!-- header -->
 
@@ -164,7 +178,7 @@
 
         <div data-role="fieldcontain">
             <label for="toggle-notifications">Toggle notification:</label>
-            <select name="slider" id="toggle-notifications" data-role="slider">
+            <select name="slider" id="toggle-notifications" data-role="slider" data-native-menu="false">
                 <option value="off">Off</option>
                 <option value="on">On</option>
             </select>
